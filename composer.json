@@ -1,0 +1,11 @@
+{
+    "name": "mortimer333/dullahan",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Dullahan\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {}
+}
