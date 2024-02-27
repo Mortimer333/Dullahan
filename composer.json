@@ -1,6 +1,6 @@
 {
     "name": "mortimer333/dullahan",
-    "type": "library",
+    "type": "symfony-bundle",
     "autoload": {
         "psr-4": {
             "Dullahan\\": "src/"

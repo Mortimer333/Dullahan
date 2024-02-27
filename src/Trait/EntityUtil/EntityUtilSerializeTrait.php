@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Criteria;
 use Dullahan\Doctrine\Mapper\EntityParentMapper;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Service\CacheService;
-use Dullahan\src\Contract\InheritanceAwareInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
 
 trait EntityUtilSerializeTrait
 {

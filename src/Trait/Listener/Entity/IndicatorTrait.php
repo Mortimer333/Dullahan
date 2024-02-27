@@ -10,8 +10,8 @@ use Dullahan\Event\Entity\PostUpdate;
 use Dullahan\Event\Entity\PreCreate;
 use Dullahan\Event\Entity\PreRemove;
 use Dullahan\Event\Entity\PreUpdate;
-use Dullahan\src\Contract\IndicatorAwareInterface;
 use Dullahan\Trait\IndicatorMethodsTrait;
+use Dullahan\Contract\IndicatorAwareInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 trait IndicatorTrait

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Doctrine\Mapper;
 
-use Dullahan\src\Contract\InheritanceAwareInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
 
 abstract class EntityInheritanceMapper
 {

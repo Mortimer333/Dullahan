@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Trait;
 
-use Dullahan\src\Contract\IndicatorAwareInterface;
+use Dullahan\Contract\IndicatorAwareInterface;
 
 trait IndicatorMethodsTrait
 {

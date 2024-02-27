@@ -18,8 +18,8 @@ use Dullahan\Service\EditorJsService;
 use Dullahan\Service\EmptyIndicatorService;
 use Dullahan\Service\UserService;
 use Dullahan\Service\ValidationService;
-use Dullahan\src\Contract\InheritanceAwareInterface;
-use Dullahan\src\Contract\ManageableInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
+use Dullahan\Contract\ManageableInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -51,8 +51,8 @@ class EntityUtilService
     public function urlSlugNamespaceToClassName(ProjectEnum $project, string $namespace): string
     {
         $context = match ($project) {
-            ProjectEnum::Main => 'App\\Entity\\Main\\',
-            ProjectEnum::Test => 'App\\EntityTest\\',
+            ProjectEnum::Main => 'App\Entity\Main\\',
+            ProjectEnum::Test => 'App\EntityTest\\',
         };
 
         $namespace = str_replace('-', ' ', trim($namespace));

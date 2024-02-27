@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Service\Util;
 
-use App\Service\Util\BinUtilService as ExtendedBinUtilService;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -12,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class BinUtilService
 {
+    protected static string $projectDir;
+
     public static function getTmpPath(): string
     {
         $path = rtrim(self::getRootPath(), '/') . '/var/tmp/';
@@ -40,7 +41,7 @@ class BinUtilService
 
     public function saveLastErrorTrace(\Throwable $e, ?Request $request = null): void
     {
-        $httpUtilService = new HttpUtilService(new ExtendedBinUtilService());
+        $httpUtilService = new HttpUtilService(new self());
         $path = $this->getRootPath() . '/var/last_error_trace';
         $file = fopen($path, 'w');
         if ($file) {
@@ -59,7 +60,34 @@ class BinUtilService
 
     public static function getRootPath(): string
     {
-        return dirname(dirname(dirname(__DIR__)));
+        if (isset(self::$projectDir)) {
+            return self::$projectDir;
+        }
+
+        if (isset($_ENV['PROJECT_ROOT'])) {
+            return self::$projectDir = $_ENV['PROJECT_ROOT'];
+        }
+
+        $r = new \ReflectionObject(new self());
+
+        if (!is_file($dir = $r->getFileName())) {
+            throw new \LogicException(
+                sprintf('Cannot auto-detect project dir for kernel of class "%s".', $r->name)
+            );
+        }
+
+        $rootDir = \dirname($dir);
+        $dirs = explode('/', $dir);
+        array_shift($dirs);
+        $dir = '/';
+        while (!is_file($dir.'/composer.json')) {
+            if ($dir === $rootDir) {
+                return self::$projectDir = $rootDir;
+            }
+            $dir = $dir . (array_splice($dirs, 0, 1)[0] ?? $rootDir) . '/';
+        }
+
+        return self::$projectDir = $dir;
     }
 
     public function isTest(): bool

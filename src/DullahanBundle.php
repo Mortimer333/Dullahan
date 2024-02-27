@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan;
 
+use Dullahan\Service\Util\BinUtilService;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -38,20 +39,6 @@ class DullahanBundle extends AbstractBundle
         ContainerConfigurator $containerConfigurator,
         ContainerBuilder $containerBuilder
     ): void {
-        $containerConfigurator->import('../config/cms.yaml');
-
-        if ($_ENV['test']) {
-            $config['projects']['main'] = [
-                'url' => 'https://cms.local/',
-                'class' => 'App\\EntityTest\\',
-            ];
-            $containerConfigurator->parameters()
-                ->set('cms.projects', $config['projects'])
-            ;
-        } else {
-            $containerConfigurator->parameters()
-                ->set('cms.projects', $config['projects'])
-            ;
-        }
+        $containerConfigurator->import('../config/services.yaml');
     }
 }

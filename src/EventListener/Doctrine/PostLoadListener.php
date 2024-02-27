@@ -11,9 +11,9 @@ use Dullahan\Doctrine\Mapper\EntityInheritanceMapper;
 use Dullahan\Doctrine\Mapper\EntityPointersMapper;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Service\Util\EntityUtilService;
-use Dullahan\src\Constraint\EntityManagerInjectionInterface;
-use Dullahan\src\Contract\AssetAwareInterface;
-use Dullahan\src\Contract\InheritanceAwareInterface;
+use Dullahan\Constraint\EntityManagerInjectionInterface;
+use Dullahan\Contract\AssetAwareInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
 
 #[AsDoctrineListener(event: Events::postLoad)]
 class PostLoadListener

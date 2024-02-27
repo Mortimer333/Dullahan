@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Dullahan\Trait\EntityUtil;
 
 use Dullahan\Entity\AssetPointer;
-use Dullahan\src\Attribute\Asset;
-use Dullahan\src\Contract\AssetAwareInterface;
-use Dullahan\src\Contract\InheritanceAwareInterface;
+use Dullahan\Attribute\Asset;
+use Dullahan\Contract\AssetAwareInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
 
 trait EntityUtilRemoveTrait
 {

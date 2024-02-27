@@ -7,7 +7,7 @@ namespace Dullahan\Service;
 use Dullahan\Entity\User;
 use Dullahan\Service\User\UserManageService;
 use Dullahan\Service\Util\HttpUtilService;
-use Dullahan\src\Contract\Service\MailServiceInterface;
+use Dullahan\Contract\Service\MailServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Dullahan\Reader;
 
-use Dullahan\src\Attribute\Entity;
-use Dullahan\src\Contract\EntityValidateConstraintInterface;
+use Dullahan\Attribute\Entity;
+use Dullahan\Contract\EntityValidateConstraintInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class EntityReader

@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Dullahan\Enum\FieldTypeEnum;
 use Dullahan\Service\Helper\CastHelper;
-use Dullahan\src\Contract\ManageableInterface;
+use Dullahan\Contract\ManageableInterface;
 use ICanBoogie\Inflector;
 
 trait EntityUtilSetterTrait

@@ -6,7 +6,7 @@ namespace Dullahan\Trait\Validate;
 
 use Dullahan\Entity\User;
 use Dullahan\Entity\UserData;
-use Dullahan\src\Constraint\RegistrationConstraint;
+use Dullahan\Constraint\RegistrationConstraint;
 
 trait RegistrationValidationTrait
 {

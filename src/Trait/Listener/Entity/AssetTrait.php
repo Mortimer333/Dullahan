@@ -11,7 +11,7 @@ use Dullahan\Event\Entity\PostCreate;
 use Dullahan\Event\Entity\PostUpdate;
 use Dullahan\Event\Entity\PreCreate;
 use Dullahan\Event\Entity\PreUpdate;
-use Dullahan\src\Contract\AssetAwareInterface;
+use Dullahan\Contract\AssetAwareInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 trait AssetTrait

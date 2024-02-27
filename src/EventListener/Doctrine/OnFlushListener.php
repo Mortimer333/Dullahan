@@ -14,8 +14,8 @@ use Doctrine\ORM\Events;
 use Dullahan\Doctrine\Mapper\EntityInheritanceMapper;
 use Dullahan\Doctrine\Mapper\EntityPointersMapper;
 use Dullahan\Service\Util\EntityUtilService;
-use Dullahan\src\Contract\AssetAwareInterface;
-use Dullahan\src\Contract\InheritanceAwareInterface;
+use Dullahan\Contract\AssetAwareInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
 
 #[AsDoctrineListener(event: Events::onFlush, priority: 500)]
 class OnFlushListener

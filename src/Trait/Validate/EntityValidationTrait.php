@@ -6,10 +6,10 @@ namespace Dullahan\Trait\Validate;
 
 use Dullahan\Reader\EntityReader;
 use Dullahan\Service\Util\HttpUtilService;
-use Dullahan\src\Constraint\DataSetCriteriaConstraint;
-use Dullahan\src\Contract\ConstraintInheritanceAwareInterface;
-use Dullahan\src\Contract\InheritanceAwareInterface;
-use Dullahan\src\Contract\ManageableInterface;
+use Dullahan\Constraint\DataSetCriteriaConstraint;
+use Dullahan\Contract\ConstraintInheritanceAwareInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
+use Dullahan\Contract\ManageableInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait EntityValidationTrait

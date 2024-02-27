@@ -8,8 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping;
 use Doctrine\Persistence\Proxy;
 use Dullahan\Entity\User;
-use Dullahan\src\Contract\InheritanceAwareInterface;
-use Dullahan\src\Contract\ManageableInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
+use Dullahan\Contract\ManageableInterface;
 
 trait EntityUtilHelperTrait
 {

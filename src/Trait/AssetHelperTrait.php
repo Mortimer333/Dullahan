@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Dullahan\Entity\Asset;
 use Dullahan\Entity\AssetPointer;
-use Dullahan\src\Contract\AssetAwareInterface;
+use Dullahan\Contract\AssetAwareInterface;
 use ICanBoogie\Inflector;
 
 trait AssetHelperTrait

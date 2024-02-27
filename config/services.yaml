@@ -1,0 +1,14 @@
+services:
+  Dullahan\:
+    resource: '../src/'
+    exclude:
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Attribute/'
+      - '../src/Event/'
+      - '../src/Reader/'
+
+  _defaults:
+    public: true
+    autowire: true
+    autoconfigure: true

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Doctrine\Mapper;
 
 use Dullahan\Entity\AssetPointer;
-use Dullahan\src\Contract\AssetAwareInterface;
+use Dullahan\Contract\AssetAwareInterface;
 
 abstract class EntityPointersMapper
 {

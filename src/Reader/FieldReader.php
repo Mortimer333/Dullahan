@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Service\CacheService;
-use Dullahan\src\Attribute\Field;
+use Dullahan\Attribute\Field;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

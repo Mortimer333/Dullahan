@@ -8,8 +8,8 @@ use Dullahan\Entity\Asset;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Entity\AssetThumbnailPointer;
 use Dullahan\Entity\Thumbnail;
-use Dullahan\src\Attribute\Thumbnail as ThumbnailAttribute;
-use Dullahan\src\Contract\AssetAwareInterface;
+use Dullahan\Attribute\Thumbnail as ThumbnailAttribute;
+use Dullahan\Contract\AssetAwareInterface;
 use PHPImageWorkshop\Core\ImageWorkshopLayer;
 use PHPImageWorkshop\ImageWorkshop;
 

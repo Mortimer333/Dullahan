@@ -8,7 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Dullahan\Service\Util\HttpUtilService;
 use Dullahan\Service\ValidationService;
-use Dullahan\src\Constraint\PaginationConstraint;
+use Dullahan\Constraint\PaginationConstraint;
 
 trait PaginationTrait
 {

@@ -7,8 +7,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Dullahan\Repository\AssetPointerRepository;
-use Dullahan\src\Contract\AssetAwareInterface;
-use Dullahan\src\Contract\PointerInterface;
+use Dullahan\Contract\AssetAwareInterface;
+use Dullahan\Contract\PointerInterface;
 
 #[ORM\Entity(repositoryClass: AssetPointerRepository::class)]
 class AssetPointer implements PointerInterface

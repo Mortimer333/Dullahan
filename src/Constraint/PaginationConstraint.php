@@ -30,7 +30,7 @@ class PaginationConstraint
     protected static function getColumnRegex(): Assert\Regex
     {
         return new Assert\Regex([
-            'pattern' => '/[!@#$%^&*()+\-=\[\]{};\':"\\|,<>\/?]+/', // allows only .
+            'pattern' => '/[!@#$%^&*()+\-=\[\]{};\':"\|,<>\/?]+/', // allows only .
             'match' => false,
             'message' => 'Column name cannot contain symbols except underscore',
         ]);

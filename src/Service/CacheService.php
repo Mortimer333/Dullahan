@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\src\Contract\InheritanceAwareInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 class CacheService
@@ -76,7 +76,7 @@ class CacheService
 
     public function getCacheClass(string $class): string
     {
-        return str_replace('\\', '-', str_replace('Proxies\\__CG__\\', '', $class));
+        return str_replace('\\', '-', str_replace('Proxies\__CG__\\', '', $class));
     }
 
     public function getCache(): CacheItemPoolInterface

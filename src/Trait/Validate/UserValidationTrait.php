@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Dullahan\Trait\Validate;
 
 use Dullahan\Entity\User;
-use Dullahan\src\Constraint\ForgottenPasswordConstraint;
-use Dullahan\src\Constraint\ResetPasswordConstraint;
-use Dullahan\src\Constraint\UserUpdateConstraint;
-use Dullahan\src\Constraint\UserUpdateMailConstraint;
-use Dullahan\src\Constraint\UserUpdatePasswordConstraint;
+use Dullahan\Constraint\ForgottenPasswordConstraint;
+use Dullahan\Constraint\ResetPasswordConstraint;
+use Dullahan\Constraint\UserUpdateConstraint;
+use Dullahan\Constraint\UserUpdateMailConstraint;
+use Dullahan\Constraint\UserUpdatePasswordConstraint;
 
 trait UserValidationTrait
 {
