@@ -1,6 +1,7 @@
 {
     "name": "mortimer333/dullahan",
     "type": "symfony-bundle",
+    "license": "GPL-2.0-only",
     "autoload": {
         "psr-4": {
             "Dullahan\\": "src/"
