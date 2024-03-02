@@ -22,3 +22,5 @@
 ###> phpstorm ###
 .idea/
 ###< phpstorm ###
+
+composer.lock
