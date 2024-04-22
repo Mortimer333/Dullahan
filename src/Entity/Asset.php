@@ -64,7 +64,7 @@ class Asset
     #[ORM\PostRemove]
     public function remove(): void
     {
-        FileUtilService::removeFEImages((string) $this->getProject(), $this->getProjectPath());
+        FileUtilService::removeFEImages($this->getProjectPath());
     }
 
     // TODO figure out proper path resolving for images

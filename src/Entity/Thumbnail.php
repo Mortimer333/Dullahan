@@ -52,7 +52,7 @@ class Thumbnail
             return;
         }
 
-        FileUtilService::removeFEImages((string) $this->getAsset()->getProject(), $this->getProjectPath());
+        FileUtilService::removeFEImages($this->getProjectPath());
     }
 
     public function getURL(): string

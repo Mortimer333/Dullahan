@@ -97,9 +97,9 @@ class FileUtilService
         rmdir($dir);
     }
 
-    public static function removeFEImages(string $project, string $path): void
+    public static function removeFEImages(string $path): void
     {
-        $path = $_ENV['PATH_FRONT_END'] . '/' . $project . '/' . $path;
+        $path = rtrim($_ENV['PATH_FRONT_END'], '/') . '/' . $path;
         if (!file_exists($path)) {
             return;
         }

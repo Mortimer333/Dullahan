@@ -128,7 +128,6 @@ class AssetService
             $name = $this->getUniqueAssetName($path, $extension);
         }
 
-        BinUtilService::logToTest($_ENV['PATH_IMAGE_FOLDER'] . $projectPath, 'a');
         $asset = $this->em->getRepository(Asset::class)->findByPath(
             $_ENV['PATH_IMAGE_FOLDER'] . $projectPath,
             $name,
@@ -272,7 +271,7 @@ class AssetService
         }
         $project = rtrim($_ENV['PATH_FRONT_END'], '/') . '/' . rtrim($_ENV['PATH_IMAGE_FOLDER'], '/') . '/'
             . $project . '/';
-        BinUtilService::logToTest($project);
+
         if (!is_dir($project)) {
             throw new \Exception("Project's image folder not found", 500);
         }
