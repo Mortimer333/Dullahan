@@ -34,7 +34,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -89,7 +89,8 @@ class AuthenticationController extends AbstractController implements NotTokenAut
         }
 
         $user = $this->userManageService->create($registration);
-        $this->mailService->sendActivationEmailAndVerify($user);
+        // TODO implement a way to activate sending validation email
+        // $this->mailService->sendActivationEmailAndVerify($user);
 
         return $this->httpUtilService->jsonResponse('User registered');
     }

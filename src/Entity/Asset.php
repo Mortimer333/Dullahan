@@ -77,10 +77,7 @@ class Asset
 
     public function getFullPathWithoutName(): string
     {
-        return rtrim(
-            $_ENV['PATH_FRONT_END'] . '/' . $this->getProject() . '/' . trim((string) $this->getPath(), '/'),
-            '/',
-        );
+        return rtrim($_ENV['PATH_FRONT_END'], '/') . '/' . trim((string) $this->getPath(), '/');
     }
 
     public function getProjectPath(): string
@@ -90,12 +87,12 @@ class Asset
 
     public function getRelativePath(): string
     {
-        return $this->getProject() . '/' . ltrim($this->getProjectPath(), '/');
+        return ltrim($this->getProjectPath(), '/');
     }
 
     public function getFullPath(): string
     {
-        return $_ENV['PATH_FRONT_END'] . '/' . ltrim($this->getRelativePath(), '/');
+        return rtrim($_ENV['PATH_FRONT_END'], '/') . '/' . $this->getRelativePath();
     }
 
     public function getId(): ?int

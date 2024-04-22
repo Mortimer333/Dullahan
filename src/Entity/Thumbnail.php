@@ -71,7 +71,7 @@ class Thumbnail
 
     public function getRelativePath(): string
     {
-        return $this->getAsset()?->getProject() . '/' . ltrim($this->getProjectPath(), '/');
+        return ltrim($this->getProjectPath(), '/');
     }
 
     public function getFullPath(): string

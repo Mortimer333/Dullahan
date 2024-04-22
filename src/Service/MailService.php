@@ -10,6 +10,7 @@ use Dullahan\Service\Util\HttpUtilService;
 use Dullahan\Contract\Service\MailServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -31,7 +32,12 @@ class MailService implements MailServiceInterface
         // TODO change to use mail service:
         // - create proper mail service and use parameters from config
         // - allow to substitute your own mailing service which must implement given interface
-        return new MockResponse();
+        $client = new MockHttpClient([new MockResponse(
+            json_encode([
+                'success' => true,
+            ])
+        )]);
+        return $client->request($method, $path);
     }
 
     public function sendActivationEmail(User $user): ResponseInterface
@@ -105,6 +111,7 @@ class MailService implements MailServiceInterface
     {
         try {
             $response = $response();
+            /** @var ResponseInterface $response */
             $jsonResponse = json_decode($response->getContent(), true) ?: [];
         } catch (\Throwable $e) {
             if ($additional) {

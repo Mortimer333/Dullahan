@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Service;
 
-use App\Trait\Service\Asset as AssetTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Entity\Asset;
 use Dullahan\Entity\UserData;
@@ -98,9 +97,9 @@ class AssetService
     ): Asset {
         $path = rtrim($path, '/') . '/';
         $this->validationService->validateUploadedFile($file);
-        $relative = $this->validateAndRefactorPath($project, $path);
+        $absolute = $this->validateAndRefactorPath($project, $path);
 
-        return $this->saveImage($project, $relative, $file, $path, $name);
+        return $this->saveImage($project, $absolute, $file, $path, $name);
     }
 
     public function getUniqueAssetName(string $path, string $extension): string
@@ -129,13 +128,14 @@ class AssetService
             $name = $this->getUniqueAssetName($path, $extension);
         }
 
+        BinUtilService::logToTest($_ENV['PATH_IMAGE_FOLDER'] . $projectPath, 'a');
         $asset = $this->em->getRepository(Asset::class)->findByPath(
-            '/media/image/dist/' . $projectPath,
+            $_ENV['PATH_IMAGE_FOLDER'] . $projectPath,
             $name,
             $extension
         );
         if ($asset) {
-            throw new \Exception('Image with exact save name already exists', 400);
+            throw new \Exception('Image with exact same name already exists', 400);
         }
 
         if (!is_writable($path)) {
@@ -155,7 +155,7 @@ class AssetService
         }
 
         $relative = str_replace(
-            rtrim($_ENV['PATH_FRONT_END'], '/') . '/' . $project,
+            rtrim($_ENV['PATH_FRONT_END'], '/'),
             '',
             $path
         );
@@ -256,6 +256,10 @@ class AssetService
             throw new \Exception('Path to FE is not set', 500);
         }
 
+        if (!isset($_ENV['PATH_IMAGE_FOLDER'])) {
+            throw new \Exception('Relative path to image folder is not set', 500);
+        }
+
         $cases = ProjectEnum::cases();
         foreach ($cases as $i => $case) {
             if ($case->value == $project) {
@@ -266,7 +270,9 @@ class AssetService
                 throw new \Exception("Project's not recognized", 400);
             }
         }
-        $project = $_ENV['PATH_FRONT_END'] . '/' . $project . '/media/image/';
+        $project = rtrim($_ENV['PATH_FRONT_END'], '/') . '/' . rtrim($_ENV['PATH_IMAGE_FOLDER'], '/') . '/'
+            . $project . '/';
+        BinUtilService::logToTest($project);
         if (!is_dir($project)) {
             throw new \Exception("Project's image folder not found", 500);
         }
@@ -275,7 +281,7 @@ class AssetService
             throw new \Exception("Project's dist is not writeable", 500);
         }
 
-        $project .= 'dist/' . trim($path, '/') . '/';
+        $project .= trim($path, '/') . '/';
         if (!is_dir($project)) {
             mkdir($project, 0755, true);
         }
