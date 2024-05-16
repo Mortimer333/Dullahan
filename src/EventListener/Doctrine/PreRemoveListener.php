@@ -7,9 +7,9 @@ namespace Dullahan\EventListener\Doctrine;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Events;
+use Dullahan\Contract\AssetAwareInterface;
 use Dullahan\Doctrine\Mapper\EntityPointersMapper;
 use Dullahan\Service\Util\EntityUtilService;
-use Dullahan\Contract\AssetAwareInterface;
 
 #[AsDoctrineListener(event: Events::preRemove, priority: 500)]
 class PreRemoveListener

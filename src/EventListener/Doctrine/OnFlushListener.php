@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace Dullahan\EventListener\Doctrine;
 
-use App\Entity\Cod\Monster;
-use App\Entity\Cod\MonsterRandomization;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
+use Dullahan\Contract\AssetAwareInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Doctrine\Mapper\EntityInheritanceMapper;
 use Dullahan\Doctrine\Mapper\EntityPointersMapper;
 use Dullahan\Service\Util\EntityUtilService;
-use Dullahan\Contract\AssetAwareInterface;
-use Dullahan\Contract\InheritanceAwareInterface;
 
 #[AsDoctrineListener(event: Events::onFlush, priority: 500)]
 class OnFlushListener
@@ -174,6 +172,9 @@ class OnFlushListener
         $em->getUnitOfWork()->computeChangeSet($em->getClassMetadata($entity::class), $entity);
     }
 
+    /**
+     * @param Collection<int, InheritanceAwareInterface> $children
+     */
     protected function assignNewRelationPathToChildren(
         EntityManagerInterface $em,
         Collection $children,

@@ -7,9 +7,9 @@ namespace Dullahan\EventListener\Doctrine;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Events;
+use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Doctrine\Mapper\EntityInheritanceMapper;
 use Dullahan\Service\Util\EntityUtilService;
-use Dullahan\Contract\InheritanceAwareInterface;
 
 #[AsDoctrineListener(event: Events::postPersist, priority: 500)]
 class PostPersistListener

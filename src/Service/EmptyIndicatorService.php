@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Dullahan\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Entity\InheritEmpty;
 use Dullahan\Contract\InheritanceAwareInterface;
+use Dullahan\Entity\InheritEmpty;
 
 class EmptyIndicatorService
 {

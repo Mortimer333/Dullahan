@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Dullahan\Service\Util;
 
-use App\Event\Entity;
-use App\Trait\EntityUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Dullahan\Contract\InheritanceAwareInterface;
+use Dullahan\Contract\ManageableInterface;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Entity\User;
 use Dullahan\Enum\ProjectEnum;
@@ -18,8 +18,6 @@ use Dullahan\Service\EditorJsService;
 use Dullahan\Service\EmptyIndicatorService;
 use Dullahan\Service\UserService;
 use Dullahan\Service\ValidationService;
-use Dullahan\Contract\InheritanceAwareInterface;
-use Dullahan\Contract\ManageableInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -84,7 +82,11 @@ class EntityUtilService
     }
 
     /**
-     * @param class-string $class
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     *
+     * @return EntityRepository<T>
      */
     public function getRepository(string $class): EntityRepository
     {

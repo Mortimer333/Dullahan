@@ -8,6 +8,9 @@ use OpenApi\Attributes as SWG;
 
 class DataSetDTO
 {
+    /**
+     * @var array<string>
+     */
     #[SWG\Property(type: 'array', items: new SWG\Items(allOf: [
         new SWG\Property(type: 'string', example: 'fieldName'),
     ]))]

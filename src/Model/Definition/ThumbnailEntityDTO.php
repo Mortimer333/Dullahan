@@ -18,6 +18,11 @@ class ThumbnailEntityDTO
     #[SWG\Property]
     public int $weight;
 
+    /**
+     * @var array{
+     *     code: PointerEntityDTO,
+     * }
+     */
     #[SWG\Property(type: 'object', properties: [
         new SWG\Property(property: 'code', ref: new Model(type: PointerEntityDTO::class)),
     ])]

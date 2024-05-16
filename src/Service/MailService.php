@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Dullahan\Service;
 
+use Dullahan\Contract\Service\MailServiceInterface;
 use Dullahan\Entity\User;
 use Dullahan\Service\User\UserManageService;
 use Dullahan\Service\Util\HttpUtilService;
-use Dullahan\Contract\Service\MailServiceInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -35,8 +35,9 @@ class MailService implements MailServiceInterface
         $client = new MockHttpClient([new MockResponse(
             json_encode([
                 'success' => true,
-            ])
+            ]) ?: ''
         )]);
+
         return $client->request($method, $path);
     }
 

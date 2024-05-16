@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Dullahan\Service;
 
-use Dullahan\Service\Util\BinUtilService;
 use Dullahan\Contract\NotDoubleSubmitAuthenticatedController;
 use Dullahan\Contract\NotTokenAuthenticatedController;
+use Dullahan\Service\Util\BinUtilService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;

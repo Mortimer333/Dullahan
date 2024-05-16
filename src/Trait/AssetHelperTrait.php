@@ -6,9 +6,9 @@ namespace Dullahan\Trait;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Dullahan\Contract\AssetAwareInterface;
 use Dullahan\Entity\Asset;
 use Dullahan\Entity\AssetPointer;
-use Dullahan\Contract\AssetAwareInterface;
 use ICanBoogie\Inflector;
 
 trait AssetHelperTrait

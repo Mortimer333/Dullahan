@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Dullahan\Trait\Validate;
 
+use Dullahan\Constraint\RegistrationConstraint;
 use Dullahan\Entity\User;
 use Dullahan\Entity\UserData;
-use Dullahan\Constraint\RegistrationConstraint;
 
 trait RegistrationValidationTrait
 {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\EventListener;
 
-use App\Trait\Listener\Entity;
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Service\AssetService;
 use Dullahan\Service\CacheService;

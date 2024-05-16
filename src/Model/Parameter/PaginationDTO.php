@@ -16,11 +16,17 @@ class PaginationDTO
     #[SWG\Property(example: 0, description: 'The amount of rows to retrieve')]
     public int $offset;
 
+    /**
+     * @var array<SortItemDTO>
+     */
     #[SWG\Property(type: 'array', items: new SWG\Items(
         ref: new Model(type: SortItemDTO::class)
     ))]
     public array $sort;
 
+    /**
+     * @var array<string, mixed>
+     */
     #[SWG\Property(
         type: 'array',
         example: '[["column", "=", "value"], "AND", ["column2","!=","value2"]]',
@@ -44,12 +50,15 @@ class PaginationDTO
                 ])
             ),
             new SWG\Property(type: 'string', enum: [
-                        'AND', 'OR', '(', ')',
-                ]),
+                'AND', 'OR', '(', ')',
+            ]),
         ])
     )]
     public array $filter;
 
+    /**
+     * @var array<array<string>>
+     */
     #[SWG\Property(type: 'array', items: new SWG\Items(anyOf: [
         new SWG\Property(
             type: 'array',

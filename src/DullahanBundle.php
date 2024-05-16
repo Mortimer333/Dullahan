@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan;
 
-use Dullahan\Service\Util\BinUtilService;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -14,7 +13,7 @@ class DullahanBundle extends AbstractBundle
 {
     public function configure(DefinitionConfigurator $definition): void
     {
-        $definition->rootNode()
+        $definition->rootNode() // @phpstan-ignore method.notFound
             ->children()
                 ->arrayNode('projects')
                 ->useAttributeAsKey('name')
@@ -36,9 +35,9 @@ class DullahanBundle extends AbstractBundle
      */
     public function loadExtension(
         array $config,
-        ContainerConfigurator $containerConfigurator,
-        ContainerBuilder $containerBuilder
+        ContainerConfigurator $container,
+        ContainerBuilder $builder,
     ): void {
-        $containerConfigurator->import('../config/services.yaml');
+        $container->import('../config/services.yaml');
     }
 }

@@ -7,9 +7,9 @@ namespace Dullahan\Trait\EntityUtil;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Dullahan\Contract\ManageableInterface;
 use Dullahan\Enum\FieldTypeEnum;
 use Dullahan\Service\Helper\CastHelper;
-use Dullahan\Contract\ManageableInterface;
 use ICanBoogie\Inflector;
 
 trait EntityUtilSetterTrait
@@ -199,8 +199,11 @@ trait EntityUtilSetterTrait
     }
 
     /**
-     * @param array<mixed> $newCollection
-     * @param class-string $class
+     * @template T of object
+     *
+     * @param array<mixed>        $newCollection
+     * @param class-string<T>     $class
+     * @param EntityRepository<T> $repo
      *
      * @return array<object>
      */

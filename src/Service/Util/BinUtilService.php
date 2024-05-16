@@ -70,7 +70,7 @@ class BinUtilService
 
         $r = new \ReflectionObject(new self());
 
-        if (!is_file($dir = $r->getFileName())) {
+        if (!is_file($dir = $r->getFileName() ?: '')) {
             throw new \LogicException(
                 sprintf('Cannot auto-detect project dir for kernel of class "%s".', $r->name)
             );

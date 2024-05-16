@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Dullahan\Trait\Service\Asset;
 
+use Dullahan\Attribute\Thumbnail as ThumbnailAttribute;
+use Dullahan\Contract\AssetAwareInterface;
 use Dullahan\Entity\Asset;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Entity\AssetThumbnailPointer;
 use Dullahan\Entity\Thumbnail;
-use Dullahan\Attribute\Thumbnail as ThumbnailAttribute;
-use Dullahan\Contract\AssetAwareInterface;
 use PHPImageWorkshop\Core\ImageWorkshopLayer;
 use PHPImageWorkshop\ImageWorkshop;
 

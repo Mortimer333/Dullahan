@@ -32,7 +32,7 @@ class ControllerSubscriber implements EventSubscriberInterface
         $this->accessControlService->validate($controller, $request);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::CONTROLLER => 'onKernelController',

@@ -14,6 +14,9 @@ interface InheritanceAwareInterface
 
     public function getParent(): ?InheritanceAwareInterface;
 
+    /**
+     * @return Collection<int, InheritanceAwareInterface>
+     */
     public function getChildren(): Collection;
 
     public function addChild(InheritanceAwareInterface $child): self;

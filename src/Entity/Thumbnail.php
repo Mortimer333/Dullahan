@@ -32,6 +32,9 @@ class Thumbnail
     #[ORM\Column]
     private ?string $settings = null;
 
+    /**
+     * @var Collection<int, AssetThumbnailPointer>
+     */
     #[ORM\OneToMany(
         mappedBy: 'thumbnail',
         targetEntity: AssetThumbnailPointer::class,

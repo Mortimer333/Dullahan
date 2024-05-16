@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Trait;
 
-trait PolymorphicEntityTrait
+trait PolymorphicEntityTrait // @phpstan-ignore trait.unused
 {
     protected ?object $entity = null;
 

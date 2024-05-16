@@ -6,9 +6,9 @@ namespace Dullahan\Trait;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Dullahan\Constraint\PaginationConstraint;
 use Dullahan\Service\Util\HttpUtilService;
 use Dullahan\Service\ValidationService;
-use Dullahan\Constraint\PaginationConstraint;
 
 trait PaginationTrait
 {

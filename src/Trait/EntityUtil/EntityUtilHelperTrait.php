@@ -7,9 +7,9 @@ namespace Dullahan\Trait\EntityUtil;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping;
 use Doctrine\Persistence\Proxy;
-use Dullahan\Entity\User;
 use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Contract\ManageableInterface;
+use Dullahan\Entity\User;
 
 trait EntityUtilHelperTrait
 {
@@ -115,6 +115,8 @@ trait EntityUtilHelperTrait
     }
 
     /**
+     * @param Collection<int, InheritanceAwareInterface> $children
+     *
      * @return array<int>
      */
     protected function retrieveChildrenIds(Collection $children): array

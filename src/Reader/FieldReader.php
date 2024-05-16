@@ -6,9 +6,9 @@ namespace Dullahan\Reader;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Dullahan\Attribute\Field;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Service\CacheService;
-use Dullahan\Attribute\Field;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

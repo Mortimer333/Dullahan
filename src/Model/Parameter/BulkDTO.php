@@ -14,7 +14,7 @@ class BulkDTO
         example: 'monster',
         description: 'Entity namespace',
     )]
-    public array $namespace;
+    public string $namespace;
 
     #[SWG\Property]
     public DataSetDTO $dataSet;

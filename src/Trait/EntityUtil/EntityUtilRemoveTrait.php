@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Dullahan\Trait\EntityUtil;
 
-use Dullahan\Entity\AssetPointer;
 use Dullahan\Attribute\Asset;
 use Dullahan\Contract\AssetAwareInterface;
 use Dullahan\Contract\InheritanceAwareInterface;
+use Dullahan\Entity\AssetPointer;
 
 trait EntityUtilRemoveTrait
 {
@@ -26,7 +26,7 @@ trait EntityUtilRemoveTrait
             return;
         }
 
-        /** @var \ReflectionAttribute $assetAttr */
+        /** @var \ReflectionAttribute<Asset> $assetAttr */
         $assetAttr = end($assets);
         /** @var Asset $asset */
         $asset = $assetAttr->newInstance();

@@ -7,8 +7,8 @@ namespace Dullahan\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Dullahan\Repository\UserDataRepository;
 use Dullahan\Attribute\Field;
+use Dullahan\Repository\UserDataRepository;
 
 /**
  * Public user information.
@@ -31,6 +31,9 @@ class UserData
     #[Field, ORM\Column(length: 255, nullable: true)]
     private ?string $oldName = null;
 
+    /**
+     * @var Collection<int, Asset>
+     */
     #[ORM\OneToMany(mappedBy: 'userData', targetEntity: Asset::class, orphanRemoval: true)]
     private Collection $assets;
 

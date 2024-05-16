@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Dullahan\Trait\Validate;
 
-use Dullahan\Reader\EntityReader;
-use Dullahan\Service\Util\HttpUtilService;
 use Dullahan\Constraint\DataSetCriteriaConstraint;
 use Dullahan\Contract\ConstraintInheritanceAwareInterface;
 use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Contract\ManageableInterface;
+use Dullahan\Reader\EntityReader;
+use Dullahan\Service\Util\HttpUtilService;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait EntityValidationTrait

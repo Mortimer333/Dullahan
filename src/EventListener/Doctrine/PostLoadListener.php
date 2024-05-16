@@ -7,13 +7,13 @@ namespace Dullahan\EventListener\Doctrine;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Events;
+use Dullahan\Constraint\EntityManagerInjectionInterface;
+use Dullahan\Contract\AssetAwareInterface;
+use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Doctrine\Mapper\EntityInheritanceMapper;
 use Dullahan\Doctrine\Mapper\EntityPointersMapper;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Service\Util\EntityUtilService;
-use Dullahan\Constraint\EntityManagerInjectionInterface;
-use Dullahan\Contract\AssetAwareInterface;
-use Dullahan\Contract\InheritanceAwareInterface;
 
 #[AsDoctrineListener(event: Events::postLoad)]
 class PostLoadListener
@@ -58,15 +58,14 @@ class PostLoadListener
             return;
         }
 
-        /** @var class-string|null $entityClass */
+        /** @var class-string $entityClass */
         $entityClass = $entity->getEntityClass();
         if (!$entityClass) {
             throw new \Exception('Entity class not set', 500);
         }
 
-        $entity->setEntityRepository(
-            $event->getObjectManager()->getRepository($entityClass)
-        );
+        $repo = $event->getObjectManager()->getRepository($entityClass);
+        $entity->setEntityRepository($repo);
     }
 
     /**

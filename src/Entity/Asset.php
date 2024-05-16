@@ -41,6 +41,9 @@ class Asset
     #[ORM\Column(length: 255)]
     private ?string $project = null;
 
+    /**
+     * @var Collection<int, AssetPointer>
+     */
     #[ORM\OneToMany(mappedBy: 'asset', targetEntity: AssetPointer::class, orphanRemoval: true)]
     private Collection $pointers;
 
@@ -48,6 +51,9 @@ class Asset
     #[ORM\JoinColumn(nullable: false)]
     private ?UserData $userData = null;
 
+    /**
+     * @var Collection<int, Thumbnail>
+     */
     #[ORM\OneToMany(mappedBy: 'asset', targetEntity: Thumbnail::class, orphanRemoval: true)]
     private Collection $thumbnails;
 

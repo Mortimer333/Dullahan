@@ -12,6 +12,9 @@ class CreateUpdateBody
     #[SWG\Property]
     public DataSetDTO $dataSet;
 
+    /**
+     * @var array<string, mixed>
+     */
     #[SWG\Property(type: 'object', properties: [
         new SWG\Property(property: 'field', example: 'value'),
     ])]

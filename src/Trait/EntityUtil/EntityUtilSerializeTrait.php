@@ -6,10 +6,10 @@ namespace Dullahan\Trait\EntityUtil;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Doctrine\Mapper\EntityParentMapper;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Service\CacheService;
-use Dullahan\Contract\InheritanceAwareInterface;
 
 trait EntityUtilSerializeTrait
 {
@@ -322,7 +322,8 @@ trait EntityUtilSerializeTrait
     }
 
     /**
-     * @param array<string, mixed> $type
+     * @param array<string, mixed>    $type
+     * @param Collection<int, object> $value
      *
      * @return array<mixed>
      */

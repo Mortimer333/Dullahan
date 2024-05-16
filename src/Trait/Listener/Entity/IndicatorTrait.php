@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Trait\Listener\Entity;
 
+use Dullahan\Contract\IndicatorAwareInterface;
 use Dullahan\Event\Entity\PostCreate;
 use Dullahan\Event\Entity\PostRemove;
 use Dullahan\Event\Entity\PostUpdate;
@@ -11,7 +12,6 @@ use Dullahan\Event\Entity\PreCreate;
 use Dullahan\Event\Entity\PreRemove;
 use Dullahan\Event\Entity\PreUpdate;
 use Dullahan\Trait\IndicatorMethodsTrait;
-use Dullahan\Contract\IndicatorAwareInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 trait IndicatorTrait

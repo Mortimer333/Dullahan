@@ -6,14 +6,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Dullahan\Repository\AssetPointerRepository;
 use Dullahan\Contract\AssetAwareInterface;
 use Dullahan\Contract\PointerInterface;
+use Dullahan\Repository\AssetPointerRepository;
 
 #[ORM\Entity(repositoryClass: AssetPointerRepository::class)]
 class AssetPointer implements PointerInterface
 {
     private ?AssetAwareInterface $entity = null;
+
+    /**
+     * @var EntityRepository<object>|null
+     */
     private ?EntityRepository $entityRepository = null;
 
     #[ORM\Id]
@@ -34,6 +38,9 @@ class AssetPointer implements PointerInterface
     #[ORM\Column(length: 255)]
     private ?string $entityColumn = null;
 
+    /**
+     * @var Collection<int, AssetThumbnailPointer>
+     */
     #[ORM\OneToMany(
         mappedBy: 'assetPointer',
         targetEntity: AssetThumbnailPointer::class,
@@ -57,6 +64,11 @@ class AssetPointer implements PointerInterface
         return $this->id;
     }
 
+    /**
+     * @template T of object
+     *
+     * @param EntityRepository<T> $repository
+     */
     public function setEntityRepository(EntityRepository $repository): object
     {
         $this->entityRepository = $repository;

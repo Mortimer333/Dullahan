@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Dullahan\Trait\Validate;
 
-use Dullahan\Entity\User;
 use Dullahan\Constraint\ForgottenPasswordConstraint;
 use Dullahan\Constraint\ResetPasswordConstraint;
 use Dullahan\Constraint\UserUpdateConstraint;
 use Dullahan\Constraint\UserUpdateMailConstraint;
 use Dullahan\Constraint\UserUpdatePasswordConstraint;
+use Dullahan\Entity\User;
 
 trait UserValidationTrait
 {

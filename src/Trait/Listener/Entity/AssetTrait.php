@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Trait\Listener\Entity;
 
+use Dullahan\Contract\AssetAwareInterface;
 use Dullahan\Doctrine\Mapper\EntityPointersMapper;
 use Dullahan\Entity\Asset;
 use Dullahan\Entity\AssetPointer;
@@ -11,7 +12,6 @@ use Dullahan\Event\Entity\PostCreate;
 use Dullahan\Event\Entity\PostUpdate;
 use Dullahan\Event\Entity\PreCreate;
 use Dullahan\Event\Entity\PreUpdate;
-use Dullahan\Contract\AssetAwareInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 trait AssetTrait

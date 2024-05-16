@@ -23,6 +23,12 @@ class UserEntityDTO
     #[SWG\Property(example: '2020-01-01 00:00:00')]
     public string $created;
 
+    /**
+     * @var array{
+     *     limit: int,
+     *     taken: int,
+     * }
+     */
     #[SWG\Property(type: 'object', properties: [
         new SWG\Property(property: 'limit', type: 'int', example: '1000000'),
         new SWG\Property(property: 'taken', type: 'int', example: '33242'),
