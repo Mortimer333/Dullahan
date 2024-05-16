@@ -1,6 +1,6 @@
 # Dullahan Symfony Bundle
 
-Headless CMS bundle created on top of Symfony 6.4.
+Headless CMS bundle created on top of Symfony 7.0.
 
 ## Installation
 
