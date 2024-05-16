@@ -4,7 +4,7 @@ Headless CMS bundle created on top of Symfony 7.0.
 
 ## Installation
 
-It is recommended to use created project [Dullahan Project](https://github.com/Mortimer333/dullahan-project).
+You can start new Symfony 7.0 + Dullahan with [Dullahan Project](https://github.com/Mortimer333/dullahan-project).
 
 Independent installation
 ```bash
