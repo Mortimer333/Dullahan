@@ -8,6 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Contract\NotTokenAuthenticatedController;
 use Dullahan\Contract\Service\MailServiceInterface;
 use Dullahan\Entity\User;
+use Dullahan\Event\PostLogin;
+use Dullahan\Event\Register\PostRegistration;
+use Dullahan\Event\Register\PostValidationRegistration;
+use Dullahan\Event\Register\PreRegistration;
 use Dullahan\Model\Body\Authentication\ResetPasswordBodyDTO;
 use Dullahan\Model\Body\Authentication\ResetPasswordVerifyBodyDTO;
 use Dullahan\Model\Body\LoginDto;
@@ -32,6 +36,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -44,14 +49,15 @@ use Symfony\Component\Routing\Attribute\Route;
 class AuthenticationController extends AbstractController implements NotTokenAuthenticatedController
 {
     public function __construct(
-        protected HttpUtilService $httpUtilService,
-        protected BinUtilService $baseUtilService,
-        protected ValidationService $validationService,
-        protected EntityManagerInterface $em,
-        protected UserService $userService,
-        protected UserManageService $userManageService,
-        protected UserValidateService $userValidateService,
-        protected MailServiceInterface $mailService,
+        protected HttpUtilService          $httpUtilService,
+        protected BinUtilService           $baseUtilService,
+        protected ValidationService        $validationService,
+        protected EntityManagerInterface   $em,
+        protected UserService              $userService,
+        protected UserManageService        $userManageService,
+        protected UserValidateService      $userValidateService,
+        protected MailServiceInterface     $mailService,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -69,18 +75,11 @@ class AuthenticationController extends AbstractController implements NotTokenAut
     )]
     public function register(Request $request): JsonResponse
     {
+        $this->eventDispatcher->dispatch(new PreRegistration($request));
         $parameters = $this->httpUtilService->getBody($request);
 
         $registration = $parameters['register'] ?? [];
         $this->validationService->validateRegistration($registration);
-
-        // TODO #recaptcha move recaptcha to separate bundle
-        //        $recaptcha = $parameters['recaptcha'] ?? throw new \Exception('Missing reCaptcha token', 400);
-        //        if (!is_string($recaptcha)) {
-        //            throw new \Exception('reCaptcha token has incorrect type', 400);
-        //        }
-        //        $this->recaptchaService->verify($recaptcha);
-
         $this->validationService->validateUserPassword($registration['password'], $registration['passwordRepeat']);
         $this->validationService->validateUserUniqueness($registration['email'], $registration['username']);
 
@@ -88,9 +87,9 @@ class AuthenticationController extends AbstractController implements NotTokenAut
             throw new \InvalidArgumentException('Registration attempt failed', 400);
         }
 
+        $this->eventDispatcher->dispatch(new PostValidationRegistration($request));
         $user = $this->userManageService->create($registration);
-        // TODO implement a way to activate sending validation email
-        // $this->mailService->sendActivationEmailAndVerify($user);
+        $this->eventDispatcher->dispatch(new PostRegistration($request, $user));
 
         return $this->httpUtilService->jsonResponse('User registered');
     }
@@ -107,16 +106,8 @@ class AuthenticationController extends AbstractController implements NotTokenAut
         content: new Model(type: UnauthorizedResponseDTO::class),
         response: 401
     )]
-    public function login(JWSService $jwsService, Security $security): JsonResponse
+    public function login(Request $request, JWSService $jwsService, Security $security): JsonResponse
     {
-        // TODO #recaptcha
-        //        $parameters = $this->httpUtilService->getBody($request);
-        //        $recaptcha = $parameters['recaptcha'] ?? throw new \Exception('Missing reCaptcha token', 400);
-        //        if (!is_string($recaptcha)) {
-        //            throw new \Exception('reCaptcha token has incorrect type', 400);
-        //        }
-        //        $this->recaptchaService->verify($recaptcha);
-
         /** @var ?\Dullahan\Entity\User $user */
         $user = $security->getUser();
 
@@ -127,6 +118,8 @@ class AuthenticationController extends AbstractController implements NotTokenAut
         if (!$user->isActivated()) {
             throw new \Exception('User with this email is not activate, you cannot log in using this account', 403);
         }
+
+        $this->eventDispatcher->dispatch(new PostLogin($request, $user));
 
         $token = $jwsService->createToken($user);
 

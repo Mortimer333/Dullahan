@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PostUpdate extends Event
 {
-    public const NAME = 'app.post_entity_update';
+    public const NAME = 'dullahan.post_entity_update';
 
     /**
      * @param array<mixed> $payload

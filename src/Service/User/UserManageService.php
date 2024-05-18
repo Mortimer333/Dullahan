@@ -17,6 +17,7 @@ class UserManageService
         protected UserPasswordHasherInterface $passwordHasher,
         protected EntityManagerInterface $em,
         protected UserService $userService,
+        protected BinUtilService $binUtilService,
     ) {
     }
 
@@ -41,10 +42,12 @@ class UserManageService
             ->setData($userData)
         ;
 
+        $this->setActivationToken($user);
+
         $this->em->persist($user);
         $this->em->flush();
 
-        $userData->setPublicId((new BinUtilService())->generateUniqueToken((string) $user->getId()));
+        $userData->setPublicId($this->binUtilService->generateUniqueToken((string) $user->getId()));
 
         $this->em->persist($userData);
         $this->em->flush();
@@ -126,5 +129,12 @@ class UserManageService
         $user->setPasswordResetVerificationToken(null);
         $this->em->persist($user);
         $this->em->flush();
+    }
+
+    public function setActivationToken(User $user): void
+    {
+        $user->setActivationToken($this->binUtilService->generateToken(32));
+        // TODO make expiry time a parameter in config
+        $user->setActivationTokenExp(time() + (60 * 60 * 24)); // Token expires after 24 hours
     }
 }

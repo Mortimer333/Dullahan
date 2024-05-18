@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PreUpdate extends Event
 {
-    public const NAME = 'app.pre_entity_update';
+    public const NAME = 'dullahan.pre_entity_update';
 
     /**
      * @param array<mixed> $payload

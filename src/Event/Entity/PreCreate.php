@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PreCreate extends Event
 {
-    public const NAME = 'app.pre_entity_create';
+    public const NAME = 'dullahan.pre_entity_create';
 
     /**
      * @param array<mixed> $payload

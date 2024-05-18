@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PostRemove extends Event
 {
-    public const NAME = 'app.post_entity_remove';
+    public const NAME = 'dullahan.post_entity_remove';
 
     public function __construct(
         protected object $entity

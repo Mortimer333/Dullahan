@@ -11,6 +11,12 @@ use Dullahan\Contract\ManageableInterface;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Entity\User;
 use Dullahan\Enum\ProjectEnum;
+use Dullahan\Event\Entity\PreCreate;
+use Dullahan\Event\Entity\PostCreate;
+use Dullahan\Event\Entity\PreUpdate;
+use Dullahan\Event\Entity\PostUpdate;
+use Dullahan\Event\Entity\PreRemove;
+use Dullahan\Event\Entity\PostRemove;
 use Dullahan\Reader\FieldReader;
 use Dullahan\Service\AssetService;
 use Dullahan\Service\CacheService;
@@ -19,16 +25,17 @@ use Dullahan\Service\EmptyIndicatorService;
 use Dullahan\Service\UserService;
 use Dullahan\Service\ValidationService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Dullahan\Trait\EntityUtil;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class EntityUtilService
 {
-    use \Dullahan\Trait\EntityUtil\EntityUtilSetterTrait;
-    use \Dullahan\Trait\EntityUtil\EntityUtilHelperTrait;
-    use \Dullahan\Trait\EntityUtil\EntityUtilSerializeTrait;
-    use \Dullahan\Trait\EntityUtil\EntityUtilRemoveTrait;
+    use EntityUtil\EntityUtilSetterTrait;
+    use EntityUtil\EntityUtilHelperTrait;
+    use EntityUtil\EntityUtilSerializeTrait;
+    use EntityUtil\EntityUtilRemoveTrait;
 
     protected ?User $user = null;
     protected bool $inherit = true;
@@ -186,7 +193,7 @@ class EntityUtilService
         /** @var ManageableInterface&T $entity */
         $entity = $this->generate($class);
         $this->validationService->handlePreCreateValidation($entity, $payload);
-        $pre = new \Dullahan\Event\Entity\PreCreate($entity, $payload);
+        $pre = new PreCreate($entity, $payload);
         $this->eventDispatcher->dispatch($pre);
         $payload = $pre->getPayload();
 
@@ -204,7 +211,7 @@ class EntityUtilService
         }
         $this->emptyIndicatorService->setEmptyIndicators($entity, $payload);
 
-        $this->eventDispatcher->dispatch(new \Dullahan\Event\Entity\PostCreate($entity, $payload));
+        $this->eventDispatcher->dispatch(new PostCreate($entity, $payload));
         // Clear all cached related entities - otherwise we might get them but without newly created entity
         $this->clearRelatedCache($entity, $definition);
 
@@ -220,7 +227,7 @@ class EntityUtilService
         $entity = $this->get($class, $id);
         $this->validationService->handlePreUpdateValidation($entity, $payload, $this->validateOwner);
         /** @var ManageableInterface $entity */
-        $pre = new \Dullahan\Event\Entity\PreUpdate($entity, $payload);
+        $pre = new PreUpdate($entity, $payload);
         $this->eventDispatcher->dispatch($pre);
         $payload = $pre->getPayload();
 
@@ -250,7 +257,7 @@ class EntityUtilService
         }
         $this->emptyIndicatorService->setEmptyIndicators($entity, $payload);
 
-        $this->eventDispatcher->dispatch(new \Dullahan\Event\Entity\PostUpdate($entity, $payload));
+        $this->eventDispatcher->dispatch(new PostUpdate($entity, $payload));
         $this->removeEntityCache($entity);
 
         return $entity;
@@ -272,7 +279,7 @@ class EntityUtilService
             throw new \Exception("You cannot delete chosen entity as it doesn't belong to you", 403);
         }
 
-        $this->eventDispatcher->dispatch(new \Dullahan\Event\Entity\PreRemove($entity));
+        $this->eventDispatcher->dispatch(new PreRemove($entity));
 
         if ($entity instanceof InheritanceAwareInterface) {
             $id = $entity->getId();
@@ -283,7 +290,7 @@ class EntityUtilService
             $this->em->flush();
         }
 
-        $this->eventDispatcher->dispatch(new \Dullahan\Event\Entity\PostRemove($entity));
+        $this->eventDispatcher->dispatch(new PostRemove($entity));
         // Clear all cached related entities - otherwise we might get them but with just deleted entity
         $this->clearRelatedCache($entity, $this->getEntityDefinition($entity));
     }

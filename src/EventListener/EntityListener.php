@@ -8,11 +8,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Service\AssetService;
 use Dullahan\Service\CacheService;
 use Dullahan\Service\Util\EntityUtilService;
+use Dullahan\Trait\Listener;
 
 class EntityListener
 {
-    use \Dullahan\Trait\Listener\Entity\AssetTrait;
-    use \Dullahan\Trait\Listener\Entity\IndicatorTrait;
+    use Listener\Entity\AssetTrait;
+    use Listener\Entity\IndicatorTrait;
 
     public function __construct(
         protected EntityManagerInterface $em,

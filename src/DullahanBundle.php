@@ -15,6 +15,11 @@ class DullahanBundle extends AbstractBundle
     {
         $definition->rootNode() // @phpstan-ignore method.notFound
             ->children()
+                ->arrayNode('email')
+                    ->children()
+                        ->scalarNode('service')->isRequired()->end()
+                    ->end()
+                ->end()
                 ->arrayNode('projects')
                 ->useAttributeAsKey('name')
                     ->arrayPrototype()
@@ -39,5 +44,8 @@ class DullahanBundle extends AbstractBundle
         ContainerBuilder $builder,
     ): void {
         $container->import('../config/services.yaml');
+//        $builder->getDefinition('Dullahan\Contract\MailerSendContractInterface')
+//            ->setClass($emailServiceRef)
+//        ;
     }
 }

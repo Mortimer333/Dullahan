@@ -16,6 +16,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationService
 {
+    // @TODO move this to service subscriber to enable validation service swap in case
+    // https://symfony.com/doc/6.4/service_container/service_subscribers_locators.html
     use RegistrationValidationTrait;
     use UserValidationTrait;
     use EntityValidationTrait;

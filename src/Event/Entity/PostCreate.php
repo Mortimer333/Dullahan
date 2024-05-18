@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PostCreate extends Event
 {
-    public const NAME = 'app.post_entity_create';
+    public const NAME = 'dullahan.post_entity_create';
 
     /**
      * @param array<mixed> $payload

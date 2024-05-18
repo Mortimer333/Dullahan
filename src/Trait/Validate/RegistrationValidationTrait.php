@@ -58,9 +58,5 @@ trait RegistrationValidationTrait
         if ($password !== $repeated) {
             $this->httpUtilService->addError("Passwords don't match", ['passwordRepeat']);
         }
-
-        if (!$this->validatePasswordStrength($password, length: 12)) {
-            $this->httpUtilService->addError('Password is too weak', ['password']);
-        }
     }
 }
