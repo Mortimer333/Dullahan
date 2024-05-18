@@ -12,6 +12,7 @@ use Dullahan\Trait\Validate\EntityValidationTrait;
 use Dullahan\Trait\Validate\RegistrationValidationTrait;
 use Dullahan\Trait\Validate\UserValidationTrait;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationService
@@ -38,11 +39,15 @@ class ValidationService
      */
     public function validate(array $body, Constraint|array $constraint): void
     {
-        $violations = $this->validator->validate($body, $constraint);
+        $this->addViolations($this->validator->validate($body, $constraint));
+    }
+
+    public function addViolations(ConstraintViolationListInterface $violations): void
+    {
         foreach ($violations as $violation) {
             $this->httpUtilService->addError(
                 (string) $violation->getMessage(),
-                explode('][', substr($violation->getPropertyPath(), 1, -1))
+                explode('][', ltrim(rtrim($violation->getPropertyPath(), ']'), '['))
             );
         }
     }

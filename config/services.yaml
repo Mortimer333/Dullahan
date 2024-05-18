@@ -12,3 +12,5 @@ services:
     public: true
     autowire: true
     autoconfigure: true
+
+  Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestPayloadValueResolver: '@argument_resolver.request_payload'

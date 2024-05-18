@@ -42,7 +42,12 @@
         "symfony/yaml": "7.0.*",
         "symfony/dotenv": "7.0.*",
         "web-token/jwt-bundle": "^3.3",
-        "nelmio/api-doc-bundle": "^4.10"
+        "nelmio/api-doc-bundle": "^4.10",
+        "phpdocumentor/reflection-docblock": "^5.4",
+        "phpstan/phpdoc-parser": "^1.29",
+        "symfony/property-access": "^7.0",
+        "symfony/property-info": "^7.0",
+        "symfony/serializer": "^7.0"
     },
     "config": {
         "allow-plugins": {
