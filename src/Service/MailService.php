@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Service;
 
+use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Contract\Service\MailServiceInterface;
 use Dullahan\Entity\User;
 use Dullahan\Service\User\UserManageService;
@@ -19,7 +20,7 @@ class MailService implements MailServiceInterface
     public function __construct(
         protected HttpClientInterface $httpClient,
         protected LoggerInterface $logger,
-        protected UserService $userService,
+        protected UserServiceInterface $userService,
         protected UserManageService $userManageService,
     ) {
     }

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Dullahan\Service\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Entity\User;
 use Dullahan\Entity\UserData;
-use Dullahan\Service\UserService;
 use Dullahan\Service\Util\BinUtilService;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -16,7 +16,7 @@ class UserManageService
     public function __construct(
         protected UserPasswordHasherInterface $passwordHasher,
         protected EntityManagerInterface $em,
-        protected UserService $userService,
+        protected UserServiceInterface $userService,
         protected BinUtilService $binUtilService,
     ) {
     }

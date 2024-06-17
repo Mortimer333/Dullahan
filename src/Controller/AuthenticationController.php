@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Contract\NotTokenAuthenticatedController;
 use Dullahan\Contract\Service\MailServiceInterface;
 use Dullahan\Entity\User;
@@ -28,7 +29,6 @@ use Dullahan\Model\Response\Manage\UserPasswordWasResetDTO;
 use Dullahan\Service\JWSService;
 use Dullahan\Service\User\UserManageService;
 use Dullahan\Service\User\UserValidateService;
-use Dullahan\Service\UserService;
 use Dullahan\Service\Util\BinUtilService;
 use Dullahan\Service\Util\HttpUtilService;
 use Dullahan\Service\ValidationService;
@@ -49,14 +49,14 @@ use Symfony\Component\Routing\Attribute\Route;
 class AuthenticationController extends AbstractController implements NotTokenAuthenticatedController
 {
     public function __construct(
-        protected HttpUtilService          $httpUtilService,
-        protected BinUtilService           $baseUtilService,
-        protected ValidationService        $validationService,
-        protected EntityManagerInterface   $em,
-        protected UserService              $userService,
-        protected UserManageService        $userManageService,
-        protected UserValidateService      $userValidateService,
-        protected MailServiceInterface     $mailService,
+        protected HttpUtilService $httpUtilService,
+        protected BinUtilService $baseUtilService,
+        protected ValidationService $validationService,
+        protected EntityManagerInterface $em,
+        protected UserServiceInterface $userService,
+        protected UserManageService $userManageService,
+        protected UserValidateService $userValidateService,
+        protected MailServiceInterface $mailService,
         protected EventDispatcherInterface $eventDispatcher,
     ) {
     }
@@ -82,12 +82,12 @@ class AuthenticationController extends AbstractController implements NotTokenAut
         $this->validationService->validateRegistration($registration);
         $this->validationService->validateUserPassword($registration['password'], $registration['passwordRepeat']);
         $this->validationService->validateUserUniqueness($registration['email'], $registration['username']);
+        $this->eventDispatcher->dispatch(new PostValidationRegistration($request));
 
         if ($this->httpUtilService->hasErrors()) {
             throw new \InvalidArgumentException('Registration attempt failed', 400);
         }
 
-        $this->eventDispatcher->dispatch(new PostValidationRegistration($request));
         $user = $this->userManageService->create($registration);
         $this->eventDispatcher->dispatch(new PostRegistration($request, $user));
 
@@ -128,10 +128,8 @@ class AuthenticationController extends AbstractController implements NotTokenAut
             data: [
                 'token' => $token,
                 'user' => [
+                    'details' => $this->userService->serialize($user),
                     'roles' => $user->getRoles(),
-                    'details' => [
-                        'id' => $user->getData()?->getId(),
-                    ],
                 ],
             ],
         );

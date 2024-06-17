@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Dullahan\Service\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Entity\User;
-use Dullahan\Service\UserService;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -15,7 +15,7 @@ class UserValidateService
     public function __construct(
         protected UserPasswordHasherInterface $passwordHasher,
         protected EntityManagerInterface $em,
-        protected UserService $userService,
+        protected UserServiceInterface $userService,
     ) {
     }
 

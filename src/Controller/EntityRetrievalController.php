@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Dullahan\Controller;
 
-use Dullahan\Enum\ProjectEnum;
 use Dullahan\Model\Parameter\BulkDTO;
 use Dullahan\Model\Parameter\DataSetDTO;
 use Dullahan\Model\Parameter\PaginationDTO;
 use Dullahan\Model\Response\PEM\BulkResponse;
+use Dullahan\Service\ProjectManagerService;
 use Dullahan\Service\Util\EntityUtilService;
 use Dullahan\Service\Util\HttpUtilService;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -17,15 +17,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Requirement\EnumRequirement;
 
 #[SWG\Tag('Project Entity Managment')]
-#[Route('/', name: 'api_entity_retrieval_')]
+#[Route('/entity/', name: 'api_entity_retrieval_')]
 class EntityRetrievalController extends AbstractController
 {
     public function __construct(
         protected HttpUtilService $httpUtilService,
         protected EntityUtilService $entityUtilService,
+        protected ProjectManagerService $projectManagerService,
     ) {
     }
 
@@ -33,7 +33,6 @@ class EntityRetrievalController extends AbstractController
         '{project}/{namespace}',
         name: 'list',
         methods: 'GET',
-        requirements: ['project' => new EnumRequirement(ProjectEnum::class)],
     )]
     #[SWG\Parameter(
         name: 'pagination',
@@ -51,10 +50,10 @@ class EntityRetrievalController extends AbstractController
         schema: new SWG\Schema(type: 'boolean'),
         example: true
     )]
-    public function list(Request $request, ProjectEnum $project, string $namespace): JsonResponse
+    public function list(Request $request, string $project, string $namespace): JsonResponse
     {
         /** @var class-string $class */
-        $class = $this->entityUtilService->urlSlugNamespaceToClassName(
+        $class = $this->projectManagerService->urlSlugNamespaceToClassName(
             $project,
             $namespace,
         );
@@ -81,7 +80,6 @@ class EntityRetrievalController extends AbstractController
         '{project}/bulk',
         name: 'bulk',
         methods: 'GET',
-        requirements: ['project' => new EnumRequirement(ProjectEnum::class)],
         priority: 1
     )]
     #[SWG\Parameter(
@@ -96,7 +94,7 @@ class EntityRetrievalController extends AbstractController
         content: new Model(type: BulkResponse::class),
         response: 200
     )]
-    public function bulk(Request $request, ProjectEnum $project): JsonResponse
+    public function bulk(Request $request, string $project): JsonResponse
     {
         $bulk = $request->get('bulk');
         if (!$bulk) {
@@ -119,7 +117,7 @@ class EntityRetrievalController extends AbstractController
             $inherit = $item['inherit'] ?? true;
 
             /** @var class-string $class */
-            $class = $this->entityUtilService->urlSlugNamespaceToClassName(
+            $class = $this->projectManagerService->urlSlugNamespaceToClassName(
                 $project,
                 $namespace,
             );
@@ -155,7 +153,6 @@ class EntityRetrievalController extends AbstractController
         '{project}/{namespace}/{id<\d+>}',
         name: 'view',
         methods: 'GET',
-        requirements: ['project' => new EnumRequirement(ProjectEnum::class)],
     )]
     #[SWG\Parameter(
         name: 'dataSet',
@@ -168,10 +165,10 @@ class EntityRetrievalController extends AbstractController
         schema: new SWG\Schema(type: 'boolean'),
         example: true
     )]
-    public function view(Request $request, ProjectEnum $project, string $namespace, int $id): JsonResponse
+    public function view(Request $request, string $project, string $namespace, int $id): JsonResponse
     {
         /** @var class-string $class */
-        $class = $this->entityUtilService->urlSlugNamespaceToClassName(
+        $class = $this->projectManagerService->urlSlugNamespaceToClassName(
             $project,
             $namespace,
         );

@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
  */
 class HttpUtilService
 {
+    // TODO parameterize it
     public const TOKEN_EXP_TIME_SECONDS = 60 * 60; // One hour
     public const TOKEN_EXP_TIME_DEV_SECONDS = 24 * 60 * 60; // One day
 

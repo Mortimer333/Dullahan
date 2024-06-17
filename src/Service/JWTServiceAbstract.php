@@ -11,6 +11,7 @@ use Psr\Cache\CacheItemPoolInterface;
 
 abstract class JWTServiceAbstract
 {
+    // TODO parameterize it
     public const AUDIENCE = 'Users';
     public const ISSUER = 'Board Meister Internal';
 

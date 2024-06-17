@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Dullahan\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Entity\Asset;
 use Dullahan\Entity\UserData;
-use Dullahan\Enum\ProjectEnum;
 use Dullahan\Service\Util\BinUtilService;
 use Dullahan\Service\Util\FileUtilService;
+use Dullahan\Trait\Service as TraitService;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -17,14 +18,15 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class AssetService
 {
-    use \Dullahan\Trait\Service\Asset\SerializeTrait;
-    use \Dullahan\Trait\Service\Asset\ThumbnailTrait;
+    use TraitService\Asset\SerializeTrait;
+    use TraitService\Asset\ThumbnailTrait;
 
     public function __construct(
         protected EntityManagerInterface $em,
-        protected UserService $userService,
+        protected UserServiceInterface $userService,
         protected CacheService $cacheService,
         protected ValidationService $validationService,
+        protected ProjectManagerService $projectManagerService,
     ) {
     }
 
@@ -259,15 +261,17 @@ class AssetService
             throw new \Exception('Relative path to image folder is not set', 500);
         }
 
-        $cases = ProjectEnum::cases();
-        foreach ($cases as $i => $case) {
-            if ($case->value == $project) {
+        $projects = $this->projectManagerService->getProjects();
+        $i = 0;
+        foreach ($projects as $name => $properties) {
+            if ($name == $project) {
                 break;
             }
 
-            if ($i + 1 === count($cases)) {
+            if ($i + 1 === count($projects)) {
                 throw new \Exception("Project's not recognized", 400);
             }
+            ++$i;
         }
         $project = rtrim($_ENV['PATH_FRONT_END'], '/') . '/' . rtrim($_ENV['PATH_IMAGE_FOLDER'], '/') . '/'
             . $project . '/';

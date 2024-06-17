@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Service\User\UserValidateService;
 use Dullahan\Service\Util\HttpUtilService;
 use Dullahan\Trait\Validate\AssetValidationTrait;
@@ -29,7 +30,7 @@ class ValidationService
         protected ValidatorInterface $validator,
         protected EntityManagerInterface $em,
         protected UserValidateService $userValidateService,
-        protected UserService $userService,
+        protected UserServiceInterface $userService,
     ) {
     }
 

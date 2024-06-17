@@ -6,14 +6,13 @@ namespace Dullahan\Controller\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Entity\Asset;
-use Dullahan\Enum\ProjectEnum;
 use Dullahan\Model\Parameter\PaginationDTO;
 use Dullahan\Model\Response\PAM\RetrieveImageResponse;
 use Dullahan\Model\Response\PAM\RetrieveImagesResponse;
 use Dullahan\Model\Response\PAM\UploadImageResponse;
 use Dullahan\Service\AssetService;
-use Dullahan\Service\UserService;
 use Dullahan\Service\Util\HttpUtilService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;
@@ -22,7 +21,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Requirement\EnumRequirement;
 
 #[SWG\Tag('Project Asset Management')]
 #[Route('/asset', name: 'api_asset_managment_')]
@@ -31,7 +29,7 @@ class AssetManagmentController extends AbstractController
     public function __construct(
         protected HttpUtilService $httpUtilService,
         protected AssetService $assetService,
-        protected UserService $userService,
+        protected UserServiceInterface $userService,
         protected EntityManagerInterface $em,
     ) {
     }
@@ -86,7 +84,6 @@ class AssetManagmentController extends AbstractController
         '/upload/{project}/image',
         name: 'upload',
         methods: 'POST',
-        requirements: ['project' => new EnumRequirement(ProjectEnum::class)],
     )]
     #[SWG\RequestBody(
         required: true,
@@ -109,7 +106,7 @@ class AssetManagmentController extends AbstractController
         content: new Model(type: UploadImageResponse::class),
         response: 200
     )]
-    public function uploadImage(Request $request, ProjectEnum $project): JsonResponse
+    public function uploadImage(Request $request, string $project): JsonResponse
     {
         $name = $request->request->get('name');
         $path = (string) ($request->request->get('path') ?? '');
@@ -135,7 +132,7 @@ class AssetManagmentController extends AbstractController
         }
         $user = $this->userService->getLoggedInUser();
         $image = $this->assetService->uploadImageToFE(
-            $project->value,
+            $project,
             'user/' . $user->getData()?->getPublicId() . '/' . $path,
             $image,
             $name,

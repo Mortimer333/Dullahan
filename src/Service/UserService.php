@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Dullahan\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Entity\Asset;
 use Dullahan\Entity\User;
 use Dullahan\Entity\UserData;
 use Dullahan\Service\Util\FileUtilService;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class UserService
+class UserService implements UserServiceInterface
 {
     public function __construct(
         protected EntityManagerInterface $em,
@@ -45,22 +46,13 @@ class UserService
         return (bool) $this->security->getUser();
     }
 
-    /**
-     * @return array{
-     *     id: int|null,
-     *     email: string|null,
-     *     data: array<string, mixed>,
-     *     activated: bool,
-     *     created: string,
-     *  }
-     */
-    public function serialize(User $user, bool $roles = false): array
+    public function serialize(User $user): array
     {
         /** @var UserData $data */
         $data = $user->getData();
         $currentTakenSpace = $this->em->getRepository(Asset::class)->getTakenSpace($data);
 
-        $details = [
+        return [
             'id' => $user->getId(),
             'email' => $user->getEmail(),
             'data' => $this->serializeData($data),
@@ -75,12 +67,6 @@ class UserService
                 'taken' => $currentTakenSpace,
             ],
         ];
-
-        if ($roles) {
-            $details['roles'] = $user->getRoles();
-        }
-
-        return $details;
     }
 
     /**

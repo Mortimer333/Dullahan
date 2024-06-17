@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan;
 
+use Dullahan\Service\Util\BinUtilService;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -15,16 +16,10 @@ class DullahanBundle extends AbstractBundle
     {
         $definition->rootNode() // @phpstan-ignore method.notFound
             ->children()
-                ->arrayNode('email')
-                    ->children()
-                        ->scalarNode('service')->isRequired()->end()
-                    ->end()
-                ->end()
                 ->arrayNode('projects')
-                ->useAttributeAsKey('name')
+                    ->useAttributeAsKey('name')
                     ->arrayPrototype()
                         ->children()
-                            ->scalarNode('url')->isRequired()->end()
                             ->scalarNode('class')->isRequired()->end()
                         ->end()
                     ->end()
@@ -44,8 +39,8 @@ class DullahanBundle extends AbstractBundle
         ContainerBuilder $builder,
     ): void {
         $container->import('../config/services.yaml');
-//        $builder->getDefinition('Dullahan\Contract\MailerSendContractInterface')
-//            ->setClass($emailServiceRef)
-//        ;
+        $builder->getDefinition('Dullahan\Service\ProjectManagerService')
+            ->setArgument('$projects', $config['projects'])
+        ;
     }
 }

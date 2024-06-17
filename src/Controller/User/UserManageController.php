@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Controller\User;
 
+use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Contract\Service\MailServiceInterface;
 use Dullahan\Model\Body\Manage\RemoveUserDTO;
 use Dullahan\Model\Body\Manage\UpdateUserDTO;
@@ -16,7 +17,6 @@ use Dullahan\Model\Response\Manage\UserRemovedDTO;
 use Dullahan\Model\Response\Manage\UserUpdatedDTO;
 use Dullahan\Service\User\UserManageService;
 use Dullahan\Service\User\UserValidateService;
-use Dullahan\Service\UserService;
 use Dullahan\Service\Util\HttpUtilService;
 use Dullahan\Service\ValidationService;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -33,7 +33,7 @@ class UserManageController extends AbstractController
 {
     public function __construct(
         protected HttpUtilService $httpUtilService,
-        protected UserService $userService,
+        protected UserServiceInterface $userService,
         protected UserValidateService $userValidateService,
         protected UserManageService $userManageService,
         protected ValidationService $validationService,
@@ -65,8 +65,11 @@ class UserManageController extends AbstractController
     )]
     public function get(): JsonResponse
     {
+        $user = $this->userService->getLoggedInUser();
+
         return $this->httpUtilService->jsonResponse('User details', data: [
-            'details' => $this->userService->serialize($this->userService->getLoggedInUser(), true),
+            'details' => $this->userService->serialize($user),
+            'roles' => $user->getRoles(),
         ]);
     }
 

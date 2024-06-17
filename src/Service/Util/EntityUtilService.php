@@ -8,24 +8,23 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Contract\ManageableInterface;
+use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Entity\User;
-use Dullahan\Enum\ProjectEnum;
-use Dullahan\Event\Entity\PreCreate;
 use Dullahan\Event\Entity\PostCreate;
-use Dullahan\Event\Entity\PreUpdate;
-use Dullahan\Event\Entity\PostUpdate;
-use Dullahan\Event\Entity\PreRemove;
 use Dullahan\Event\Entity\PostRemove;
+use Dullahan\Event\Entity\PostUpdate;
+use Dullahan\Event\Entity\PreCreate;
+use Dullahan\Event\Entity\PreRemove;
+use Dullahan\Event\Entity\PreUpdate;
 use Dullahan\Reader\FieldReader;
 use Dullahan\Service\AssetService;
 use Dullahan\Service\CacheService;
 use Dullahan\Service\EditorJsService;
 use Dullahan\Service\EmptyIndicatorService;
-use Dullahan\Service\UserService;
 use Dullahan\Service\ValidationService;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Dullahan\Trait\EntityUtil;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -43,7 +42,7 @@ class EntityUtilService
 
     public function __construct(
         protected EntityManagerInterface $em,
-        protected UserService $userService,
+        protected UserServiceInterface $userService,
         protected EventDispatcherInterface $eventDispatcher,
         protected ValidationService $validationService,
         protected AssetService $assetService,
@@ -51,20 +50,6 @@ class EntityUtilService
         protected CacheService $cacheService,
         protected EditorJsService $editorJsService,
     ) {
-    }
-
-    public function urlSlugNamespaceToClassName(ProjectEnum $project, string $namespace): string
-    {
-        $context = match ($project) {
-            ProjectEnum::Main => 'App\Entity\Main\\',
-            ProjectEnum::Test => 'App\EntityTest\\',
-        };
-
-        $namespace = str_replace('-', ' ', trim($namespace));
-        $namespace = ucwords($namespace);
-        $namespace = str_replace(' ', '\\', $namespace);
-
-        return $context . $namespace;
     }
 
     /**

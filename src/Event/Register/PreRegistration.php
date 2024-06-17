@@ -11,9 +11,6 @@ class PreRegistration extends Event
 {
     public const NAME = 'dullahan.pre_registration';
 
-    /**
-     * @param array<mixed> $payload
-     */
     public function __construct(
         protected Request $request,
     ) {
