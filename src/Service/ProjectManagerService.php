@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Service;
 
-use Dullahan\Service\Util\BinUtilService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProjectManagerService

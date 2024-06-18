@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping;
 use Doctrine\Persistence\Proxy;
 use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Contract\ManageableInterface;
+use Dullahan\Contract\OwnerlessManageableInterface;
 use Dullahan\Entity\User;
 
 trait EntityUtilHelperTrait
@@ -96,7 +97,11 @@ trait EntityUtilHelperTrait
             throw new \Exception(sprintf("Class %s doesn't exist", $class), 400);
         }
 
-        if (!isset(class_implements($class)[ManageableInterface::class])) {
+        $implements = class_implements($class);
+        if (
+            !isset($implements[ManageableInterface::class])
+            && !isset($implements[OwnerlessManageableInterface::class])
+        ) {
             throw new \Exception(sprintf('Class %s cannot be created, updated or deleted', $class), 400);
         }
 

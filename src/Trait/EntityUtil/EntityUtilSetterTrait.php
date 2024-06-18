@@ -29,6 +29,10 @@ trait EntityUtilSetterTrait
         $this->setMappings($entity, $mappings, $payload, $definitions);
         foreach ($fields as $fieldName => $field) {
             $definition = $definitions[$fieldName] ?? '';
+            // field was not attributed with Field Attribute
+            if (empty($definition)) {
+                continue;
+            }
             $setter = 'set' . ucfirst($fieldName);
             if ($definition['auto'] ?? false) {
                 $entity->$setter(forward_static_call(...$definition['auto']));

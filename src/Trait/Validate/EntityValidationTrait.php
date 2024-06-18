@@ -8,6 +8,7 @@ use Dullahan\Constraint\DataSetCriteriaConstraint;
 use Dullahan\Contract\ConstraintInheritanceAwareInterface;
 use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Contract\ManageableInterface;
+use Dullahan\Contract\OwnerlessManageableInterface;
 use Dullahan\Reader\EntityReader;
 use Dullahan\Service\Util\HttpUtilService;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -53,12 +54,18 @@ trait EntityValidationTrait
      */
     public function handlePreUpdateValidation(object $entity, array $payload, bool $validateOwner = true): void
     {
-        if (!$entity instanceof ManageableInterface) {
+        if (!$entity instanceof ManageableInterface && !$entity instanceof OwnerlessManageableInterface) {
             throw new \Exception('Chosen entity cannot be updated', 400);
         }
-        if ($validateOwner && !$entity->isOwner($this->userService->getLoggedInUser())) {
+
+        if (
+            $validateOwner
+            && $entity instanceof ManageableInterface
+            && !$entity->isOwner($this->userService->getLoggedInUser())
+        ) {
             throw new \Exception("You cannot update chosen entity as it doesn't belong to you", 403);
         }
+
         $reader = new EntityReader($entity);
         if ($entity instanceof InheritanceAwareInterface && isset($payload['parent'])) {
             if (isset($payload['children'])) {
@@ -69,6 +76,7 @@ trait EntityValidationTrait
         } else {
             $this->runValidationConstraint($payload, $reader->getUpdateConstraint(), $entity);
         }
+
         if (HttpUtilService::hasErrors()) {
             throw new \Exception('Entity update has failed', 400);
         }

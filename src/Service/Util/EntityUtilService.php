@@ -9,8 +9,10 @@ use Doctrine\ORM\EntityRepository;
 use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Contract\ManageableInterface;
 use Dullahan\Contract\Marker\UserServiceInterface;
+use Dullahan\Contract\OwnerlessManageableInterface;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Entity\User;
+use Dullahan\Event\Entity\OwnershipCheck;
 use Dullahan\Event\Entity\PostCreate;
 use Dullahan\Event\Entity\PostRemove;
 use Dullahan\Event\Entity\PostUpdate;
@@ -25,6 +27,7 @@ use Dullahan\Service\EmptyIndicatorService;
 use Dullahan\Service\ValidationService;
 use Dullahan\Trait\EntityUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -67,7 +70,7 @@ class EntityUtilService
         /** @var T|null $entity */
         $entity = $repo->find($id);
         if (!$entity) {
-            throw new \Exception('Entity not found', 400);
+            throw new \Exception('Entity not found', Response::HTTP_NOT_FOUND);
         }
 
         return $entity;
@@ -175,7 +178,7 @@ class EntityUtilService
      */
     public function create(string $class, array $payload, bool $flush = true): object
     {
-        /** @var ManageableInterface&T $entity */
+        /** @var (ManageableInterface&T)|(OwnerlessManageableInterface&T) $entity */
         $entity = $this->generate($class);
         $this->validationService->handlePreCreateValidation($entity, $payload);
         $pre = new PreCreate($entity, $payload);
@@ -184,7 +187,11 @@ class EntityUtilService
 
         $definition = $this->getEntityDefinition($entity);
         $this->fillEntity($class, $entity, $payload, $definition);
-        $entity->setOwner($this->user ?? $this->userService->getLoggedInUser());
+
+        $this->eventDispatcher->dispatch(new OwnershipCheck($pre));
+        if ($entity instanceof ManageableInterface) {
+            $entity->setOwner($this->user ?? $this->userService->getLoggedInUser());
+        }
 
         $this->em->persist($entity);
         if ($flush) {
@@ -211,21 +218,19 @@ class EntityUtilService
     {
         $entity = $this->get($class, $id);
         $this->validationService->handlePreUpdateValidation($entity, $payload, $this->validateOwner);
-        /** @var ManageableInterface $entity */
+        /** @var ManageableInterface|OwnerlessManageableInterface $entity */
         $pre = new PreUpdate($entity, $payload);
         $this->eventDispatcher->dispatch($pre);
         $payload = $pre->getPayload();
 
         $this->fillEntity($class, $entity, $payload, $this->getEntityDefinition($entity));
 
-        /*
-         * Validating ownership twice.
-         *
-         * Entities are matched using changeable values like expansion or chapter, so we have to check ownership before
-         * and after the change, so they won't attach their own entities to someone's else object
-         * and change ownership by doing so.
-         */
-        if ($this->validateOwner && !$entity->isOwner($this->user ?? $this->userService->getLoggedInUser())) {
+        $this->eventDispatcher->dispatch(new OwnershipCheck($pre));
+        if (
+            $entity instanceof ManageableInterface
+            && $this->validateOwner
+            && !$entity->isOwner($this->user ?? $this->userService->getLoggedInUser())
+        ) {
             throw new \Exception(
                 'You cannot update chosen entity as you would be transferring ownership to different user',
                 403
@@ -256,15 +261,20 @@ class EntityUtilService
     public function remove(string $class, int $id): void
     {
         $entity = $this->get($class, $id);
-        if (!$entity instanceof ManageableInterface) {
+        if (!$entity instanceof ManageableInterface && !$entity instanceof OwnerlessManageableInterface) {
             throw new \Exception('Chosen entity cannot be deleted', 400);
         }
 
-        if ($this->validateOwner && !$entity->isOwner($this->user ?? $this->userService->getLoggedInUser())) {
+        $pre = new PreRemove($entity);
+        $this->eventDispatcher->dispatch($pre);
+        $this->eventDispatcher->dispatch(new OwnershipCheck($pre));
+        if (
+            $entity instanceof ManageableInterface
+            && $this->validateOwner
+            && !$entity->isOwner($this->user ?? $this->userService->getLoggedInUser())
+        ) {
             throw new \Exception("You cannot delete chosen entity as it doesn't belong to you", 403);
         }
-
-        $this->eventDispatcher->dispatch(new PreRemove($entity));
 
         if ($entity instanceof InheritanceAwareInterface) {
             $id = $entity->getId();
