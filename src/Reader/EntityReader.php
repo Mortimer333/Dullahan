@@ -58,7 +58,7 @@ class EntityReader
             throw new \Exception(sprintf("Constraint for class %s doesn't exist", $this->root::class), 500);
         }
 
-        if (!class_implements($this->entity->constraint)[EntityValidateConstraintInterface::class]) {
+        if (!isset(class_implements($this->entity->constraint)[EntityValidateConstraintInterface::class])) {
             throw new \Exception(
                 sprintf(
                     "Constraint class %s doesn't implement %s",

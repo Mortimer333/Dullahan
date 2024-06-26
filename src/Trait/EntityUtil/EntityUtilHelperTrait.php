@@ -10,7 +10,9 @@ use Doctrine\Persistence\Proxy;
 use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Contract\ManageableInterface;
 use Dullahan\Contract\OwnerlessManageableInterface;
+use Dullahan\Contract\TransferableOwnerManageableInterface;
 use Dullahan\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 
 trait EntityUtilHelperTrait
 {
@@ -49,14 +51,13 @@ trait EntityUtilHelperTrait
      */
     public function clearRelatedCache(object $entity, array $definition): void
     {
-        $inflector = $this->getInflector();
         foreach ($definition as $name => $column) {
             if (!is_array($column['type'])) {
                 continue;
             }
 
             if (Mapping\ManyToMany::class == $column['relation'] || Mapping\OneToMany::class == $column['relation']) {
-                $getter = 'get' . $inflector->pluralize($name);
+                $getter = 'get' . $this->pluralize($column, $name);
                 $related = $entity->$getter();
                 foreach ($related as $item) {
                     $this->removeEntityCache($item);
@@ -80,6 +81,30 @@ trait EntityUtilHelperTrait
     public function logout(): void
     {
         $this->user = null;
+    }
+
+    /**
+     * @param array<mixed>|string $definition
+     */
+    protected function pluralize(array|string $definition, string $name): string
+    {
+        if (!is_array($definition) || !isset($definition['plural'])) {
+            return $this->getInflector()->pluralize($name);
+        }
+
+        return $definition['plural'];
+    }
+
+    /**
+     * @param array<mixed>|string $definition
+     */
+    protected function singularize(array|string $definition, string $name): string
+    {
+        if (!is_array($definition) || !isset($definition['singular'])) {
+            return $this->getInflector()->singularize($name);
+        }
+
+        return $definition['singular'];
     }
 
     /**
@@ -138,5 +163,21 @@ trait EntityUtilHelperTrait
         }
 
         return $ids;
+    }
+
+    protected function validateOwnership(object $entity): void
+    {
+        if (
+            (
+                $entity instanceof ManageableInterface
+                || $entity instanceof TransferableOwnerManageableInterface
+            ) && $this->validateOwner
+            && !$entity->isOwner($this->user ?? $this->userService->getLoggedInUser())
+        ) {
+            throw new \Exception(
+                'You do not own this entity',
+                Response::HTTP_FORBIDDEN,
+            );
+        }
     }
 }

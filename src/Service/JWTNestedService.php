@@ -12,6 +12,9 @@ use Jose\Component\NestedToken\NestedTokenLoader;
 use Jose\Component\Signature\JWS;
 use Psr\Cache\CacheItemPoolInterface;
 
+/**
+ * @deprecated
+ */
 class JWTNestedService extends JWTServiceAbstract
 {
     public function __construct(

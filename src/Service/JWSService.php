@@ -22,6 +22,7 @@ use Jose\Component\Signature\JWSVerifier;
 use Jose\Component\Signature\Serializer\CompactSerializer;
 use Jose\Component\Signature\Serializer\JWSSerializerManager;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
@@ -35,13 +36,14 @@ class JWSService extends JWTServiceAbstract
         protected CacheItemPoolInterface $cache,
         protected BinUtilService $baseUtilService,
         protected HttpUtilService $httpUtilService,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
         $this->validateAlgorithmEnvsExist();
     }
 
     public function createToken(User $user): string
     {
-        $payload = ['user' => $user->getUserIdentifier(), 'user_id' => $user->getId()];
+        $payload = $this->createPayload($user);
         [$signatureKeySet] = $this->getKeys();
         $sigJWK = $signatureKeySet->get('sig-main');
 
@@ -80,10 +82,10 @@ class JWSService extends JWTServiceAbstract
         $headerCheckerManager = new HeaderCheckerManager(
             [
                 new AlgorithmChecker([$signatureAlgorithm], $protectedHeaderOnly),
-                new AudienceChecker(self::AUDIENCE, $protectedHeaderOnly),
+                new AudienceChecker($this->getAudience(), $protectedHeaderOnly),
                 new ExpirationTimeChecker($this->httpUtilService->getTokenExpTimeSeconds(), $protectedHeaderOnly),
                 new IssuedAtChecker(0, $protectedHeaderOnly),
-                new IssuerChecker([self::ISSUER], $protectedHeaderOnly),
+                new IssuerChecker([$this->getIssuer()], $protectedHeaderOnly),
             ],
             [
                 new JWSTokenSupport(),

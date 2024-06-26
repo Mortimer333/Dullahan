@@ -4,20 +4,23 @@ declare(strict_types=1);
 
 namespace Dullahan\Service;
 
+use Dullahan\Entity\User;
+use Dullahan\Event\JWTCreate;
 use Dullahan\Service\Util\BinUtilService;
 use Dullahan\Service\Util\HttpUtilService;
 use Jose\Component\Core\JWKSet;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class JWTServiceAbstract
 {
-    // TODO parameterize it
     public const AUDIENCE = 'Users';
-    public const ISSUER = 'Board Meister Internal';
+    public const ISSUER = 'Dullahan';
 
     protected CacheItemPoolInterface $cache;
     protected BinUtilService $baseUtilService;
     protected HttpUtilService $httpUtilService;
+    protected EventDispatcherInterface $eventDispatcher;
 
     /**
      * @return array<JWKSet>
@@ -55,8 +58,8 @@ abstract class JWTServiceAbstract
         return array_merge([
             'alg' => $header['alg'] ?? throw new \Exception('Missing algorithm header in token', 500),
             'jti' => $header['jti'] ?? $this->createJTI($userId),
-            'iss' => $header['iss'] ?? self::ISSUER,
-            'aud' => $header['aud'] ?? self::AUDIENCE,
+            'iss' => $header['iss'] ?? $this->getIssuer(),
+            'aud' => $header['aud'] ?? $this->getAudience(),
             'iat' => $header['iat'] ?? time(),
             'nbf' => $header['nbf'] ?? time(),
             'exp' => $header['exp'] ?? time() + $this->httpUtilService->getTokenExpTimeSeconds(),
@@ -77,5 +80,27 @@ abstract class JWTServiceAbstract
         ) {
             throw new \InvalidArgumentException('JWT algorithms are not set in environment', 500);
         }
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function createPayload(User $user): array
+    {
+        $payload = ['user' => $user->getUserIdentifier(), 'user_id' => $user->getId()];
+        $event = new JWTCreate($payload, $user);
+        $this->eventDispatcher->dispatch($event);
+
+        return $event->getPayload();
+    }
+
+    protected function getIssuer(): string
+    {
+        return $_ENV['JWT_ISSUER'] ?? self::ISSUER;
+    }
+
+    protected function getAudience(): string
+    {
+        return $_ENV['JWT_AUDIENCE'] ?? self::AUDIENCE;
     }
 }

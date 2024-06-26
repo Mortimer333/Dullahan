@@ -7,4 +7,5 @@ namespace Dullahan\Enum;
 enum FieldTypeEnum: string
 {
     case RICH = 'rich_content';
+    case ENUM = 'enum';
 }

@@ -27,35 +27,39 @@ class TraceService
 
     public function create(\Throwable $e, ?Request $request = null, ?Response $response = null): ?Trace
     {
-        if (!$this->em->isOpen()) {
-            return null;
+        try {
+            if (!$this->em->isOpen()) {
+                return null;
+            }
+
+            $this->em->clear(); // Clear entity to avoid persistence errors
+            if (!$response) {
+                $response = $this->httpUtilService->getProperResponseFromException($e);
+            }
+
+            $status = $this->httpUtilService->getStatusCode($e);
+            $trace = $this->generateTrace($status, $response, $e);
+
+            if ($request) {
+                $this->saveRequest($trace, $request);
+            }
+
+            $user = $this->security->getUser();
+            if ($user && $user instanceof User) {
+                $trace->setUserId($user->getId());
+            }
+
+            if (!$this->em->isOpen()) {
+                $this->managerRegistry->resetManager(); // Have to reset entity on exception
+            }
+
+            $this->em->persist($trace);
+            $this->em->flush();
+
+            return $trace;
+        } catch (\Throwable) {
+            throw $e;
         }
-
-        $this->em->clear(); // Clear entity to avoid persistence errors
-        if (!$response) {
-            $response = $this->httpUtilService->getProperResponseFromException($e);
-        }
-
-        $status = $this->httpUtilService->getStatusCode($e);
-        $trace = $this->generateTrace($status, $response, $e);
-
-        if ($request) {
-            $this->saveRequest($trace, $request);
-        }
-
-        $user = $this->security->getUser();
-        if ($user && $user instanceof User) {
-            $trace->setUserId($user->getId());
-        }
-
-        if (!$this->em->isOpen()) {
-            $this->managerRegistry->resetManager(); // Have to reset entity on exception
-        }
-
-        $this->em->persist($trace);
-        $this->em->flush();
-
-        return $trace;
     }
 
     protected function generateTrace(int $status, Response $response, \Throwable $e): Trace

@@ -56,6 +56,23 @@ trait EntityUtilSetterTrait
                 }
                 $entity->$setter(json_encode($content) ?: null);
                 $entity->$setterParsed($this->editorJsService->parse($content ?? []));
+            } elseif (
+                $definition['type'] === FieldTypeEnum::ENUM->value
+                || FieldTypeEnum::ENUM === $definition['type']
+            ) {
+                $enum = $definition['enum'] ?? throw new \Exception(
+                    sprintf('Missing enum value on "%s" of "%s"', $fieldName, $entity::class),
+                    500,
+                );
+                if (!enum_exists($enum)) {
+                    throw new \Exception(sprintf('Provided enum %s doesn\'t exists', $enum), 500);
+                }
+
+                $value = forward_static_call([$enum, 'tryFrom'], $payload[$fieldName]); // @phpstan-ignore-line
+                if (is_null($value)) {
+                    throw new \Exception('Value provided for enum was not filtered properly', 500);
+                }
+                $entity->$setter($value);
             } else {
                 $entity->$setter(CastHelper::cast($payload[$fieldName], $field['type']));
             }
@@ -162,10 +179,9 @@ trait EntityUtilSetterTrait
             $name = end($name);
         }
         $name = ucfirst($name);
-        $inflector = $this->getInflector();
-        $remover = 'remove' . $inflector->singularize($name);
-        $adder = 'add' . $inflector->singularize($name);
-        $getter = 'get' . $inflector->pluralize($name);
+        $remover = 'remove' . $this->singularize($definition, $name);
+        $adder = 'add' . $this->singularize($definition, $name);
+        $getter = 'get' . $this->pluralize($definition, $name);
         if (!method_exists($entity, $adder) || !method_exists($entity, $getter)) {
             throw new \Exception(
                 sprintf(

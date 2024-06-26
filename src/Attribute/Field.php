@@ -20,6 +20,8 @@ class Field
         public ?int $limit = null,
         public mixed $type = null,
         public ?array $auto = null,
+        public ?string $plural = null,
+        public ?string $enum = null,
     ) {
         if (!is_null($this->order) && Criteria::ASC != $this->order && Criteria::DESC != $this->order) {
             throw new \Exception('Wrongly defined order, use Criteria constants', 500);
