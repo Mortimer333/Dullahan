@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Service\User\UserValidateService;
 use Dullahan\Service\Util\HttpUtilService;
-use Dullahan\Trait\Validate\AssetValidationTrait;
 use Dullahan\Trait\Validate\EntityValidationTrait;
 use Dullahan\Trait\Validate\RegistrationValidationTrait;
 use Dullahan\Trait\Validate\UserValidationTrait;
@@ -18,12 +17,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationService
 {
-    // @TODO move this to service subscriber to enable validation service swap in case
+    // @TODO move this to service subscriber to enable validation service swap
     // https://symfony.com/doc/6.4/service_container/service_subscribers_locators.html
     use RegistrationValidationTrait;
     use UserValidationTrait;
     use EntityValidationTrait;
-    use AssetValidationTrait;
 
     public function __construct(
         protected HttpUtilService $httpUtilService,

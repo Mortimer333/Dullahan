@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Dullahan\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\AssetManager\EntityBasedAssetManager;
 use Dullahan\Contract\AssetAwareInterface;
 use Dullahan\Entity\Asset;
-use Dullahan\Service\AssetService;
 use Dullahan\Service\CacheService;
 use Dullahan\Service\TraceService;
 use Dullahan\Service\Util\BinUtilService;
@@ -24,12 +24,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RecreateThumbnailsCommand extends BaseCommandAbstract
 {
     public function __construct(
-        protected EntityManagerInterface $em,
-        protected LoggerInterface $logger,
-        protected BinUtilService $binUtilService,
-        protected TraceService $traceService,
-        protected AssetService $assetService,
-        protected CacheService $cacheService,
+        protected EntityManagerInterface  $em,
+        protected LoggerInterface         $logger,
+        protected BinUtilService          $binUtilService,
+        protected TraceService            $traceService,
+        protected EntityBasedAssetManager $assetService,
+        protected CacheService            $cacheService,
     ) {
         parent::__construct();
     }

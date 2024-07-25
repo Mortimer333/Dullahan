@@ -6,6 +6,7 @@ namespace Dullahan\Service\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Dullahan\AssetManager\EntityBasedAssetManager;
 use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Contract\ManageableInterface;
 use Dullahan\Contract\Marker\UserServiceInterface;
@@ -17,11 +18,13 @@ use Dullahan\Event\Entity\OwnershipCheck;
 use Dullahan\Event\Entity\PostCreate;
 use Dullahan\Event\Entity\PostRemove;
 use Dullahan\Event\Entity\PostUpdate;
+use Dullahan\Event\Entity\PostValidationCreate;
+use Dullahan\Event\Entity\PostValidationUpdate;
 use Dullahan\Event\Entity\PreCreate;
 use Dullahan\Event\Entity\PreRemove;
 use Dullahan\Event\Entity\PreUpdate;
+use Dullahan\Event\Entity\Retrieval;
 use Dullahan\Reader\FieldReader;
-use Dullahan\Service\AssetService;
 use Dullahan\Service\CacheService;
 use Dullahan\Service\EditorJsService;
 use Dullahan\Service\EmptyIndicatorService;
@@ -45,14 +48,14 @@ class EntityUtilService
     protected bool $validateOwner = true;
 
     public function __construct(
-        protected EntityManagerInterface $em,
-        protected UserServiceInterface $userService,
+        protected EntityManagerInterface   $em,
+        protected UserServiceInterface     $userService,
         protected EventDispatcherInterface $eventDispatcher,
-        protected ValidationService $validationService,
-        protected AssetService $assetService,
-        protected EmptyIndicatorService $emptyIndicatorService,
-        protected CacheService $cacheService,
-        protected EditorJsService $editorJsService,
+        protected ValidationService        $validationService,
+        protected EntityBasedAssetManager  $assetService,
+        protected EmptyIndicatorService    $emptyIndicatorService,
+        protected CacheService             $cacheService,
+        protected EditorJsService          $editorJsService,
     ) {
     }
 
@@ -73,6 +76,7 @@ class EntityUtilService
         if (!$entity) {
             throw new \Exception('Entity not found', Response::HTTP_NOT_FOUND);
         }
+        $this->eventDispatcher->dispatch(new Retrieval($entity));
 
         return $entity;
     }
@@ -196,6 +200,7 @@ class EntityUtilService
             $entity->setOwner($this->user ?? $this->userService->getLoggedInUser());
         }
 
+        $this->eventDispatcher->dispatch(new PostValidationCreate($entity));
         $this->em->persist($entity);
         if ($flush) {
             $this->em->flush();
@@ -231,8 +236,9 @@ class EntityUtilService
         $this->eventDispatcher->dispatch(new OwnershipCheck($pre));
         $this->validateOwnership($entity);
 
+        $this->eventDispatcher->dispatch(new PostValidationUpdate($entity));
+        $this->em->persist($entity);
         if ($persist) {
-            $this->em->persist($entity);
             $this->em->flush();
         }
 

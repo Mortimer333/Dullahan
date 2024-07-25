@@ -2,21 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\Service;
+namespace Dullahan\AssetManager;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Entity\Asset;
 use Dullahan\Entity\UserData;
+use Dullahan\Service\CacheService;
+use Dullahan\Service\ProjectManagerService;
 use Dullahan\Service\Util\BinUtilService;
 use Dullahan\Service\Util\FileUtilService;
+use Dullahan\Service\ValidationService;
 use Dullahan\Trait\Service as TraitService;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @internal Do not use, incomplete manager (SQL + file system)
  */
-class AssetService
+class EntityBasedAssetManager // implements AssetManagerInterface
 {
     use TraitService\Asset\SerializeTrait;
     use TraitService\Asset\ThumbnailTrait;
@@ -166,7 +169,7 @@ class AssetService
         $userData = $user->getData();
 
         $asset = new Asset();
-        $asset->setType(FileUtilService::extToType($mime))
+        $asset->setMimeType(FileUtilService::extToType($mime))
             ->setName($name)
             ->setExtension($extension)
             ->setProject($project)

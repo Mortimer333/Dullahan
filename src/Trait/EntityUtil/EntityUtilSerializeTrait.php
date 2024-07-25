@@ -48,6 +48,12 @@ trait EntityUtilSerializeTrait
                 continue;
             }
 
+            if ($value instanceof \BackedEnum) {
+                $serialized[$fieldName] = $value->value;
+
+                continue;
+            }
+
             $value = $this->getInheritedValue($entity, $fieldName, $value);
             if (is_object($value)) {
                 $value = $this->cacheService->getEntitySerializedCacheKey($value, $this->inherit);

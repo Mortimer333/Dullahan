@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Dullahan\Contract\AssetManager\AssetInterface;
 use Dullahan\Repository\AssetRepository;
 use Dullahan\Service\Util\BinUtilService;
 use Dullahan\Service\Util\FileUtilService;
@@ -14,7 +15,7 @@ use Dullahan\Trait\UserDataRelationTrait;
 #[ORM\Entity(repositoryClass: AssetRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Index(name: 'path_search_idx', fields: ['path', 'name', 'extension'])]
-class Asset
+class Asset implements AssetInterface
 {
     use UserDataRelationTrait;
 
@@ -33,7 +34,7 @@ class Asset
     private ?string $extension = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $type = null;
+    private ?string $mimeType = null;
 
     #[ORM\Column]
     private ?int $weight = null;
@@ -142,14 +143,14 @@ class Asset
         return $this;
     }
 
-    public function getType(): ?string
+    public function getMimeType(): ?string
     {
-        return $this->type;
+        return $this->mimeType;
     }
 
-    public function setType(string $type): self
+    public function setMimeType(string $mimeType): self
     {
-        $this->type = $type;
+        $this->mimeType = $mimeType;
 
         return $this;
     }
@@ -260,5 +261,53 @@ class Asset
         $this->modified = $modified;
 
         return $this;
+    }
+
+    public function getCreated(): ?\DateTimeInterface
+    {
+        throw new \Exception('To be implemented', 500);
+    }
+
+    public function createdBy(): ?User
+    {
+        throw new \Exception('To be implemented', 500);
+    }
+
+    public function modifiedBy(): ?User
+    {
+        throw new \Exception('To be implemented', 500);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getProperties(): \Iterator
+    {
+        throw new \Exception('To be implemented', 500);
+    }
+
+    public function getProperty(string $name, mixed $default = null): mixed
+    {
+        throw new \Exception('To be implemented', 500);
+    }
+
+    public function setProperty(string $name, mixed $value): self
+    {
+        throw new \Exception('To be implemented', 500);
+    }
+
+    public function removeProperty(string $name): self
+    {
+        throw new \Exception('To be implemented', 500);
+    }
+
+    public function markToRemove(bool $remove): bool
+    {
+        throw new \Exception('To be implemented', 500);
+    }
+
+    public function getFile()
+    {
+        throw new \Exception('To be implemented', 500);
     }
 }

@@ -7,6 +7,8 @@ services:
       - '../src/Attribute/'
       - '../src/Event/'
       - '../src/Reader/'
+      - '../src/Document/'
+      - '../src/Model/'
 
   _defaults:
     public: true

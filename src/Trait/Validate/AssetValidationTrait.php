@@ -10,6 +10,9 @@ use Dullahan\Entity\UserData;
 use Dullahan\Service\Util\FileUtilService;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * @deprecated This kind of validation shouldn't be done internally
+ */
 trait AssetValidationTrait
 {
     public function isImage(UploadedFile $file): bool

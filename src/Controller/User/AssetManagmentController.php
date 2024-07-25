@@ -6,13 +6,13 @@ namespace Dullahan\Controller\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Dullahan\AssetManager\EntityBasedAssetManager;
 use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Entity\Asset;
 use Dullahan\Model\Parameter\PaginationDTO;
 use Dullahan\Model\Response\PAM\RetrieveImageResponse;
 use Dullahan\Model\Response\PAM\RetrieveImagesResponse;
 use Dullahan\Model\Response\PAM\UploadImageResponse;
-use Dullahan\Service\AssetService;
 use Dullahan\Service\Util\HttpUtilService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;
@@ -27,10 +27,10 @@ use Symfony\Component\Routing\Attribute\Route;
 class AssetManagmentController extends AbstractController
 {
     public function __construct(
-        protected HttpUtilService $httpUtilService,
-        protected AssetService $assetService,
-        protected UserServiceInterface $userService,
-        protected EntityManagerInterface $em,
+        protected HttpUtilService         $httpUtilService,
+        protected EntityBasedAssetManager $assetService,
+        protected UserServiceInterface    $userService,
+        protected EntityManagerInterface  $em,
     ) {
     }
 

@@ -74,7 +74,7 @@ trait ThumbnailTrait
         ThumbnailAttribute $assetAttribute
     ): void {
         $pointer = $entity->{'get' . ucfirst($fieldName)}();
-        if (!$pointer instanceof AssetPointer || 'image' !== $pointer->getAsset()?->getType()) {
+        if (!$pointer instanceof AssetPointer || 'image' !== $pointer->getAsset()?->getMimeType()) {
             return;
         }
 

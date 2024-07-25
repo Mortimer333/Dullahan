@@ -12,6 +12,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ * @TODO Refactor to follow "single responsibility" principal
+ * - secrete logger class
+ * - secrete timer class
+ * - secrete output/report class
+ */
 abstract class BaseCommandAbstract extends Command
 {
     protected ?SymfonyStyle $io = null;
