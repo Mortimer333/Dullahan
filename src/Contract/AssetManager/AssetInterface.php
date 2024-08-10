@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Dullahan\Contract\AssetManager;
 
-use Doctrine\Common\Collections\Collection;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Entity\Thumbnail;
 use Dullahan\Entity\User;
+use Dullahan\Exception\AssetManager\PropertyNotRemovedException;
+use Dullahan\Exception\AssetManager\PropertyNotSetException;
 
 interface AssetInterface
 {
+    public function getOwner(): ?User;
+
+    public function getEntity(): AssetInterface;
+
     public function getId(): ?int;
 
     public function getPath(): ?string;
@@ -29,18 +34,18 @@ interface AssetInterface
     public function getFile();
 
     /**
-     * @return Collection<int, AssetPointer>
+     * @return \IteratorAggregate<int, AssetPointer>
      */
-    public function getPointers(): Collection;
+    public function getPointers(): \IteratorAggregate;
     public function addPointer(AssetPointer $pointer): self;
     public function removePointer(AssetPointer $pointer): self;
 
     /**
-     * @return Collection<int, Thumbnail>
+     * @return \IteratorAggregate<int, Thumbnail>
      */
-    public function getThumbnails(): Collection;
-    public function addThumbnail(Thumbnail $thumbnail): self;
-    public function removeThumbnail(Thumbnail $thumbnail): self;
+    public function getThumbnails(): \IteratorAggregate;
+    public function addThumbnail(ThumbnailInterface $thumbnail): self;
+    public function removeThumbnail(ThumbnailInterface $thumbnail): self;
 
     public function getCreated(): ?\DateTimeInterface;
     public function createdBy(): ?User;
@@ -50,12 +55,25 @@ interface AssetInterface
     public function modifiedBy(): ?User;
 
     /**
-     * @return array<string, mixed>
+     * @return \IteratorAggregate<string, mixed>
      */
-    public function getProperties(): \Iterator;
+    public function getProperties(): \IteratorAggregate;
     public function getProperty(string $name, mixed $default = null): mixed;
+
+    /**
+     * @throws PropertyNotSetException
+     */
     public function setProperty(string $name, mixed $value): self;
+
+    /**
+     * @throws PropertyNotRemovedException
+     */
     public function removeProperty(string $name): self;
 
-    public function markToRemove(bool $remove): bool;
+    public function getParent(): ?AssetInterface;
+
+    /**
+     * @return \IteratorAggregate<AssetInterface>
+     */
+    public function getChildren(string $match): \IteratorAggregate;
 }

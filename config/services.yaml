@@ -9,10 +9,13 @@ services:
       - '../src/Reader/'
       - '../src/Document/'
       - '../src/Model/'
+      - '../src/Exception/'
 
   _defaults:
     public: true
     autowire: true
     autoconfigure: true
 
+  Dullahan\Asset\UploadedFile:
+    autowire: false
   Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestPayloadValueResolver: '@argument_resolver.request_payload'

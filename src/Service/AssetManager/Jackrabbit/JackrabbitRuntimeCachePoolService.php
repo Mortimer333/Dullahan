@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dullahan\Service\AssetManager\Jackrabbit;
 
 use Dullahan\Model\AssetManager\Jackrabbit\JackrabbitRuntimeCacheItem;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @internal

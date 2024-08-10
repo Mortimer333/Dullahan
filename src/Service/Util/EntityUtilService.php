@@ -6,7 +6,8 @@ namespace Dullahan\Service\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Dullahan\AssetManager\EntityBasedAssetManager;
+use Dullahan\Contract\AssetManager\AssetManagerInterface;
+use Dullahan\Contract\AssetManager\AssetSerializerInterface;
 use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Contract\ManageableInterface;
 use Dullahan\Contract\Marker\UserServiceInterface;
@@ -52,10 +53,11 @@ class EntityUtilService
         protected UserServiceInterface     $userService,
         protected EventDispatcherInterface $eventDispatcher,
         protected ValidationService        $validationService,
-        protected EntityBasedAssetManager  $assetService,
+        protected AssetManagerInterface    $assetManager,
         protected EmptyIndicatorService    $emptyIndicatorService,
         protected CacheService             $cacheService,
         protected EditorJsService          $editorJsService,
+        protected AssetSerializerInterface $assetSerializer,
     ) {
     }
 
@@ -117,7 +119,7 @@ class EntityUtilService
         ?array $dataSet = null,
         bool $inherit = true
     ): array {
-        // @TODO fix this with special one time class for serialization
+        // @TODO fix this with special one time class for serialization - encapsulate logic
         $tmp = $this->inherit;
         $this->inherit = $inherit;
 
@@ -204,6 +206,7 @@ class EntityUtilService
         $this->em->persist($entity);
         if ($flush) {
             $this->em->flush();
+            $this->assetManager->flush();
         }
 
         if ($entity instanceof InheritanceAwareInterface && $entity->getParent()) {
@@ -240,6 +243,7 @@ class EntityUtilService
         $this->em->persist($entity);
         if ($persist) {
             $this->em->flush();
+            $this->assetManager->flush();
         }
 
         if ($entity instanceof InheritanceAwareInterface && $entity->getParent()) {
@@ -281,6 +285,7 @@ class EntityUtilService
         } else {
             $this->em->remove($entity);
             $this->em->flush();
+            $this->assetManager->flush();
         }
 
         $this->eventDispatcher->dispatch(new PostRemove($entity));

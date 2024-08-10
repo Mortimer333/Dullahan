@@ -5,44 +5,36 @@ declare(strict_types=1);
 namespace Dullahan\Document;
 
 use Doctrine\Common\Collections\Collection;
-use Dullahan\AssetManager\JackrabbitAssetManager;
+use Dullahan\Asset\Manager\JackrabbitAssetManager;
 use Dullahan\Contract\AssetManager\AssetInterface;
+use Dullahan\Contract\AssetManager\ThumbnailInterface;
 use Dullahan\Entity\Asset as AssetEntity;
 use Dullahan\Entity\AssetPointer;
 use Dullahan\Entity\Thumbnail;
 use Dullahan\Entity\User;
-use PHPCR\AccessDeniedException;
-use PHPCR\Lock\LockException;
 use PHPCR\NodeInterface;
-use PHPCR\NodeType\ConstraintViolationException;
 use PHPCR\PropertyType;
-use PHPCR\RepositoryException;
-use PHPCR\Version\VersionException;
 
 class JackrabbitAsset implements AssetInterface
 {
     protected bool $requiresFlush = false;
     protected bool $isDirty = false;
-    protected bool $remove = false;
+    protected $file = null;
 
     public function __construct(
-        protected AssetEntity   $entity,
-        protected NodeInterface $node,
+        protected AssetEntity $entity,
+        protected \Closure    $nodeDecorator,
+        protected \Closure    $lazyLoadParent,
+        protected \Closure    $lazyLoadChildren,
     ) {
     }
 
-    /**
-     * @internal
-     */
-    public function getNode(): NodeInterface
+    public function getOwner(): ?User
     {
-        return $this->node;
+        return $this->entity->getUser();
     }
 
-    /**
-     * @internal
-     */
-    public function getEntity(): AssetEntity
+    public function getEntity(): AssetInterface
     {
         return $this->entity;
     }
@@ -54,38 +46,45 @@ class JackrabbitAsset implements AssetInterface
 
     public function getPath(): ?string
     {
-        return $this->node->getPath();
+        return $this->entity->getPath();
     }
 
     public function getName(): ?string
     {
-        return $this->node->getName();
+        return ($this->nodeDecorator)()->getName();
     }
 
     public function getExtension(): ?string
     {
-        return $this->getPropertyValue(JackrabbitAssetManager::PROPERTY_EXTENSION, PropertyType::STRING);
+        return $this->entity->getExtension();
     }
 
     public function getMimeType(): ?string
     {
-        return $this->getPropertyValue(JackrabbitAssetManager::PROPERTY_MIME_TYPE, PropertyType::STRING);
+        return $this->entity->getMimeType();
     }
 
     public function getWeight(): ?int
     {
-        return $this->getPropertyValue(JackrabbitAssetManager::PROPERTY_WEIGHT, PropertyType::LONG);
+        return $this->entity->getWeight();
     }
 
     public function getFile()
     {
-        return $this->getPropertyValue(JackrabbitAssetManager::PROPERTY_FILE, PropertyType::BINARY);
+        if (!isset($this->file)) {
+            $this->file = $this->getNode()
+                ->getNode(JackrabbitAssetManager::CONTENT_META_NAME)
+                ->getPropertyValue(JackrabbitAssetManager::PROPERTY_FILE, PropertyType::BINARY)
+            ;
+        }
+
+        return $this->file;
     }
 
     /**
-     * @inheritDoc
+     * @return Collection<int, AssetPointer>
      */
-    public function getPointers(): Collection
+    public function getPointers(): \IteratorAggregate
     {
         return $this->entity->getPointers();
     }
@@ -107,14 +106,14 @@ class JackrabbitAsset implements AssetInterface
     }
 
     /**
-     * @inheritDoc
+     * @return Collection<int, Thumbnail>
      */
-    public function getThumbnails(): Collection
+    public function getThumbnails(): \IteratorAggregate
     {
         return $this->entity->getThumbnails();
     }
 
-    public function addThumbnail(Thumbnail $thumbnail): self
+    public function addThumbnail(ThumbnailInterface $thumbnail): self
     {
         $this->requiresFlush = true;
         $this->entity->addThumbnail($thumbnail);
@@ -122,7 +121,7 @@ class JackrabbitAsset implements AssetInterface
         return $this;
     }
 
-    public function removeThumbnail(Thumbnail $thumbnail): self
+    public function removeThumbnail(ThumbnailInterface $thumbnail): self
     {
         $this->requiresFlush = true;
         $this->entity->removeThumbnail($thumbnail);
@@ -159,38 +158,35 @@ class JackrabbitAsset implements AssetInterface
     }
 
     /**
-     * @return array<string, mixed>
+     * @param ?array<string> $nameFilter
+     * @return Collection<string, mixed>
      */
-    public function getProperties($nameFilter = null): \Iterator
+    public function getProperties(array $nameFilter = null): \IteratorAggregate
     {
-        foreach ($this->node->getProperties($nameFilter) as $property) {
-            yield $property->getName() => $property->getValue();
+        $arr = [];
+        foreach (($this->getNode()->getProperties($nameFilter) ?? []) as $property) {
+            $arr[$property->getName()] = $property->getValue();
         }
+
+        return $arr;
     }
 
     public function getProperty(string $name, mixed $default = null): mixed
     {
-        return $this->node->getPropertyValueWithDefault($name, $default);
+        return $this->getNode()->getPropertyValueWithDefault($name, $default) ?? $default;
     }
 
     public function setProperty(string $name, mixed $value): self
     {
-        $this->node->setProperty($name, $value);
+        $this->getNode()->setProperty($name, $value);
         $this->markAsDirty();
 
         return $this;
     }
 
-    /**
-     * @throws VersionException
-     * @throws LockException
-     * @throws ConstraintViolationException
-     * @throws AccessDeniedException
-     * @throws RepositoryException
-     */
     public function removeProperty(string $name): self
     {
-        $this->node->setProperty($name, null);
+        $this->getNode()->setProperty($name, null);
         $this->markAsDirty();
 
         return $this;
@@ -215,13 +211,6 @@ class JackrabbitAsset implements AssetInterface
         return $this->isDirty;
     }
 
-    public function markToRemove(bool $remove): bool
-    {
-        $this->remove = $remove;
-
-        return true;
-    }
-
     public function requiresFlush(): bool
     {
         return $this->requiresFlush;
@@ -234,12 +223,18 @@ class JackrabbitAsset implements AssetInterface
         return $this;
     }
 
-    protected function getPropertyValue(string $name, ?int $type = null): mixed
+    public function getParent(): ?AssetInterface
     {
-        if (!$this->node->hasProperty($name)) {
-            return null;
-        }
+        return ($this->lazyLoadParent)();
+    }
 
-        return $this->node->getPropertyValue($name, $type);
+    public function getChildren(?string $nameMatch = null, ?string $typeMatch = null): \IteratorAggregate
+    {
+        return ($this->lazyLoadChildren)();
+    }
+
+    protected function getNode(): NodeInterface
+    {
+        return ($this->nodeDecorator)();
     }
 }

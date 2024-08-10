@@ -6,7 +6,9 @@ namespace Dullahan\Controller\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Dullahan\AssetManager\EntityBasedAssetManager;
+use Dullahan\Asset\UploadedFile;
+use Dullahan\Contract\AssetManager\AssetManagerInterface;
+use Dullahan\Contract\AssetManager\AssetSerializerInterface;
 use Dullahan\Contract\Marker\UserServiceInterface;
 use Dullahan\Entity\Asset;
 use Dullahan\Model\Parameter\PaginationDTO;
@@ -17,20 +19,23 @@ use Dullahan\Service\Util\HttpUtilService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+// @TODO move all functionality to middleware as this is too much for controller
 #[SWG\Tag('Project Asset Management')]
 #[Route('/asset', name: 'api_asset_managment_')]
 class AssetManagmentController extends AbstractController
 {
     public function __construct(
-        protected HttpUtilService         $httpUtilService,
-        protected EntityBasedAssetManager $assetService,
-        protected UserServiceInterface    $userService,
-        protected EntityManagerInterface  $em,
+        protected HttpUtilService        $httpUtilService,
+        protected AssetManagerInterface  $assetManager,
+        protected UserServiceInterface   $userService,
+        protected EntityManagerInterface $em,
+        protected AssetSerializerInterface $assetSerializer,
     ) {
     }
 
@@ -43,7 +48,7 @@ class AssetManagmentController extends AbstractController
     public function get(int $id): JsonResponse
     {
         return $this->httpUtilService->jsonResponse('Image retrieved successfully', data: [
-            'image' => $this->assetService->serialize($this->assetService->get($id)),
+            'image' => $this->assetSerializer->serialize($this->assetManager->get($id)),
         ]);
     }
 
@@ -72,7 +77,7 @@ class AssetManagmentController extends AbstractController
             }
         );
         foreach ($imageEntities as $imageEntity) {
-            $images[] = $this->assetService->serialize($imageEntity);
+            $images[] = $this->assetSerializer->serialize($imageEntity);
         }
 
         return $this->httpUtilService->jsonResponse('Images retrieved successfully', data: [
@@ -81,7 +86,7 @@ class AssetManagmentController extends AbstractController
     }
 
     #[Route(
-        '/upload/{project}/image',
+        '/upload/image',
         name: 'upload',
         methods: 'POST',
     )]
@@ -106,42 +111,50 @@ class AssetManagmentController extends AbstractController
         content: new Model(type: UploadImageResponse::class),
         response: 200
     )]
-    public function uploadImage(Request $request, string $project): JsonResponse
+    public function uploadImage(Request $request): JsonResponse
     {
         $name = $request->request->get('name');
-        $path = (string) ($request->request->get('path') ?? '');
-        if ('null' == $path) {
-            $path = '';
+        $path = $request->request->get('path');
+        if (empty($path) || !is_string($path)) {
+            return $this->httpUtilService->jsonResponse(
+                'Image is lacking appropriate path',
+                Response::HTTP_UNPROCESSABLE_ENTITY,
+                false,
+            );
         }
-        if (!$name) {
-            try {
-                $body = $this->httpUtilService->getBody($request);
-                $name = $body['name'] ?? null;
-            } catch (\Exception) {
-                $name = null;
-            }
-        }
-        if ('null' === $name) {
+
+        try {
+            $name = $name ?: ($this->httpUtilService->getBody($request)['name'] ?? null);
+        } catch (\Exception) {
             $name = null;
         }
 
-        /** @var ?UploadedFile $image */
-        $image = $request->files->get('image');
-        if (!$image) {
-            throw new \Exception('Sent image not found', 404);
+        if (empty($name) || !is_string($name)) {
+            return $this->httpUtilService->jsonResponse(
+                'Image is lacking appropriate name',
+                Response::HTTP_UNPROCESSABLE_ENTITY,
+                false,
+            );
         }
-        $user = $this->userService->getLoggedInUser();
-        $image = $this->assetService->uploadImageToFE(
-            $project,
-            'user/' . $user->getData()?->getPublicId() . '/' . $path,
-            $image,
+
+        $image = $request->files->get('image');
+        if (!($image instanceof File\UploadedFile)) {
+            return $this->httpUtilService->jsonResponse(
+                'Sent image was not found',
+                Response::HTTP_NOT_FOUND,
+                false,
+            );
+        }
+
+        $image = $this->assetManager->upload(
+            $path,
             $name,
+            new UploadedFile($image),
         );
-        $this->em->persist($image);
-        $this->em->flush();
+        $this->assetManager->flush();
 
         return $this->httpUtilService->jsonResponse('Image uploaded successfully', data: [
-            'image' => $this->assetService->serialize($image),
+            'image' => $this->assetSerializer->serialize($image),
         ]);
     }
 
@@ -167,25 +180,24 @@ class AssetManagmentController extends AbstractController
     )]
     public function updateImage(Request $request, int $id): JsonResponse
     {
-        $asset = $this->assetService->get($id);
+        $asset = $this->assetManager->get($id);
 
-        /** @var ?UploadedFile $image */
         $image = $request->files->get('image');
-        if (!$image) {
+        if (!($image instanceof File\UploadedFile)) {
             throw new \Exception('Sent image not found', 404);
         }
 
+        // @TODO potential place for another ownership event
         $user = $this->userService->getLoggedInUser();
-        if ($user->getId() != $asset->getUser()?->getId()) {
+        if ($user->getId() != $asset->getOwner()?->getId()) {
             throw new \Exception('Unauthorized access', 401);
         }
 
-        $image = $this->assetService->updateImage($image, $asset);
-        $this->em->persist($image);
-        $this->em->flush();
+        $asset = $this->assetManager->move($asset, $asset->getPath(), new UploadedFile($image));
+        $this->assetManager->flush();
 
         return $this->httpUtilService->jsonResponse('Image updated successfully', data: [
-            'image' => $this->assetService->serialize($image),
+            'image' => $this->assetSerializer->serialize($asset),
         ]);
     }
 
@@ -196,7 +208,8 @@ class AssetManagmentController extends AbstractController
     )]
     public function remove(int $id): JsonResponse
     {
-        $this->assetService->remove($id);
+        $this->assetManager->remove($this->assetManager->get($id));
+        $this->assetManager->flush();
 
         return $this->httpUtilService->jsonResponse('Asset successfully deleted');
     }

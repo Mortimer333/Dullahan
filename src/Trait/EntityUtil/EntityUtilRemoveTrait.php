@@ -31,7 +31,7 @@ trait EntityUtilRemoveTrait
         /** @var Asset $asset */
         $asset = $assetAttr->newInstance();
         if ($asset->conjoined && $pointer->getAsset()) {
-            $this->em->remove($pointer->getAsset());
+            $this->assetManager->remove($pointer->getAsset());
         }
     }
 

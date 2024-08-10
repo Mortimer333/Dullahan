@@ -75,7 +75,7 @@ trait EntityUtilSerializeTrait
             return null;
         }
 
-        return $this->assetService->serializePointer($value);
+        return $this->assetSerializer->serializePointer($value);
     }
 
     protected function getInheritedValue(object $entity, string $field, mixed $value): mixed

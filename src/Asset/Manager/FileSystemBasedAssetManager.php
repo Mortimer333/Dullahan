@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\AssetManager;
+namespace Dullahan\Asset\Manager;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Contract\Marker\UserServiceInterface;
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 /**
  * @internal Do not use, incomplete manager (SQL + file system)
  */
-class EntityBasedAssetManager // implements AssetManagerInterface
+class FileSystemBasedAssetManager // implements AssetManagerInterface
 {
     use TraitService\Asset\SerializeTrait;
     use TraitService\Asset\ThumbnailTrait;

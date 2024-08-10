@@ -5,14 +5,16 @@ namespace Dullahan\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Dullahan\Contract\AssetManager\AssetInterface;
+use Dullahan\Contract\AssetManager\ThumbnailInterface;
 use Dullahan\Repository\ThumbnailRepository;
 use Dullahan\Service\Util\BinUtilService;
 use Dullahan\Service\Util\FileUtilService;
 
 #[ORM\Entity(repositoryClass: ThumbnailRepository::class)]
-#[ORM\HasLifecycleCallbacks]
+//#[ORM\HasLifecycleCallbacks]
 #[ORM\Index(name: 'duplicate_find_idx', fields: ['asset', 'settings'])]
-class Thumbnail
+class Thumbnail implements ThumbnailInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -48,51 +50,62 @@ class Thumbnail
         $this->assetPointers = new ArrayCollection();
     }
 
-    #[ORM\PostRemove]
-    public function remove(): void
+    public function getEntity(): ThumbnailInterface
     {
-        if (!$this->getAsset()) {
-            return;
-        }
-
-        FileUtilService::removeFEImages($this->getProjectPath());
+        return $this;
     }
 
-    public function getURL(): string
+    public function getFile()
     {
-        return rtrim(BinUtilService::projectToUrl((string) $this->getAsset()?->getProject()), '/')
-            . '/' . trim((string) $this->getAsset()?->getPath(), '/')
-            . '/' . $this->getName() . '.' . $this->getAsset()?->getExtension()
-            . '?v=' . $this->getAsset()?->getModified()?->getTimestamp();
+        throw new \Exception('Not implemented');
     }
 
-    public function getProjectPath(): string
-    {
-        return trim((string) $this->getAsset()?->getPath(), '/')
-            . '/' . $this->getName() . '.' . $this->getAsset()?->getExtension();
-    }
 
-    public function getRelativePath(): string
-    {
-        return ltrim($this->getProjectPath(), '/');
-    }
+//    #[ORM\PostRemove]
+//    public function remove(): void
+//    {
+//        if (!$this->getAsset()) {
+//            return;
+//        }
+//
+//        FileUtilService::removeFEImages($this->getProjectPath());
+//    }
 
-    public function getFullPath(): string
-    {
-        return $_ENV['PATH_FRONT_END'] . '/' . ltrim($this->getRelativePath(), '/');
-    }
+//    public function getURL(): string
+//    {
+//        return rtrim(BinUtilService::projectToUrl((string) $this->getAsset()?->getProject()), '/')
+//            . '/' . trim((string) $this->getAsset()?->getPath(), '/')
+//            . '/' . $this->getName() . '.' . $this->getAsset()?->getExtension()
+//            . '?v=' . $this->getAsset()?->getModified()?->getTimestamp();
+//    }
+
+//    public function getProjectPath(): string
+//    {
+//        return trim((string) $this->getAsset()?->getPath(), '/')
+//            . '/' . $this->getName() . '.' . $this->getAsset()?->getExtension();
+//    }
+
+//    public function getRelativePath(): string
+//    {
+//        return ltrim($this->getProjectPath(), '/');
+//    }
+//
+//    public function getFullPath(): string
+//    {
+//        return $_ENV['PATH_FRONT_END'] . '/' . ltrim($this->getRelativePath(), '/');
+//    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getAsset(): ?Asset
+    public function getAsset(): ?AssetInterface
     {
         return $this->asset;
     }
 
-    public function setAsset(?Asset $asset): self
+    public function setAsset(?AssetInterface $asset): self
     {
         $this->asset = $asset;
 
@@ -138,7 +151,7 @@ class Thumbnail
     /**
      * @return Collection<int, AssetThumbnailPointer>
      */
-    public function getAssetPointers(): Collection
+    public function getAssetPointers(): \Iterator
     {
         return $this->assetPointers;
     }

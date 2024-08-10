@@ -7,13 +7,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Dullahan\Contract\AssetManager\AssetInterface;
+use Dullahan\Contract\AssetManager\ThumbnailInterface;
 use Dullahan\Repository\AssetRepository;
 use Dullahan\Service\Util\BinUtilService;
 use Dullahan\Service\Util\FileUtilService;
 use Dullahan\Trait\UserDataRelationTrait;
 
 #[ORM\Entity(repositoryClass: AssetRepository::class)]
-#[ORM\HasLifecycleCallbacks]
+//#[ORM\HasLifecycleCallbacks]
 #[ORM\Index(name: 'path_search_idx', fields: ['path', 'name', 'extension'])]
 class Asset implements AssetInterface
 {
@@ -39,7 +40,7 @@ class Asset implements AssetInterface
     #[ORM\Column]
     private ?int $weight = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $project = null;
 
     /**
@@ -68,11 +69,21 @@ class Asset implements AssetInterface
         $this->thumbnails = new ArrayCollection();
     }
 
-    #[ORM\PostRemove]
-    public function remove(): void
+    public function getOwner(): ?User
     {
-        FileUtilService::removeFEImages($this->getProjectPath());
+        return $this->getUser();
     }
+
+    public function getEntity(): AssetInterface
+    {
+        return $this;
+    }
+
+//    #[ORM\PostRemove]
+//    public function remove2(): void
+//    {
+//        FileUtilService::removeFEImages($this->getProjectPath());
+//    }
 
     // TODO figure out proper path resolving for images
     public function getURL(): string
@@ -172,7 +183,7 @@ class Asset implements AssetInterface
         return $this->project;
     }
 
-    public function setProject(string $project): self
+    public function setProject(?string $project): self
     {
         $this->project = $project;
 
@@ -182,7 +193,7 @@ class Asset implements AssetInterface
     /**
      * @return Collection<int, AssetPointer>
      */
-    public function getPointers(): Collection
+    public function getPointers(): \IteratorAggregate
     {
         return $this->pointers;
     }
@@ -224,12 +235,12 @@ class Asset implements AssetInterface
     /**
      * @return Collection<int, Thumbnail>
      */
-    public function getThumbnails(): Collection
+    public function getThumbnails(): \IteratorAggregate
     {
         return $this->thumbnails;
     }
 
-    public function addThumbnail(Thumbnail $thumbnail): self
+    public function addThumbnail(ThumbnailInterface $thumbnail): self
     {
         if (!$this->thumbnails->contains($thumbnail)) {
             $this->thumbnails->add($thumbnail);
@@ -239,7 +250,7 @@ class Asset implements AssetInterface
         return $this;
     }
 
-    public function removeThumbnail(Thumbnail $thumbnail): self
+    public function removeThumbnail(ThumbnailInterface $thumbnail): self
     {
         if ($this->thumbnails->removeElement($thumbnail)) {
             // set the owning side to null (unless already changed)
@@ -281,7 +292,7 @@ class Asset implements AssetInterface
     /**
      * @return array<string, mixed>
      */
-    public function getProperties(): \Iterator
+    public function getProperties(): \IteratorAggregate
     {
         throw new \Exception('To be implemented', 500);
     }
@@ -301,12 +312,20 @@ class Asset implements AssetInterface
         throw new \Exception('To be implemented', 500);
     }
 
-    public function markToRemove(bool $remove): bool
+    public function getFile()
     {
         throw new \Exception('To be implemented', 500);
     }
 
-    public function getFile()
+    public function getParent(): ?AssetInterface
+    {
+        throw new \Exception('To be implemented', 500);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getChildren(string $match): \IteratorAggregate
     {
         throw new \Exception('To be implemented', 500);
     }
