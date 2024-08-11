@@ -1,21 +1,29 @@
 services:
-  Dullahan\:
-    resource: '../src/'
+  Dullahan\Thumbnail\:
+    resource: '../thumbnail/'
     exclude:
-      - '../src/DependencyInjection/'
-      - '../src/Entity/'
-      - '../src/Attribute/'
-      - '../src/Event/'
-      - '../src/Reader/'
-      - '../src/Document/'
-      - '../src/Model/'
-      - '../src/Exception/'
+      - '../thumbnail/Adapter/Infrastructure/Database/Entity/'
+      - '../thumbnail/Application/Attribute'
+      - '../thumbnail/Application/Exception'
+      - '../thumbnail/Domain'
+
+  Dullahan\Main\:
+    resource: '../main/'
+    exclude:
+      - '../main/DependencyInjection/'
+      - '../main/Entity/'
+      - '../main/Attribute/'
+      - '../main/Event/'
+      - '../main/Reader/'
+      - '../main/Document/'
+      - '../main/Model/'
+      - '../main/Exception/'
 
   _defaults:
     public: true
     autowire: true
     autoconfigure: true
 
-  Dullahan\Asset\UploadedFile:
+  Dullahan\Main\Asset\UploadedFile:
     autowire: false
   Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestPayloadValueResolver: '@argument_resolver.request_payload'

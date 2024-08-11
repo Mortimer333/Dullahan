@@ -1,13 +1,13 @@
 controllers:
-    resource: ../src/Controller/
+    resource: ../main/Controller/
     type: attribute
     prefix: '/_'
 api.user.controllers:
-    resource: ../src/Controller/User
+    resource: ../main/Controller/User
     type: attribute
     prefix: '/_/user'
 api.user.super.controllers:
-    resource: ../src/Controller/Admin
+    resource: ../main/Controller/Admin
     type: attribute
     prefix: '/_/user/super'
 app_user_logout:

@@ -4,7 +4,8 @@
     "license": "GPL-2.0-only",
     "autoload": {
         "psr-4": {
-            "Dullahan\\": "src/"
+            "Dullahan\\Main\\": "main/",
+            "Dullahan\\Thumbnail\\": "thumbnail/"
         }
     },
     "minimum-stability": "stable",
