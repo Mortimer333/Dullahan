@@ -8,6 +8,10 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 
+/**
+ * @TODO couldn't this be archived by changing database in .env.test.local? I think this is a left over from
+ *      previous approach
+ */
 #[AsDoctrineListener(event: Events::loadClassMetadata, priority: 500)]
 class DoctrineListener
 {

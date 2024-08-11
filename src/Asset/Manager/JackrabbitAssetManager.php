@@ -27,12 +27,12 @@ use PHPCR\PropertyType;
 
 class JackrabbitAssetManager implements AssetManagerInterface
 {
-    public const PROPERTY_MIME_TYPE = "jcr:mimeType";
-    public const PROPERTY_FILE = "jcr:data";
-    public const CONTENT_META_NAME = "jcr:content";
-    public const CONTENT_RESOURCE_TYPE =  "nt:resource";
-    public const CONTENT_FILE_TYPE =  "nt:file";
-    public const CONTENT_FOLDER_TYPE =  "nt:folder";
+    public const PROPERTY_MIME_TYPE = 'jcr:mimeType';
+    public const PROPERTY_FILE = 'jcr:data';
+    public const CONTENT_META_NAME = 'jcr:content';
+    public const CONTENT_RESOURCE_TYPE = 'nt:resource';
+    public const CONTENT_FILE_TYPE = 'nt:file';
+    public const CONTENT_FOLDER_TYPE = 'nt:folder';
     /** @var \WeakMap<AssetInterface, true> */
     protected \WeakMap $toRemove;
     protected Session $session;
@@ -76,7 +76,7 @@ class JackrabbitAssetManager implements AssetManagerInterface
             'folder',
         );
 
-        return $this->generateJackrabbitAssetProxy($asset, fn() => $node);
+        return $this->generateJackrabbitAssetProxy($asset, fn () => $node);
     }
 
     public function upload(
@@ -94,7 +94,7 @@ class JackrabbitAssetManager implements AssetManagerInterface
         $this->assetRepository->save($asset);
         $this->updateNodeProperties($node, $file, $asset);
 
-        return $this->generateJackrabbitAssetProxy($asset, fn() => $node);
+        return $this->generateJackrabbitAssetProxy($asset, fn () => $node);
     }
 
     public function exists(string $path): bool
@@ -158,7 +158,7 @@ class JackrabbitAssetManager implements AssetManagerInterface
 
         return $this->generateJackrabbitAssetProxy(
             $newAsset,
-            fn() => $this->getNode($newAsset->getPath()),
+            fn () => $this->getNode($newAsset->getPath()),
         );
     }
 
@@ -198,7 +198,7 @@ class JackrabbitAssetManager implements AssetManagerInterface
     protected function createStructure(string $path, string $name, string $type): NodeInterface
     {
         try {
-            $parent = $this->session->getNode($path === '/' ? $path : rtrim($path, '/'));
+            $parent = $this->session->getNode('/' === $path ? $path : rtrim($path, '/'));
         } catch (PathNotFoundException) {
             throw new AssetNotFoundException($path);
         }
@@ -248,10 +248,10 @@ class JackrabbitAssetManager implements AssetManagerInterface
 
         $assetEntity = $this->assetRepository->findOneBy([$type => $id]);
         if (!$assetEntity) {
-            throw new AssetEntityNotFoundException("Asset not found");
+            throw new AssetEntityNotFoundException('Asset not found');
         }
 
-        $nodeDecorator = function() use ($assetEntity) {
+        $nodeDecorator = function () use ($assetEntity) {
             return $this->getNode($assetEntity->getPath());
         };
 
@@ -277,16 +277,14 @@ class JackrabbitAssetManager implements AssetManagerInterface
         return new JackrabbitAsset(
             $asset,
             $nodeDecorator,
-            function(JackrabbitAsset $asset): ?JackrabbitAsset
-            {
-                if ($asset->getPath() === '/') {
+            function (JackrabbitAsset $asset): ?JackrabbitAsset {
+                if ('/' === $asset->getPath()) {
                     return null;
                 }
 
                 return $this->getByPath(dirname($asset->getPath()));
             },
-            function(JackrabbitAsset $asset, ?string $nameMatch = null, ?string $typeMatch = null): array|\Iterator
-            {
+            function (JackrabbitAsset $asset, ?string $nameMatch = null, ?string $typeMatch = null): array|\Iterator {
                 foreach ($this->getNode($asset->getPath())->getNodes($nameMatch, $typeMatch) as $item) {
                     yield $this->getByPath($item->getPath());
                 }
@@ -310,7 +308,8 @@ class JackrabbitAssetManager implements AssetManagerInterface
 
         $content->setProperty(self::PROPERTY_FILE, $file->getResource(), PropertyType::BINARY);
         $this->updateNodeProperties($node, $file, $asset->getEntity());
-        return $this->generateJackrabbitAssetProxy($asset->getEntity(), fn() => $node);
+
+        return $this->generateJackrabbitAssetProxy($asset->getEntity(), fn () => $node);
     }
 
     protected function regenerateNode(string $path): NodeInterface

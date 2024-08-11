@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Dullahan\Contract\AssetAwareInterface;
-use Dullahan\Contract\AssetManager\AssetManagerInterface;
 use Dullahan\Contract\InheritanceAwareInterface;
 use Dullahan\Doctrine\Mapper\EntityInheritanceMapper;
 use Dullahan\Doctrine\Mapper\EntityPointersMapper;

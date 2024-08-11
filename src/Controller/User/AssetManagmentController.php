@@ -31,9 +31,9 @@ use Symfony\Component\Routing\Attribute\Route;
 class AssetManagmentController extends AbstractController
 {
     public function __construct(
-        protected HttpUtilService        $httpUtilService,
-        protected AssetManagerInterface  $assetManager,
-        protected UserServiceInterface   $userService,
+        protected HttpUtilService $httpUtilService,
+        protected AssetManagerInterface $assetManager,
+        protected UserServiceInterface $userService,
         protected EntityManagerInterface $em,
         protected AssetSerializerInterface $assetSerializer,
     ) {

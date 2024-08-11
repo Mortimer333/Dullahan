@@ -9,12 +9,12 @@ use Dullahan\Document\JackrabbitAsset;
 /**
  * Variation of PSR-6 CacheItemPoolInterface
  * Not implemented methods:
- * - expiresAt && expiresAfter - expiry time is only one: at the end of script
+ * - expiresAt && expiresAfter - expiry time is only one: at the end of script.
  */
 class JackrabbitRuntimeCacheItem
 {
     public function __construct(
-        protected string           $key,
+        protected string $key,
         protected ?JackrabbitAsset $subject = null,
     ) {
     }
@@ -31,7 +31,7 @@ class JackrabbitRuntimeCacheItem
 
     public function isHit(): bool
     {
-        return !!$this->subject;
+        return (bool) $this->subject;
     }
 
     public function set(JackrabbitAsset $asset): self

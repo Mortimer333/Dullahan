@@ -38,6 +38,7 @@ trait AssetTrait
         foreach ($pointers as $fieldName) {
             $asset = $repo->find($payload[$fieldName]);
             if (!$asset) {
+                // @TODO specific exception
                 throw new \Exception(sprintf('Chosen asset for %s was not found', $fieldName), 400);
             }
 
@@ -91,7 +92,7 @@ trait AssetTrait
             $assetId = $payload[$fieldName];
             $asset = $repo->find($assetId);
             if (!$asset) {
-                throw new \Exception(sprintf('Chosen asset for %s was not found', $fieldName), 400);
+                throw new \Exception(sprintf('Chosen asset for %s was not found', $fieldName), 404);
             }
 
             $fields[$fieldName] = $asset;
@@ -106,7 +107,6 @@ trait AssetTrait
             }
 
             $entity->setAsset($fieldName, $asset);
-            $this->assetService->createThumbnails($entity, $fieldName);
         }
         $this->toSetAssetLater[] = $fields;
         $event->setPayload($payload);
@@ -126,6 +126,7 @@ trait AssetTrait
         }
 
         foreach (array_keys($fields) as $fieldName) {
+            $this->assetService->createThumbnails($entity, $fieldName);
             EntityPointersMapper::setActivePointer($entity, $fieldName);
         }
     }

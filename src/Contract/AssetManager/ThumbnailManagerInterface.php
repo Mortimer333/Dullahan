@@ -6,5 +6,4 @@ namespace Dullahan\Contract\AssetManager;
 
 interface ThumbnailManagerInterface
 {
-
 }

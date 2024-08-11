@@ -7,6 +7,9 @@ namespace Dullahan\Doctrine\Mapper;
 use Dullahan\Contract\AssetAwareInterface;
 use Dullahan\Entity\AssetPointer;
 
+/**
+ * @TODO What's the point of this being static?
+ */
 abstract class EntityPointersMapper
 {
     /** @var array<class-string, array<int, array<string, AssetPointer>>> */

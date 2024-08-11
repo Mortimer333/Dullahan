@@ -12,7 +12,7 @@ use Dullahan\Service\Util\BinUtilService;
 use Dullahan\Service\Util\FileUtilService;
 
 #[ORM\Entity(repositoryClass: ThumbnailRepository::class)]
-//#[ORM\HasLifecycleCallbacks]
+// #[ORM\HasLifecycleCallbacks]
 #[ORM\Index(name: 'duplicate_find_idx', fields: ['asset', 'settings'])]
 class Thumbnail implements ThumbnailInterface
 {
@@ -60,40 +60,39 @@ class Thumbnail implements ThumbnailInterface
         throw new \Exception('Not implemented');
     }
 
+    //    #[ORM\PostRemove]
+    //    public function remove(): void
+    //    {
+    //        if (!$this->getAsset()) {
+    //            return;
+    //        }
+    //
+    //        FileUtilService::removeFEImages($this->getProjectPath());
+    //    }
 
-//    #[ORM\PostRemove]
-//    public function remove(): void
-//    {
-//        if (!$this->getAsset()) {
-//            return;
-//        }
-//
-//        FileUtilService::removeFEImages($this->getProjectPath());
-//    }
+    //    public function getURL(): string
+    //    {
+    //        return rtrim(BinUtilService::projectToUrl((string) $this->getAsset()?->getProject()), '/')
+    //            . '/' . trim((string) $this->getAsset()?->getPath(), '/')
+    //            . '/' . $this->getName() . '.' . $this->getAsset()?->getExtension()
+    //            . '?v=' . $this->getAsset()?->getModified()?->getTimestamp();
+    //    }
 
-//    public function getURL(): string
-//    {
-//        return rtrim(BinUtilService::projectToUrl((string) $this->getAsset()?->getProject()), '/')
-//            . '/' . trim((string) $this->getAsset()?->getPath(), '/')
-//            . '/' . $this->getName() . '.' . $this->getAsset()?->getExtension()
-//            . '?v=' . $this->getAsset()?->getModified()?->getTimestamp();
-//    }
+    //    public function getProjectPath(): string
+    //    {
+    //        return trim((string) $this->getAsset()?->getPath(), '/')
+    //            . '/' . $this->getName() . '.' . $this->getAsset()?->getExtension();
+    //    }
 
-//    public function getProjectPath(): string
-//    {
-//        return trim((string) $this->getAsset()?->getPath(), '/')
-//            . '/' . $this->getName() . '.' . $this->getAsset()?->getExtension();
-//    }
-
-//    public function getRelativePath(): string
-//    {
-//        return ltrim($this->getProjectPath(), '/');
-//    }
-//
-//    public function getFullPath(): string
-//    {
-//        return $_ENV['PATH_FRONT_END'] . '/' . ltrim($this->getRelativePath(), '/');
-//    }
+    //    public function getRelativePath(): string
+    //    {
+    //        return ltrim($this->getProjectPath(), '/');
+    //    }
+    //
+    //    public function getFullPath(): string
+    //    {
+    //        return $_ENV['PATH_FRONT_END'] . '/' . ltrim($this->getRelativePath(), '/');
+    //    }
 
     public function getId(): ?int
     {

@@ -26,11 +26,11 @@ class AssetSerializer implements AssetSerializerInterface
         }
 
         return [
-            'id' => $asset->getId(),
-            'name' => $asset->getName(),
-            'extension' => $asset->getExtension(),
+            'id' => (int) $asset->getId(),
+            'name' => (string) $asset->getName(),
+            'extension' => (string) $asset->getExtension(),
             'src' => $this->assetUrlResolver->getUrl($asset),
-            'weight' => $asset->getWeight(),
+            'weight' => (int) $asset->getWeight(),
             'weight_readable' => FileUtilService::humanFilesize((int) $asset->getWeight()),
             'thumbnails' => $thumbnails,
             'pointers_amount' => count($asset->getPointers()),
@@ -51,19 +51,19 @@ class AssetSerializer implements AssetSerializerInterface
             if (!$pointer) {
                 continue;
             }
-            $pointers[$assetPointer->getCode()] = [
-                'id' => $pointer->getId(),
-                'class' => $pointer->getEntityClass(),
-                'column' => $pointer->getEntityColumn(),
-                'entity' => $pointer->getEntityId(),
+            $pointers[(string) $assetPointer->getCode()] = [
+                'id' => (int) $pointer->getId(),
+                'class' => (string) $pointer->getEntityClass(),
+                'column' => (string) $pointer->getEntityColumn(),
+                'entity' => (int) $pointer->getEntityId(),
             ];
         }
 
         return [
-            'id' => $thumbnail->getId(),
+            'id' => (int) $thumbnail->getId(),
             'src' => $this->assetUrlResolver->getUrl($thumbnail),
-            'name' => $thumbnail->getName(),
-            'weight' => $thumbnail->getWeight(),
+            'name' => (string) $thumbnail->getName(),
+            'weight' => (int) $thumbnail->getWeight(),
             'weight_readable' => FileUtilService::humanFilesize((int) $thumbnail->getWeight()),
             'pointers' => $pointers,
             'dimensions' => $dimensions,

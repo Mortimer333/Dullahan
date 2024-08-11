@@ -31,6 +31,9 @@ class PostLoadListener
         $this->postEntityInject($event);
     }
 
+    /**
+     * @TODO this approach violates so many conventions, get reed of it
+     */
     protected function postEntityInject(PostLoadEventArgs $event): void
     {
         $entity = $event->getObject();
@@ -61,6 +64,7 @@ class PostLoadListener
         /** @var class-string $entityClass */
         $entityClass = $entity->getEntityClass();
         if (!$entityClass) {
+            // @TODO add specific exception
             throw new \Exception('Entity class not set', 500);
         }
 
@@ -69,7 +73,9 @@ class PostLoadListener
     }
 
     /**
-     * Garbage collector for orphaned pointers - here saves relation before changes on the object.
+     * Part of the garbage collector for orphaned pointers
+     * Save pointer relation before any changes, so we can later deduce it his "relation" got deleted and remove pointer
+     * (pointers create relations with polymorphic foreign key).
      */
     protected function postAssetAwareLoad(PostLoadEventArgs $event): void
     {

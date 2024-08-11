@@ -24,12 +24,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RecreateThumbnailsCommand extends BaseCommandAbstract
 {
     public function __construct(
-        protected EntityManagerInterface      $em,
-        protected LoggerInterface             $logger,
-        protected BinUtilService              $binUtilService,
-        protected TraceService                $traceService,
+        protected EntityManagerInterface $em,
+        protected LoggerInterface $logger,
+        protected BinUtilService $binUtilService,
+        protected TraceService $traceService,
         protected FileSystemBasedAssetManager $assetService,
-        protected CacheService                $cacheService,
+        protected CacheService $cacheService,
     ) {
         parent::__construct();
     }

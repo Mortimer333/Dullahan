@@ -6,7 +6,8 @@ namespace Dullahan\Exception\AssetManager;
 
 class UploadedFileNotAccessibleException extends \Exception
 {
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct('Uploaded file is not accessible', 500);
     }
 }

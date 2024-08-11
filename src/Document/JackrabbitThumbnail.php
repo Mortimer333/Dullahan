@@ -14,7 +14,7 @@ class JackrabbitThumbnail implements ThumbnailInterface
 {
     public function __construct(
         protected ThumbnailInterface $entity,
-        protected \Closure           $nodeDecorator,
+        protected \Closure $nodeDecorator,
     ) {
     }
 

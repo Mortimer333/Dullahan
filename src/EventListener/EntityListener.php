@@ -16,10 +16,10 @@ class EntityListener
     use Listener\Entity\IndicatorTrait;
 
     public function __construct(
-        protected EntityManagerInterface      $em,
-        protected EntityUtilService           $entityUtilService,
+        protected EntityManagerInterface $em,
+        protected EntityUtilService $entityUtilService,
         protected FileSystemBasedAssetManager $assetService,
-        protected CacheService                $cacheService,
+        protected CacheService $cacheService,
     ) {
     }
 

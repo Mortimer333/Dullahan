@@ -7,8 +7,8 @@ namespace Dullahan\Contract\AssetManager;
 use Dullahan\Entity\User;
 use Dullahan\Exception\AssetManager\AssetEntityNotFoundException;
 use Dullahan\Exception\AssetManager\AssetExistsException;
-use Dullahan\Exception\AssetManager\UploadedFileNotAccessibleException;
 use Dullahan\Exception\AssetManager\AssetNotFoundException;
+use Dullahan\Exception\AssetManager\UploadedFileNotAccessibleException;
 
 interface AssetManagerInterface
 {
@@ -24,12 +24,13 @@ interface AssetManagerInterface
      * @throws AssetEntityNotFoundException
      */
     public function getByPath(string $path): AssetInterface;
+
     public function exists(string $path): bool;
 
     /**
-     * @param string $path Absolute path to the parent
-     * @param ?User $owner User to be assigned as an owner of the image. If not given, one will be retrieved from
-     *                     session
+     * @param string $path  Absolute path to the parent
+     * @param ?User  $owner User to be assigned as an owner of the image. If not given, one will be retrieved from
+     *                      session
      *
      * @throws AssetExistsException
      * @throws AssetNotFoundException
@@ -37,9 +38,9 @@ interface AssetManagerInterface
     public function folder(string $path, string $name, ?User $owner = null): AssetInterface;
 
     /**
-     * @param string $path Absolute path to the parent
-     * @param ?User $owner User to be assigned as an owner of the image. If not given, one will be retrieved from
-     *                     session
+     * @param string $path  Absolute path to the parent
+     * @param ?User  $owner User to be assigned as an owner of the image. If not given, one will be retrieved from
+     *                      session
      *
      * @throws AssetExistsException
      * @throws AssetNotFoundException
@@ -53,6 +54,7 @@ interface AssetManagerInterface
     ): AssetInterface;
 
     public function remove(AssetInterface $asset): bool;
+
     public function dontRemove(AssetInterface $asset): bool;
 
     /**
@@ -63,17 +65,17 @@ interface AssetManagerInterface
     public function move(AssetInterface $asset, string $path, ?UploadedFileInterface $file = null): AssetInterface;
 
     /**
-     * Duplicates given asset and returns its copy
+     * Duplicates given asset and returns its copy.
      */
     public function clone(AssetInterface $asset, string $path): AssetInterface;
 
     /**
-     * Persists changes
+     * Persists changes.
      */
     public function flush(): void;
 
     /**
-     * Clears all currently managed object
+     * Clears all currently managed object.
      */
     public function clear(): void;
 }

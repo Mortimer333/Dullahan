@@ -14,7 +14,7 @@ use Dullahan\Service\Util\FileUtilService;
 use Dullahan\Trait\UserDataRelationTrait;
 
 #[ORM\Entity(repositoryClass: AssetRepository::class)]
-//#[ORM\HasLifecycleCallbacks]
+// #[ORM\HasLifecycleCallbacks]
 #[ORM\Index(name: 'path_search_idx', fields: ['path', 'name', 'extension'])]
 class Asset implements AssetInterface
 {
@@ -79,11 +79,11 @@ class Asset implements AssetInterface
         return $this;
     }
 
-//    #[ORM\PostRemove]
-//    public function remove2(): void
-//    {
-//        FileUtilService::removeFEImages($this->getProjectPath());
-//    }
+    //    #[ORM\PostRemove]
+    //    public function remove2(): void
+    //    {
+    //        FileUtilService::removeFEImages($this->getProjectPath());
+    //    }
 
     // TODO figure out proper path resolving for images
     public function getURL(): string
@@ -193,7 +193,7 @@ class Asset implements AssetInterface
     /**
      * @return Collection<int, AssetPointer>
      */
-    public function getPointers(): \IteratorAggregate
+    public function getPointers(): \IteratorAggregate&\Countable
     {
         return $this->pointers;
     }
@@ -235,7 +235,7 @@ class Asset implements AssetInterface
     /**
      * @return Collection<int, Thumbnail>
      */
-    public function getThumbnails(): \IteratorAggregate
+    public function getThumbnails(): \IteratorAggregate&\Countable
     {
         return $this->thumbnails;
     }
@@ -292,7 +292,7 @@ class Asset implements AssetInterface
     /**
      * @return array<string, mixed>
      */
-    public function getProperties(): \IteratorAggregate
+    public function getProperties(): \IteratorAggregate&\Countable
     {
         throw new \Exception('To be implemented', 500);
     }
@@ -322,10 +322,7 @@ class Asset implements AssetInterface
         throw new \Exception('To be implemented', 500);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getChildren(string $match): \IteratorAggregate
+    public function getChildren(string $match): \IteratorAggregate&\Countable
     {
         throw new \Exception('To be implemented', 500);
     }

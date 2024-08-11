@@ -25,7 +25,7 @@ class PreRemoveListener
     }
 
     /**
-     * Garbage collector for orphaned pointers - remove all pointers of the removed entity.
+     * Garbage collector for orphaned pointers - remove all pointers assigned to the removed entity.
      */
     protected function removeOrphanedPointersAndThumbnails(PreRemoveEventArgs $event): void
     {

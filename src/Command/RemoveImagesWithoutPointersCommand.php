@@ -7,7 +7,6 @@ namespace Dullahan\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Contract\AssetManager\AssetManagerInterface;
 use Dullahan\Entity\Asset;
-use Dullahan\Entity\User;
 use Dullahan\Service\TraceService;
 use Dullahan\Service\Util\BinUtilService;
 use Psr\Log\LoggerInterface;
@@ -15,7 +14,6 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[AsCommand(
     name: 'dullahan:image:remove:orphaned',

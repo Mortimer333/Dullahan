@@ -32,14 +32,15 @@ class JackrabbitRuntimeCachePoolService
         return $pool[$key];
     }
 
-    public function getItems(array $keys = array()): \Traversable
+    public function getItems(array $keys = []): \Traversable
     {
         foreach ($keys as $key) {
             yield $this->getItem($key);
         }
     }
 
-    public function hasItem($key) {
+    public function hasItem($key)
+    {
         return $this->getItem($key)->isHit();
     }
 

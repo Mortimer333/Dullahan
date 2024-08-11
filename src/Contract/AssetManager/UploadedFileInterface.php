@@ -10,10 +10,14 @@ interface UploadedFileInterface
 {
     /**
      * @return resource
+     *
      * @throws UploadedFileNotAccessibleException
      */
     public function getResource();
+
     public function getSize(): int;
+
     public function getExtension(): string;
+
     public function getMimeType(): string;
 }

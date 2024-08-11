@@ -21,9 +21,8 @@ class BigAssetServer implements AssetServerInterface
 
         $file = $asset->getFile();
         set_time_limit(0);
-        while(!feof($file))
-        {
-            print(fread($file, 1024*8));
+        while (!feof($file)) {
+            echo fread($file, 1024 * 8);
             ob_flush();
             flush();
         }

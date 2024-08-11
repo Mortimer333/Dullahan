@@ -49,14 +49,14 @@ class EntityUtilService
     protected bool $validateOwner = true;
 
     public function __construct(
-        protected EntityManagerInterface   $em,
-        protected UserServiceInterface     $userService,
+        protected EntityManagerInterface $em,
+        protected UserServiceInterface $userService,
         protected EventDispatcherInterface $eventDispatcher,
-        protected ValidationService        $validationService,
-        protected AssetManagerInterface    $assetManager,
-        protected EmptyIndicatorService    $emptyIndicatorService,
-        protected CacheService             $cacheService,
-        protected EditorJsService          $editorJsService,
+        protected ValidationService $validationService,
+        protected AssetManagerInterface $assetManager,
+        protected EmptyIndicatorService $emptyIndicatorService,
+        protected CacheService $cacheService,
+        protected EditorJsService $editorJsService,
         protected AssetSerializerInterface $assetSerializer,
     ) {
     }

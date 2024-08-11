@@ -34,30 +34,38 @@ interface AssetInterface
     public function getFile();
 
     /**
-     * @return \IteratorAggregate<int, AssetPointer>
+     * @return \Countable&\IteratorAggregate<int, AssetPointer>
      */
-    public function getPointers(): \IteratorAggregate;
+    public function getPointers(): \IteratorAggregate&\Countable;
+
     public function addPointer(AssetPointer $pointer): self;
+
     public function removePointer(AssetPointer $pointer): self;
 
     /**
-     * @return \IteratorAggregate<int, Thumbnail>
+     * @return \Countable&\IteratorAggregate<int, Thumbnail>
      */
-    public function getThumbnails(): \IteratorAggregate;
+    public function getThumbnails(): \IteratorAggregate&\Countable;
+
     public function addThumbnail(ThumbnailInterface $thumbnail): self;
+
     public function removeThumbnail(ThumbnailInterface $thumbnail): self;
 
     public function getCreated(): ?\DateTimeInterface;
+
     public function createdBy(): ?User;
 
     public function getModified(): ?\DateTimeInterface;
+
     public function setModified(\DateTimeInterface $modified): self;
+
     public function modifiedBy(): ?User;
 
     /**
-     * @return \IteratorAggregate<string, mixed>
+     * @return \Countable&\IteratorAggregate<string, mixed>
      */
-    public function getProperties(): \IteratorAggregate;
+    public function getProperties(): \IteratorAggregate&\Countable;
+
     public function getProperty(string $name, mixed $default = null): mixed;
 
     /**
@@ -73,7 +81,7 @@ interface AssetInterface
     public function getParent(): ?AssetInterface;
 
     /**
-     * @return \IteratorAggregate<AssetInterface>
+     * @return \Countable&\IteratorAggregate<AssetInterface>
      */
-    public function getChildren(string $match): \IteratorAggregate;
+    public function getChildren(string $match): \IteratorAggregate&\Countable;
 }

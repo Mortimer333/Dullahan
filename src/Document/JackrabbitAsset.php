@@ -19,13 +19,13 @@ class JackrabbitAsset implements AssetInterface
 {
     protected bool $requiresFlush = false;
     protected bool $isDirty = false;
-    protected $file = null;
+    protected $file;
 
     public function __construct(
         protected AssetEntity $entity,
-        protected \Closure    $nodeDecorator,
-        protected \Closure    $lazyLoadParent,
-        protected \Closure    $lazyLoadChildren,
+        protected \Closure $nodeDecorator,
+        protected \Closure $lazyLoadParent,
+        protected \Closure $lazyLoadChildren,
     ) {
     }
 
@@ -84,7 +84,7 @@ class JackrabbitAsset implements AssetInterface
     /**
      * @return Collection<int, AssetPointer>
      */
-    public function getPointers(): \IteratorAggregate
+    public function getPointers(): \IteratorAggregate&\Countable
     {
         return $this->entity->getPointers();
     }
@@ -108,7 +108,7 @@ class JackrabbitAsset implements AssetInterface
     /**
      * @return Collection<int, Thumbnail>
      */
-    public function getThumbnails(): \IteratorAggregate
+    public function getThumbnails(): \IteratorAggregate&\Countable
     {
         return $this->entity->getThumbnails();
     }
@@ -159,9 +159,10 @@ class JackrabbitAsset implements AssetInterface
 
     /**
      * @param ?array<string> $nameFilter
+     *
      * @return Collection<string, mixed>
      */
-    public function getProperties(array $nameFilter = null): \IteratorAggregate
+    public function getProperties(?array $nameFilter = null): \IteratorAggregate&\Countable
     {
         $arr = [];
         foreach (($this->getNode()->getProperties($nameFilter) ?? []) as $property) {
@@ -228,7 +229,7 @@ class JackrabbitAsset implements AssetInterface
         return ($this->lazyLoadParent)();
     }
 
-    public function getChildren(?string $nameMatch = null, ?string $typeMatch = null): \IteratorAggregate
+    public function getChildren(?string $nameMatch = null, ?string $typeMatch = null): \IteratorAggregate&\Countable
     {
         return ($this->lazyLoadChildren)();
     }
