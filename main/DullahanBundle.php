@@ -38,6 +38,7 @@ class DullahanBundle extends AbstractBundle
         ContainerBuilder $builder,
     ): void {
         $container->import('../config/services.yaml');
+        //        $container->import('../config/doctrine.yaml');
         $builder->getDefinition('Dullahan\Main\Service\ProjectManagerService')
             ->setArgument('$projects', $config['projects'])
         ;

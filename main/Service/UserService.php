@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Dullahan\Main\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Asset\Entity\Asset;
 use Dullahan\Main\Contract\Marker\UserServiceInterface;
-use Dullahan\Main\Entity\Asset;
 use Dullahan\Main\Entity\User;
 use Dullahan\Main\Entity\UserData;
 use Dullahan\Main\Service\Util\FileUtilService;
@@ -38,7 +38,7 @@ class UserService implements UserServiceInterface
             throw new \Exception('User is not logged in', 400);
         }
 
-        return $user;
+        return $this->get((int) $user->getId());
     }
 
     public function isLoggedIn(): bool
@@ -46,6 +46,7 @@ class UserService implements UserServiceInterface
         return (bool) $this->security->getUser();
     }
 
+    // @TODO add event for serialization and move asset specific information to it
     public function serialize(User $user): array
     {
         /** @var UserData $data */

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Dullahan\Main\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Main\Asset\Manager\FileSystemBasedAssetManager;
-use Dullahan\Main\Contract\AssetAwareInterface;
-use Dullahan\Main\Entity\Asset;
+use Dullahan\Asset\Application\Port\Infrastructure\AssetAwareInterface;
+use Dullahan\Asset\Application\Port\Presentation\AssetServiceInterface;
+use Dullahan\Asset\Entity\Asset;
+use Dullahan\Asset\Entity\AssetPointer;
 use Dullahan\Main\Service\CacheService;
 use Dullahan\Main\Service\TraceService;
 use Dullahan\Main\Service\Util\BinUtilService;
+use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,8 +30,9 @@ class RecreateThumbnailsCommand extends BaseCommandAbstract
         protected LoggerInterface $logger,
         protected BinUtilService $binUtilService,
         protected TraceService $traceService,
-        protected FileSystemBasedAssetManager $assetService,
         protected CacheService $cacheService,
+        protected ThumbnailServiceInterface $thumbnailService,
+        protected AssetServiceInterface $assetService,
     ) {
         parent::__construct();
     }
@@ -65,6 +68,7 @@ class RecreateThumbnailsCommand extends BaseCommandAbstract
         foreach ($q->toIterable() as $asset) {
             $this->increaseIndent();
             $this->log('Asset ' . $asset->getName() . ' [' . $asset->getId() . ']');
+            /** @var AssetPointer $pointer */
             foreach ($asset->getPointers() as $pointer) {
                 $entity = $pointer->getEntity();
                 if (!$entity instanceof AssetAwareInterface || !$pointer->getEntityColumn()) {
@@ -74,13 +78,13 @@ class RecreateThumbnailsCommand extends BaseCommandAbstract
                     'Save entity to recreate thumbnails ' . $entity::class . ' [' . $entity->getId()
                     . '] ' . $pointer->getEntityColumn()
                 );
-                $this->assetService->createThumbnails($entity, $pointer->getEntityColumn());
+                $this->thumbnailService->generate($entity, $pointer->getEntityColumn());
 
                 if (!$dry) {
                     $this->log('Create thumbnails...');
                     $this->cacheService->deleteEntityCache($entity, true);
                     $this->cacheService->deleteEntityCache($entity, false);
-                    $this->em->flush();
+                    $this->thumbnailService->flush();
                     $this->em->clear();
                 }
             }
@@ -93,16 +97,19 @@ class RecreateThumbnailsCommand extends BaseCommandAbstract
         $q = $this->em->createQuery('SELECT a FROM ' . Asset::class . ' a');
         $this->log('Starting command to remove old thumbnails and create new one');
         $this->increaseIndent();
-        /** @var Asset $asset */
-        foreach ($q->toIterable() as $asset) {
-            $this->log('Asset ' . $asset->getName() . ' [' . $asset->getId() . ']');
+        /* @var Asset $asset */
+        foreach ($q->toIterable() as $assetEntity) {
+            $this->log('Asset ' . $assetEntity->getName() . ' [' . $assetEntity->getId() . ']');
             $this->increaseIndent();
-            foreach ($asset->getThumbnails() as $thumbnail) {
-                foreach ($thumbnail->getAssetPointers() as $assetPointer) {
+            $asset = $this->assetService->get($assetEntity->getId());
+            foreach ($this->thumbnailService->getThumbnails($asset) as $thumbnail) {
+                foreach ($thumbnail->entity->getAssetPointers() as $assetPointer) {
                     $this->em->remove($assetPointer);
                 }
                 $this->em->flush();
-                $this->log('Remove thumbnail ' . $thumbnail->getName() . ' [' . $thumbnail->getId() . ']');
+                $this->log(
+                    'Remove thumbnail ' . $thumbnail->structure->name . ' [' . $thumbnail->entity->getId() . ']'
+                );
                 $this->em->remove($thumbnail);
             }
             $this->decreaseIndent();

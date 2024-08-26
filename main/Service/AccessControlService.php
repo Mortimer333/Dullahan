@@ -6,6 +6,7 @@ namespace Dullahan\Main\Service;
 
 use Dullahan\Main\Contract\NotDoubleSubmitAuthenticatedController;
 use Dullahan\Main\Contract\NotTokenAuthenticatedController;
+use Dullahan\Main\Entity\User;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,7 +43,7 @@ class AccessControlService
     protected function validateRoutesAccess(string $path): void
     {
         if (preg_match('/^\/(_\/user)/', $path)) {
-            /** @var ?\Dullahan\Entity\User $user */
+            /** @var ?User $user */
             $user = $this->security->getUser();
             if (null === $user) {
                 throw new AccessDeniedHttpException('You need to be logged in to access this resource');

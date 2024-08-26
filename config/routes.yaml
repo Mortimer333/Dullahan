@@ -13,3 +13,21 @@ api.user.super.controllers:
 app_user_logout:
     path: /_/user/logout
     methods: GET
+
+# ASSET
+api.asset.controllers:
+    resource: ../asset/Adapter/Presentation/Http/Controller/
+    type: attribute
+    prefix: '/_'
+api.asset.user.controllers:
+    resource: ../asset/Adapter/Presentation/Http/Controller/User/
+    type: attribute
+    prefix: '/_/user'
+#> ASSET
+
+# THUMBNAIL
+api.thumbnails.controllers:
+    resource: ../thumbnail/Adapter/Presentation/Http/Controller/
+    type: attribute
+    prefix: '/_'
+#> THUMBNAIL

@@ -10,3 +10,7 @@ Independent installation
 ```bash
 composer require mortimer333/dullahan
 ```
+
+## Adding new subbundle:
+- remove .lock from master repo (which requests this bundle via composer)
+- `composer clear-cache && composer dump && composer install`

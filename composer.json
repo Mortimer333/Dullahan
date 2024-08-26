@@ -5,7 +5,8 @@
     "autoload": {
         "psr-4": {
             "Dullahan\\Main\\": "main/",
-            "Dullahan\\Thumbnail\\": "thumbnail/"
+            "Dullahan\\Thumbnail\\": "thumbnail/",
+            "Dullahan\\Asset\\": "asset/"
         }
     },
     "minimum-stability": "stable",

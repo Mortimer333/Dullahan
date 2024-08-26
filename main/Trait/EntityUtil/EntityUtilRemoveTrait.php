@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Dullahan\Main\Trait\EntityUtil;
 
-use Dullahan\Main\Attribute\Asset;
-use Dullahan\Main\Contract\AssetAwareInterface;
+use Dullahan\Asset\Application\Attribute\Asset;
+use Dullahan\Asset\Application\Port\Infrastructure\AssetAwareInterface;
+use Dullahan\Asset\Entity\AssetPointer;
 use Dullahan\Main\Contract\InheritanceAwareInterface;
-use Dullahan\Main\Entity\AssetPointer;
 
 trait EntityUtilRemoveTrait
 {
@@ -31,7 +31,7 @@ trait EntityUtilRemoveTrait
         /** @var Asset $asset */
         $asset = $assetAttr->newInstance();
         if ($asset->conjoined && $pointer->getAsset()) {
-            $this->assetManager->remove($pointer->getAsset());
+            $this->assetService->remove($this->assetService->get((int) $pointer->getAsset()->getId()));
         }
     }
 

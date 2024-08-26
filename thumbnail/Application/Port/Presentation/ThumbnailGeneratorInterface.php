@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Dullahan\Thumbnail\Application\Port\Presentation;
 
-use Dullahan\Main\Contract\AssetAwareInterface;
+use Dullahan\Thumbnail\Application\Exception\ThumbnailCannotBeGeneratedException;
 use Dullahan\Thumbnail\Domain\ThumbnailConfig;
 
 interface ThumbnailGeneratorInterface
 {
     /**
-     * @param array<ThumbnailConfigInterface> $configs
      * @return resource
+     *
+     * @throws ThumbnailCannotBeGeneratedException
      */
-    public function generate(AssetAwareInterface $entity, ThumbnailConfig $config);
+    public function generate(ThumbnailConfig $config, string $filename);
 }

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Dullahan\Thumbnail\Application\Mapper;
 
-use Dullahan\Main\Contract\AssetAwareInterface;
+use Dullahan\Asset\Application\Port\Infrastructure\AssetAwareInterface;
+use Dullahan\Asset\Application\Port\Presentation\AssetPointerInterface;
 use Dullahan\Thumbnail\Application\Attribute\Thumbnail as ThumbnailAttribute;
+use Dullahan\Thumbnail\Application\Exception\ThumbnailFieldCannotBeMappedException;
 use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailMapperInterface;
 use Dullahan\Thumbnail\Domain\ThumbnailConfig;
-use Thumbnail\Application\Exception\ThumbnailFieldNotMappedException;
 
 class AttributeThumbnailMapper implements ThumbnailMapperInterface
 {
@@ -17,38 +18,44 @@ class AttributeThumbnailMapper implements ThumbnailMapperInterface
         try {
             $property = new \ReflectionProperty($entity, $fieldName);
         } catch (\ReflectionException) {
-            throw new ThumbnailFieldNotMappedException(
+            throw new ThumbnailFieldCannotBeMappedException(
                 sprintf('Class "%s" is missing "%s" field', $entity::class, $fieldName),
                 500,
             );
         }
 
-        $assets = $property->getAttributes(ThumbnailAttribute::class);
-
-
         $configs = [];
         $value = $property->getValue($entity);
-        if (!is_null($value) && !($value instanceof AssetAwareInterface)) {
-            throw new ThumbnailFieldNotMappedException(
+        if (!is_null($value) && !($value instanceof AssetPointerInterface)) {
+            throw new ThumbnailFieldCannotBeMappedException(
                 sprintf(
-                    'Class "%s" has invalid value in "%s" field (% or null)',
+                    'Class "%s" has invalid value in "%s" field (%s or null) (%s)',
                     $entity::class,
-                    AssetAwareInterface::class,
+                    $fieldName,
+                    AssetPointerInterface::class,
+                    'object' === gettype($value) ? $value::class : gettype($value),
                 ),
                 500,
             );
         }
-        foreach ($assets as $asset) {
-            /** @var ThumbnailAttribute$instance */
-            $instance = $asset->newInstance();
+
+        if (is_null($value) || !$value->getId()) {
+            return $configs;
+        }
+
+        $assets = $property->getAttributes(ThumbnailAttribute::class);
+        foreach ($assets as $assetAttribute) {
+            /** @var ThumbnailAttribute $instance */
+            $instance = $assetAttribute->newInstance();
 
             $configs[] = new ThumbnailConfig(
                 $instance->getCode(),
+                (int) $value->getId(),
+                (int) $value->getAsset()?->getId(),
                 $instance->getWidth(),
                 $instance->getHeight(),
                 $instance->getAutoResize(),
                 $instance->getCrop(),
-                $value,
             );
         }
 

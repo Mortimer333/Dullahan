@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Thumbnail\Application\Port\Presentation;
 
-use Dullahan\Main\Contract\AssetAwareInterface;
+use Dullahan\Asset\Application\Port\Infrastructure\AssetAwareInterface;
 use Dullahan\Thumbnail\Domain\ThumbnailConfig;
 
 interface ThumbnailMapperInterface

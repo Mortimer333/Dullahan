@@ -1,13 +1,27 @@
 services:
+  Dullahan\Asset\:
+    autowire: true
+    autoconfigure: true
+    resource: '../asset/'
+    exclude:
+      - '../asset/Entity/'
+      - '../asset/Application/Attribute'
+      - '../asset/Application/Exception'
+      - '../asset/Domain'
+
   Dullahan\Thumbnail\:
+    autowire: true
+    autoconfigure: true
     resource: '../thumbnail/'
     exclude:
-      - '../thumbnail/Adapter/Infrastructure/Database/Entity/'
+      - '../thumbnail/Entity/'
       - '../thumbnail/Application/Attribute'
       - '../thumbnail/Application/Exception'
       - '../thumbnail/Domain'
 
   Dullahan\Main\:
+    autowire: true
+    autoconfigure: true
     resource: '../main/'
     exclude:
       - '../main/DependencyInjection/'
@@ -18,11 +32,6 @@ services:
       - '../main/Document/'
       - '../main/Model/'
       - '../main/Exception/'
-
-  _defaults:
-    public: true
-    autowire: true
-    autoconfigure: true
 
   Dullahan\Main\Asset\UploadedFile:
     autowire: false

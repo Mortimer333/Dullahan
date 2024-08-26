@@ -108,7 +108,7 @@ class AuthenticationController extends AbstractController implements NotTokenAut
     )]
     public function login(Request $request, JWSService $jwsService, Security $security): JsonResponse
     {
-        /** @var ?\Dullahan\Entity\User $user */
+        /** @var ?User $user */
         $user = $security->getUser();
 
         if (null === $user) {

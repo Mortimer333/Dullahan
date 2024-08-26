@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Dullahan\Main\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Main\Asset\Manager\FileSystemBasedAssetManager;
+use Dullahan\Asset\Application\Manager\FileSystemBasedAssetManager;
 use Dullahan\Main\Service\CacheService;
 use Dullahan\Main\Service\Util\EntityUtilService;
 use Dullahan\Main\Trait\Listener;
 
 class EntityListener
 {
-    use Listener\Entity\AssetTrait;
     use Listener\Entity\IndicatorTrait;
 
     public function __construct(

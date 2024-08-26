@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Dullahan\Thumbnail\Domain;
 
-use DullahanMainContract\AssetManager\AssetPointerInterface;
-
 final readonly class ThumbnailConfig
 {
+    /**
+     * @param array<mixed> $crop
+     */
     public function __construct(
         public string $code,
+        public int $pointerId,
+        public int $assetId,
         public ?int $width = null,
         public ?int $height = null,
         public ?bool $autoResize = null,
         public array $crop = [],
-        public ?AssetPointerInterface $assetPointer,
     ) {
     }
 
@@ -26,11 +28,11 @@ final readonly class ThumbnailConfig
     public function __toString(): string
     {
         return json_encode([
-            "code" => $this->getCode(),
-            "width" => $this->getWidth(),
-            "height" => $this->getHeight(),
-            "autoResize" => $this->getAutoResize(),
-            "crop" => $this->getCrop(),
-        ]);
+            'code' => $this->code,
+            'width' => $this->width,
+            'height' => $this->height,
+            'autoResize' => $this->autoResize,
+            'crop' => $this->crop,
+        ]) ?: '';
     }
 }

@@ -8,7 +8,8 @@ namespace Dullahan\Thumbnail\Application\Attribute;
 final class Thumbnail
 {
     /**
-     * @param array<int|string|null> $crop
+     * @param array<int|'MM'|'SM'|'EM'|'MS'|'EM'|'SE'|'ES'|'SS'|'EE'> $crop Definition of the crop starting position XY.
+     *                                                                      M - Middle, S - Start, E - End
      */
     public function __construct(
         protected string $code,
@@ -30,7 +31,7 @@ final class Thumbnail
             $this->crop[1] = (int) $this->crop[1];                  // height
             $this->crop[2] = (int) ($this->crop[2] ?? 0);           // X translation
             $this->crop[3] = (int) ($this->crop[3] ?? 0);           // Y translation
-            $this->crop[4] = (string) ($this->crop[4] ?? 'MM');     // Starting position - Middle Middle
+            $this->crop[4] = (string) ($this->crop[4] ?? 'SS');     // @phpstan-ignore-line
         }
     }
 
@@ -54,6 +55,15 @@ final class Thumbnail
         return $this->autoResize;
     }
 
+    /**
+     * @return array{}|array{
+     *      0: int,
+     *      1: int,
+     *      2: int,
+     *      3: int,
+     *      4: 'MM'|'SM'|'EM'|'MS'|'EM'|'SE'|'ES'|'SS'|'EE'
+     *  }
+     */
     public function getCrop(): array
     {
         return $this->crop;

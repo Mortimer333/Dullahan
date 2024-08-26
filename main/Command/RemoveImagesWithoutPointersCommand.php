@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Dullahan\Main\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Main\Contract\AssetManager\AssetManagerInterface;
-use Dullahan\Main\Entity\Asset;
+use Dullahan\Asset\Application\Port\Presentation\AssetServiceInterface;
+use Dullahan\Asset\Entity\Asset;
 use Dullahan\Main\Service\TraceService;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Psr\Log\LoggerInterface;
@@ -26,7 +26,7 @@ class RemoveImagesWithoutPointersCommand extends BaseCommandAbstract
         protected LoggerInterface $logger,
         protected BinUtilService $binUtilService,
         protected TraceService $traceService,
-        protected AssetManagerInterface $assetManager,
+        protected AssetServiceInterface $assetService,
     ) {
         parent::__construct();
     }
@@ -50,13 +50,13 @@ class RemoveImagesWithoutPointersCommand extends BaseCommandAbstract
         $dry = $input->getOption('dry-run');
         $batchSize = 200;
         $i = 1;
-        $q = $this->em->createQuery('SELECT a FROM ' . Asset::class . ' a WHERE a.pointers IS EMPTY');
+        $q = $this->em->createQuery('SELECT a FROM ' . Asset::class . ' a WHERE a.pointers IS EMPTY AND a.mimeType IS NOT NULL');
         $this->log('Starting command to remove all images without any reference (batch size: ' . $batchSize . ')');
         $this->increaseIndent();
         /** @var Asset $asset */
         foreach ($q->toIterable() as $asset) {
             $this->log('Asset: ' . $asset->getName() . ' [' . $asset->getId() . ']');
-            $this->assetManager->remove($this->assetManager->get($asset->getId()));
+            $this->assetService->remove($this->assetService->get($asset->getId()));
 
             ++$i;
             if (($i % $batchSize) === 0) {
@@ -64,13 +64,13 @@ class RemoveImagesWithoutPointersCommand extends BaseCommandAbstract
                     $this->log('=== Due to dry run batch data was not send ===');
                 } else {
                     $this->log('=== Sent batched data ===');
-                    $this->assetManager->flush();
+                    $this->assetService->flush();
                 }
-                $this->assetManager->clear();
+                $this->assetService->clear();
             }
         }
         $this->decreaseIndent();
-        !$dry ? $this->assetManager->flush() : $this->log('=== Due to dry run batch data was not send ===');
+        !$dry ? $this->assetService->flush() : $this->log('=== Due to dry run batch data was not send ===');
         $this->log('Command finished successfully');
     }
 }

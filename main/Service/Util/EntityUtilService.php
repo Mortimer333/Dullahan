@@ -6,14 +6,13 @@ namespace Dullahan\Main\Service\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Dullahan\Main\Contract\AssetManager\AssetManagerInterface;
-use Dullahan\Main\Contract\AssetManager\AssetSerializerInterface;
+use Dullahan\Asset\Application\Port\Presentation\AssetSerializerInterface;
+use Dullahan\Asset\Application\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Contract\InheritanceAwareInterface;
 use Dullahan\Main\Contract\ManageableInterface;
 use Dullahan\Main\Contract\Marker\UserServiceInterface;
 use Dullahan\Main\Contract\OwnerlessManageableInterface;
 use Dullahan\Main\Contract\TransferableOwnerManageableInterface;
-use Dullahan\Main\Entity\AssetPointer;
 use Dullahan\Main\Entity\User;
 use Dullahan\Main\Event\Entity\OwnershipCheck;
 use Dullahan\Main\Event\Entity\PostCreate;
@@ -53,7 +52,7 @@ class EntityUtilService
         protected UserServiceInterface $userService,
         protected EventDispatcherInterface $eventDispatcher,
         protected ValidationService $validationService,
-        protected AssetManagerInterface $assetManager,
+        protected AssetServiceInterface $assetService,
         protected EmptyIndicatorService $emptyIndicatorService,
         protected CacheService $cacheService,
         protected EditorJsService $editorJsService,
@@ -206,7 +205,6 @@ class EntityUtilService
         $this->em->persist($entity);
         if ($flush) {
             $this->em->flush();
-            $this->assetManager->flush();
         }
 
         if ($entity instanceof InheritanceAwareInterface && $entity->getParent()) {
@@ -243,7 +241,6 @@ class EntityUtilService
         $this->em->persist($entity);
         if ($persist) {
             $this->em->flush();
-            $this->assetManager->flush();
         }
 
         if ($entity instanceof InheritanceAwareInterface && $entity->getParent()) {
@@ -285,25 +282,10 @@ class EntityUtilService
         } else {
             $this->em->remove($entity);
             $this->em->flush();
-            $this->assetManager->flush();
         }
 
         $this->eventDispatcher->dispatch(new PostRemove($entity));
         // Clear all cached related entities - otherwise we might get them but with just deleted entity
         $this->clearRelatedCache($entity, $this->getEntityDefinition($entity));
-    }
-
-    public function removeFromThumbnails(AssetPointer $pointer): void
-    {
-        foreach ($pointer->getThumbnailPointers() as $thumbnailPointer) {
-            $thumbnail = $thumbnailPointer->getThumbnail();
-            if (!$thumbnail) {
-                continue;
-            }
-            $thumbnail->removeAssetPointer($thumbnailPointer);
-            if ($thumbnail->getAssetPointers()->isEmpty()) {
-                $this->em->remove($thumbnail);
-            }
-        }
     }
 }
