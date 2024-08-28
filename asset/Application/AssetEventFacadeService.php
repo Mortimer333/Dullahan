@@ -13,6 +13,7 @@ use Dullahan\Asset\Adapter\Presentation\Event\Transport\Create\PostCreateAssetEv
 use Dullahan\Asset\Adapter\Presentation\Event\Transport\Create\PreCreateAssetEvent;
 use Dullahan\Asset\Adapter\Presentation\Event\Transport\Exist\AssetExistEvent;
 use Dullahan\Asset\Adapter\Presentation\Event\Transport\Flush\FlushAssetEvent;
+use Dullahan\Asset\Adapter\Presentation\Event\Transport\List\ListAssetEvent;
 use Dullahan\Asset\Adapter\Presentation\Event\Transport\Move\MoveAssetEvent;
 use Dullahan\Asset\Adapter\Presentation\Event\Transport\Move\PostMoveAssetEvent;
 use Dullahan\Asset\Adapter\Presentation\Event\Transport\Move\PreMoveAssetEvent;
@@ -49,6 +50,16 @@ class AssetEventFacadeService implements AssetServiceInterface
         $this->eventDispatcher->dispatch($event);
 
         return $event->exists();
+    }
+
+    public function list(?Context $context = null): array
+    {
+        $context ??= new Context();
+
+        $event = new ListAssetEvent($context);
+        $this->eventDispatcher->dispatch($event);
+
+        return $event->getAssets();
     }
 
     public function get(mixed $id, ?Context $context = null): Asset
@@ -185,13 +196,15 @@ class AssetEventFacadeService implements AssetServiceInterface
         return $after->getAsset();
     }
 
-    public function flush(): void
+    public function flush(?Context $context = null): void
     {
-        $this->eventDispatcher->dispatch(new FlushAssetEvent());
+        $context ??= new Context();
+        $this->eventDispatcher->dispatch(new FlushAssetEvent($context));
     }
 
-    public function clear(): void
+    public function clear(?Context $context = null): void
     {
-        $this->eventDispatcher->dispatch(new ClearAssetEvent());
+        $context ??= new Context();
+        $this->eventDispatcher->dispatch(new ClearAssetEvent($context));
     }
 }

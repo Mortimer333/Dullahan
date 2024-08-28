@@ -60,20 +60,26 @@ class EntityRetrievalController extends AbstractController
         $pagination = json_decode($request->get('pagination') ?? '[]', true);
         $dataSet = json_decode($request->get('dataSet') ?? '', true) ?: null;
         $inherit = json_decode($request->get('inherit') ?? '', true) ?: true;
+        // @TODO make special interface
         $repo = $this->entityUtilService->getRepository($class);
-        if (!method_exists($repo, 'list')) {
+        if (!method_exists($repo, 'list') || !method_exists($repo, 'total')) {
             throw new \Exception("This entity repository doesn't implement list retrieval", 400);
         }
 
+        $total = $repo->total($pagination);
         $entities = $repo->list($pagination);
         $serialized = [];
         foreach ($entities as $entity) {
             $serialized[] = $this->entityUtilService->serialize($entity, $dataSet, $inherit);
         }
 
-        return $this->httpUtilService->jsonResponse('Entities retrieved successfully', data: [
-            'entities' => $serialized,
-        ]);
+        return $this->httpUtilService->jsonResponse(
+            'Entities retrieved successfully',
+            data: [
+                'entities' => $serialized,
+            ],
+            total: $total,
+        );
     }
 
     #[Route(
@@ -121,8 +127,9 @@ class EntityRetrievalController extends AbstractController
                 $project,
                 $namespace,
             );
+            // @TODO make special interface
             $repo = $this->entityUtilService->getRepository($class);
-            if (!method_exists($repo, 'list')) {
+            if (!method_exists($repo, 'list') || !method_exists($repo, 'total')) {
                 throw new \Exception("This entity repository doesn't implement list retrieval", 400);
             }
 
@@ -136,7 +143,7 @@ class EntityRetrievalController extends AbstractController
                 'entities' => $serialized,
                 'limit' => HttpUtilService::getLimit(),
                 'offset' => HttpUtilService::getOffset(),
-                'total' => HttpUtilService::getTotal(),
+                'total' => $repo->total($pagination),
             ];
 
             HttpUtilService::setLimit(null);

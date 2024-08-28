@@ -10,6 +10,9 @@ use Dullahan\Main\Constraint\PaginationConstraint;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\Main\Service\ValidationService;
 
+/**
+ * @phpstan-type Pagination array<string, int|array<int|string, string|array<string|null>>|array<array<string>>|null>
+ */
 trait PaginationTrait
 {
     public function __construct(
@@ -31,24 +34,22 @@ trait PaginationTrait
      *
      * You can also pass callback which allows to add additional changes to the query builder
      *
-     * @param array<string, int|array<int|string, string|array<string|null>>|array<array<string>>|null> $pagination
+     * @param Pagination $pagination
      *
      * @return array<mixed>
      */
     public function list(array $pagination, ?callable $callback = null): array
     {
-        $total = $this->count($pagination, $callback);
-        HttpUtilService::setTotal($total);
-
-        $rows = $this->buildQuery($pagination, $callback)
+        return $this->buildQuery($pagination, $callback)
             ->getQuery()
             ->getResult()
         ;
-
-        return $rows;
     }
 
-    public function count(array $pagination, ?callable $callback = null): int
+    /**
+     * @param Pagination $pagination
+     */
+    public function total(array $pagination, ?callable $callback = null): int
     {
         /** @var array<string> $group */
         $group = $pagination['group'] ?? [];
@@ -71,9 +72,7 @@ trait PaginationTrait
         $rows = $this->buildQuery($pagination, $callback, false, false)
             ->select($select)
             ->getQuery()
-        ;
-
-        $rows = $rows->getResult()
+            ->getResult()
         ;
 
         $total = 0;

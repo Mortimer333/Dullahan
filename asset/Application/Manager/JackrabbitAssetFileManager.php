@@ -9,7 +9,6 @@ use Dullahan\Asset\Application\Exception\AssetExistsException;
 use Dullahan\Asset\Application\Exception\AssetNotFoundException;
 use Dullahan\Asset\Application\Exception\MissingParentException;
 use Dullahan\Asset\Application\Port\Infrastructure\AssetFileManagerInterface;
-use Dullahan\Asset\Application\Port\Presentation\AssetInterface;
 use Dullahan\Asset\Application\Port\Presentation\NewStructureInterface;
 use Dullahan\Asset\Domain\Structure;
 use Dullahan\Asset\Domain\StructureTypeEnum;

@@ -21,6 +21,45 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
     ) {
     }
 
+    public function list(
+        int $limit,
+        int $offset,
+        ?array $sort = null,
+        ?array $filter = null,
+        ?array $join = null,
+        ?array $group = null,
+    ): array {
+        /** @var array<AssetEntityInterface> $assets */
+        $assets = $this->em->getRepository(Asset::class)->list(
+            [
+                'limit' => $limit,
+                'offset' => $offset,
+                'sort' => $sort,
+                'filter' => $filter,
+                'join' => $join,
+                'group' => $group,
+            ],
+        );
+
+        return $assets;
+    }
+
+    public function count(
+        ?array $sort = null,
+        ?array $filter = null,
+        ?array $join = null,
+        ?array $group = null,
+    ): int {
+        return $this->em->getRepository(Asset::class)->total(
+            [
+                'sort' => $sort,
+                'filter' => $filter,
+                'join' => $join,
+                'group' => $group,
+            ],
+        );
+    }
+
     public function exists(string $path): bool
     {
         try {

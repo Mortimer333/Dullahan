@@ -6,6 +6,8 @@ namespace Dullahan\Asset\Domain;
 
 final class Context
 {
+    public const TYPE = 'type';
+
     /**
      * @param array<string, mixed> $context
      */

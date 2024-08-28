@@ -17,6 +17,11 @@ interface AssetServiceInterface
     public function exists(string $path, ?Context $context = null): bool;
 
     /**
+     * @return array<Asset>
+     */
+    public function list(?Context $context = null): array;
+
+    /**
      * @throws AssetNotFoundException
      */
     public function get(mixed $id, ?Context $context = null): Asset;
@@ -48,7 +53,7 @@ interface AssetServiceInterface
      */
     public function clone(Asset $asset, string $path, ?Context $context = null): Asset;
 
-    public function flush(): void;
+    public function flush(?Context $context = null): void;
 
-    public function clear(): void;
+    public function clear(?Context $context = null): void;
 }
