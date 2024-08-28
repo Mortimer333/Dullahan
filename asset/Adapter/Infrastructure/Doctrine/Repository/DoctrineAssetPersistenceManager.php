@@ -63,7 +63,7 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
     public function exists(string $path): bool
     {
         try {
-            $this->uniGet('path', rtrim($path, '/'));
+            $this->uniGet('fullPath', rtrim($path, '/'));
 
             return true;
         } catch (AssetEntityNotFoundException) {
@@ -78,7 +78,7 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
 
     public function getByPath(string $path): AssetEntityInterface
     {
-        return $this->uniGet('path', $path);
+        return $this->uniGet('fullPath', $path);
     }
 
     public function create(Structure $structure, User $owner): AssetEntityInterface
@@ -138,10 +138,12 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
         Asset $asset,
         Structure $structure,
     ): void {
-        $asset->setPath($structure->path);
+        $asset->setFullPath($structure->path);
+        $asset->setDirectory(dirname($structure->path));
         $asset->setName($structure->name);
         $asset->setWeight($structure->weight);
         $asset->setExtension($structure->extension);
         $asset->setMimeType($structure->mimeType);
+        $asset->setHidden('.' === ($asset->getName()[0] ?? null));
     }
 }

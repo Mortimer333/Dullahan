@@ -31,6 +31,6 @@ final class RetrieveListener
     {
         $entity = $this->assetPersistenceManager->get((int) $event->getId());
         $event->setEntity($entity);
-        $event->setStructure($this->assetFileManager->get($entity->getPath()));
+        $event->setStructure($this->assetFileManager->get($entity->getFullPath()));
     }
 }

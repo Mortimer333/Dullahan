@@ -12,7 +12,6 @@ use Dullahan\Asset\Application\Port\Infrastructure\AssetFileManagerInterface;
 use Dullahan\Asset\Application\Port\Presentation\NewStructureInterface;
 use Dullahan\Asset\Domain\Structure;
 use Dullahan\Asset\Domain\StructureTypeEnum;
-use Dullahan\Main\Service\Util\BinUtilService;
 use PHPCR\ItemExistsException;
 use PHPCR\NodeInterface;
 use PHPCR\PathNotFoundException;
@@ -59,14 +58,6 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
 
     public function upload(NewStructureInterface $file): Structure
     {
-        BinUtilService::logToTest('Upload', 'a');
-        BinUtilService::logToTest([
-            $file->getMimeType(),
-            $file->getName(),
-            $file->getOriginalName(),
-            $file->getPath(),
-            $file->getExtension(),
-        ], 'a');
         $name = $this->trimEnd($file->getName(), '.' . $file->getExtension()) . '.' . $file->getExtension();
         $path = rtrim($file->getPath(), '/') . '/';
         $fullPath = $path . $name;

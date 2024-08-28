@@ -13,7 +13,6 @@ use Dullahan\Asset\Domain\Asset;
 use Dullahan\Asset\Domain\Context;
 use Dullahan\Asset\Domain\Directory;
 use Dullahan\Asset\Domain\File;
-use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Thumbnail\Application\Port\Infrastructure\Database\Repository\ThumbnailPersisterInterface;
 use Dullahan\Thumbnail\Application\Port\Infrastructure\Database\Repository\ThumbnailRetrieveInterface;
 use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailGeneratorInterface;
@@ -82,10 +81,8 @@ final readonly class ThumbnailService implements ThumbnailServiceInterface
 
     public function generate(AssetAwareInterface $asset, string $fieldName): array
     {
-        BinUtilService::logToTest('Generate thumbnails: ' . $fieldName, 'a');
         $thumbnails = [];
         $mapped = $this->thumbnailMapper->mapField($asset, $fieldName);
-        BinUtilService::logToTest('Mapped: ' . count($mapped), 'a');
         foreach ($mapped as $config) {
             if ($thumbnail = $this->generateWithConfig($config)) {
                 $thumbnails[] = $thumbnail;

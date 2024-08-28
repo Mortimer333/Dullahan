@@ -14,8 +14,8 @@ use Dullahan\Main\Entity\UserData;
 use Dullahan\Main\Trait\UserDataRelationTrait;
 
 #[ORM\Entity(repositoryClass: AssetRepository::class)]
-// #[ORM\HasLifecycleCallbacks]
-#[ORM\Index(name: 'path_search_idx', fields: ['path', 'name', 'extension'])]
+#[ORM\Index(name: 'path_search_idx', fields: ['directory', 'name', 'extension'])]
+#[ORM\UniqueConstraint(name: 'full_path_unique_idx', fields: ['fullPath'])]
 class Asset implements AssetEntityInterface
 {
     use UserDataRelationTrait;
@@ -26,7 +26,10 @@ class Asset implements AssetEntityInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $path = null;
+    private ?string $fullPath = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $directory = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -39,6 +42,9 @@ class Asset implements AssetEntityInterface
 
     #[ORM\Column(nullable: true)]
     private ?int $weight = null;
+
+    #[ORM\Column]
+    private ?bool $hidden;
 
     /**
      * @var Collection<int, AssetPointerInterface>
@@ -57,6 +63,7 @@ class Asset implements AssetEntityInterface
     {
         $this->modified = new \DateTime();
         $this->pointers = new ArrayCollection();
+        $this->hidden = false;
     }
 
     public function getOwner(): ?User
@@ -69,14 +76,14 @@ class Asset implements AssetEntityInterface
         return $this->id;
     }
 
-    public function getPath(): string
+    public function getFullPath(): string
     {
-        return (string) $this->path;
+        return (string) $this->fullPath;
     }
 
-    public function setPath(string $path): self
+    public function setFullPath(string $fullPath): self
     {
-        $this->path = $path;
+        $this->fullPath = $fullPath;
 
         return $this;
     }
@@ -181,5 +188,25 @@ class Asset implements AssetEntityInterface
         $this->modified = $modified;
 
         return $this;
+    }
+
+    public function getDirectory(): ?string
+    {
+        return $this->directory;
+    }
+
+    public function setDirectory(?string $directory): void
+    {
+        $this->directory = $directory;
+    }
+
+    public function isHidden(): ?bool
+    {
+        return $this->hidden;
+    }
+
+    public function setHidden(?bool $hidden): void
+    {
+        $this->hidden = $hidden;
     }
 }

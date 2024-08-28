@@ -59,13 +59,13 @@ class AssetRepository extends ServiceEntityRepository
         return (int) $res;
     }
 
-    public function findByPath(string $path, string $name, string $etx): ?Asset
+    public function findByPath(string $directory, string $name, string $etx): ?Asset
     {
         return $this->createQueryBuilder('a')
-            ->where('a.path = :path')
+            ->where('a.directory = :directory')
             ->andWhere('a.name = :name')
             ->andWhere('a.extension = :ext')
-            ->setParameter('path', $path)
+            ->setParameter('directory', $directory)
             ->setParameter('name', $name)
             ->setParameter('ext', $etx)
             ->getQuery()

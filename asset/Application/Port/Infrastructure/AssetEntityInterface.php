@@ -11,7 +11,7 @@ interface AssetEntityInterface
 {
     public function getId(): mixed;
 
-    public function getPath(): string;
+    public function getFullPath(): string;
 
     public function getOwner(): ?User;
 

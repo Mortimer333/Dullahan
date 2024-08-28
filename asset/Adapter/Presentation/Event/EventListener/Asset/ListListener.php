@@ -53,7 +53,7 @@ final readonly class ListListener
         $sharedContext = new Context();
         foreach ($assets as $asset) {
             $found[] = new Asset(
-                $this->assetFileManager->get($asset->getPath()),
+                $this->assetFileManager->get($asset->getFullPath()),
                 $asset,
                 $sharedContext,
             );
