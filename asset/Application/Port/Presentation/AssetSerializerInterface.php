@@ -38,6 +38,7 @@ use Dullahan\Thumbnail\Domain\Thumbnail;
  *     src: string,
  *     weight: int,
  *     weight_readable: string,
+ *     mime_type: string,
  *     thumbnails: array<ThumbnailSerialized>,
  *     pointers_amount: int,
  * }

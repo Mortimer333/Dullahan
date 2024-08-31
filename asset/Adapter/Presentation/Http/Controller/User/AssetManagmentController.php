@@ -60,7 +60,7 @@ class AssetManagmentController extends AbstractController
         $path = $request->request->get('path');
         if (empty($path) || !is_string($path)) {
             return $this->httpUtilService->jsonResponse(
-                'Image is lacking appropriate path',
+                'Image lacks appropriate path',
                 Response::HTTP_UNPROCESSABLE_ENTITY,
                 false,
             );
@@ -74,7 +74,7 @@ class AssetManagmentController extends AbstractController
 
         if (empty($name) || !is_string($name)) {
             return $this->httpUtilService->jsonResponse(
-                'Image is lacking appropriate name',
+                'Image lacks appropriate name',
                 Response::HTTP_UNPROCESSABLE_ENTITY,
                 false,
             );

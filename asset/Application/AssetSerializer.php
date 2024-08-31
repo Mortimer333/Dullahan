@@ -44,6 +44,7 @@ class AssetSerializer implements AssetSerializerInterface
             'extension' => (string) $structure->extension,
             'src' => $this->assetUrlResolver->getUrl($asset),
             'weight' => (int) $structure->weight,
+            'mime_type' => (string) $structure->mimeType,
             'weight_readable' => FileUtilService::humanFilesize((int) $structure->weight),
             'thumbnails' => $thumbnails,
             'pointers_amount' => count($entity->getPointers()),
