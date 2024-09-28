@@ -65,7 +65,10 @@ class AssetManagmentController extends AbstractController
     )]
     public function list(Request $request): JsonResponse
     {
-        $pagination = json_decode($request->get('pagination') ?? '[]', true);
+        $pagination = $request->get('pagination') ?? [];
+        if (is_string($pagination)) {
+            $pagination = json_decode($pagination, true);
+        }
 
         return $this->httpUtilService->jsonResponse('Images retrieved successfully', data: [
             'images' => $this->assetMiddleware->list($pagination),

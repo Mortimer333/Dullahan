@@ -25,6 +25,7 @@ use Dullahan\Asset\Adapter\Presentation\Event\Transport\Replace\PreReplaceAssetE
 use Dullahan\Asset\Adapter\Presentation\Event\Transport\Replace\ReplaceAssetEvent;
 use Dullahan\Asset\Adapter\Presentation\Event\Transport\Retrieve\RetrieveByIdEvent;
 use Dullahan\Asset\Adapter\Presentation\Event\Transport\Retrieve\RetrieveByPathEvent;
+use Dullahan\Asset\Adapter\Presentation\Event\Transport\Validate\AsseNameEvent;
 use Dullahan\Asset\Application\Exception\AssetNotClonedException;
 use Dullahan\Asset\Application\Exception\AssetNotCreatedException;
 use Dullahan\Asset\Application\Exception\AssetNotFoundException;
@@ -50,6 +51,15 @@ class AssetEventFacadeService implements AssetServiceInterface
         $this->eventDispatcher->dispatch($event);
 
         return $event->exists();
+    }
+
+    public function validName(string $name, ?Context $context = null): bool
+    {
+        $context ??= new Context();
+        $event = new AsseNameEvent($name, $context);
+        $this->eventDispatcher->dispatch($event);
+
+        return $event->isValid();
     }
 
     public function list(?Context $context = null): array

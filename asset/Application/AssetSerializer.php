@@ -48,6 +48,7 @@ class AssetSerializer implements AssetSerializerInterface
             'weight_readable' => FileUtilService::humanFilesize((int) $structure->weight),
             'thumbnails' => $thumbnails,
             'pointers_amount' => count($entity->getPointers()),
+            'path' => $entity->getFullPath(),
         ];
     }
 

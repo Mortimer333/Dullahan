@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Adapter\Presentation\Http\Controller\User;
 
+use Dullahan\Asset\Adapter\Presentation\Http\Model\Body\CreateFolderDTO;
+use Dullahan\Asset\Adapter\Presentation\Http\Model\Body\MoveDTO;
 use Dullahan\Asset\Adapter\Presentation\Http\Model\Response\PAM\UploadImageResponse;
 use Dullahan\Asset\Application\Port\Presentation\AssetMiddlewareInterface;
+use Dullahan\Main\Attribute\RequestPayload;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;
@@ -138,6 +141,22 @@ class AssetManagmentController extends AbstractController
                 (string) $file->guessExtension(),
                 (string) $file->getMimeType(),
             ),
+        ]);
+    }
+
+    #[Route('/upload/folder', name: 'create_folder', methods: 'POST')]
+    public function createFolder(#[RequestPayload] CreateFolderDTO $dto): JsonResponse
+    {
+        return $this->httpUtilService->jsonResponse('Folder created successfully', data: [
+            'folder' => $this->assetMiddleware->folder($dto->parent ?? '', $dto->name ?? ''),
+        ]);
+    }
+
+    #[Route('/move', name: 'move', methods: 'POST')]
+    public function move(#[RequestPayload] MoveDTO $dto): JsonResponse
+    {
+        return $this->httpUtilService->jsonResponse('Asset moved successfully', data: [
+            'asset' => $this->assetMiddleware->move($dto->from ?? '', $dto->to ?? ''),
         ]);
     }
 

@@ -9,6 +9,7 @@ use Dullahan\Asset\Application\Port\Infrastructure\AssetFileManagerInterface;
 use Dullahan\Asset\Application\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Domain\Asset;
 use Dullahan\Asset\Domain\Context;
+use Dullahan\Main\Service\Util\HttpUtilService;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 final readonly class ListListener
@@ -47,6 +48,7 @@ final readonly class ListListener
 
         if ($context->hasProperty(self::COUNT)) {
             $event->setTotal($this->assetPersistenceManager->count($sort, $filter, $join, $group));
+            HttpUtilService::setTotal($event->getTotal());
         }
 
         $found = [];

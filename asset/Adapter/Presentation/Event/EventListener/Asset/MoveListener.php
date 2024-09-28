@@ -8,6 +8,7 @@ use Dullahan\Asset\Adapter\Presentation\Event\Transport\Move\MoveAssetEvent;
 use Dullahan\Asset\Application\Port\Infrastructure\AssetFileManagerInterface;
 use Dullahan\Asset\Application\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Domain\Asset;
+use Dullahan\Main\Service\Util\BinUtilService;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 final class MoveListener
@@ -23,6 +24,8 @@ final class MoveListener
     {
         $asset = $event->getAsset();
         $path = $event->getPath();
+        BinUtilService::logToTest('in event: ' . $asset->structure->path . '=>'.  $path, 'a');
+
         $moved = $this->assetFileManager->move($asset->structure, $path);
         $this->assetPersistenceManager->update($asset->entity, $moved);
         $event->setAsset(

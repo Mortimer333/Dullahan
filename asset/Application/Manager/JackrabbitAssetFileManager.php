@@ -30,7 +30,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
     public const TYPE_CONTENT_RESOURCE = 'nt:resource';
     public const TYPE_UNSTRUCTURED = 'nt:unstructured';
     public const TYPE_CONTENT_FILE = 'dl:file';
-    public const TYPE_CONTENT_FOLDER = 'nt:folder';
+    public const TYPE_CONTENT_FOLDER = 'dl:folder';
 
     /** @var \WeakMap<Structure, true> */
     protected \WeakMap $toRemove;
@@ -51,9 +51,13 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
         return $this->generateStructure($this->getNode($path));
     }
 
-    public function folder(string $path, string $name): Structure
+    public function folder(NewStructureInterface $folder): Structure
     {
-        return $this->generateStructure($this->newNode($path, $name, self::TYPE_CONTENT_FOLDER));
+        $node = $this->newNode($folder->getPath(), $folder->getName(), self::TYPE_CONTENT_FOLDER);
+        $node->addNode(self::NODE_NAME_PROPERTIES, self::TYPE_UNSTRUCTURED);
+        $this->setFolderProperties($node, $folder);
+
+        return $this->generateStructure($node);
     }
 
     public function upload(NewStructureInterface $file): Structure
@@ -66,7 +70,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
         }
 
         if (!$file->getResource()) {
-            return $this->folder($file->getPath(), $file->getName());
+            return $this->folder($file);
         }
 
         $node = $this->newNode($file->getPath(), $name, self::TYPE_CONTENT_FILE);
@@ -225,6 +229,13 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
     {
         // Clear is not present in the interface but is implemented on class, and we need it
         $this->session->clear(); // @phpstan-ignore-line
+    }
+
+    protected function setFolderProperties(NodeInterface $node, NewStructureInterface $folder): void
+    {
+        $properties = $node->getNode(self::NODE_NAME_PROPERTIES);
+
+        $properties->setProperty(self::PROPERTY_SIZE, $folder->getSize());
     }
 
     protected function setFileProperties(NodeInterface $node, NewStructureInterface $file): void

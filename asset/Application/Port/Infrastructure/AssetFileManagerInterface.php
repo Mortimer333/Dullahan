@@ -22,12 +22,10 @@ interface AssetFileManagerInterface
     public function exists(string $path): bool;
 
     /**
-     * @param string $path Absolute path to the parent
-     *
      * @throws AssetExistsException
      * @throws AssetNotFoundException
      */
-    public function folder(string $path, string $name): Structure;
+    public function folder(NewStructureInterface $file): Structure;
 
     /**
      * @throws AssetExistsException

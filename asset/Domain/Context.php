@@ -39,6 +39,14 @@ final class Context
         return (bool) ($this->context[$name] ?? false);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getProperties(): array
+    {
+        return $this->context;
+    }
+
     public function getProperty(string $name, mixed $default = null): mixed
     {
         return $this->context[$name] ?? $default;

@@ -41,6 +41,7 @@ use Dullahan\Thumbnail\Domain\Thumbnail;
  *     mime_type: string,
  *     thumbnails: array<ThumbnailSerialized>,
  *     pointers_amount: int,
+ *     path: string,
  * }
  */
 interface AssetSerializerInterface

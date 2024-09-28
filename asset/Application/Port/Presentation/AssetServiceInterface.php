@@ -16,6 +16,8 @@ interface AssetServiceInterface
 {
     public function exists(string $path, ?Context $context = null): bool;
 
+    public function validName(string $name, ?Context $context = null): bool;
+
     /**
      * @return array<Asset>
      */
