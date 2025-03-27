@@ -174,7 +174,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
             }
             $this->move(
                 $asset,
-                dirname($asset->path) . implode('.', $name) . '.' . $file->getExtension(),
+                rtrim(dirname($asset->path), '/') . '/' . implode('.', $name) . '.' . $file->getExtension(),
             );
         }
 

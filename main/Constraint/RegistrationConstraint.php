@@ -25,7 +25,7 @@ class RegistrationConstraint
     public static function getPasswordRepeat(string $password = 'repeated password'): array
     {
         return [
-            new Assert\NotBlank(['message' => 'Missing ' . $password]),
+            new Assert\NotBlank(['message' => 'Cannot be empty']),
             new Assert\Type([
                 'type' => 'string',
                 'message' => ucfirst($password) . ' must be a string',
@@ -43,7 +43,7 @@ class RegistrationConstraint
     public static function getPassword(string $password = 'password'): array
     {
         return [
-            new Assert\NotBlank(['message' => 'Missing ' . $password]),
+            new Assert\NotBlank(['message' => 'Cannot be empty']),
             new Assert\Type([
                 'type' => 'string',
                 'message' => ucfirst($password) . ' must be a string',
@@ -61,7 +61,7 @@ class RegistrationConstraint
     public static function getUsername(): array
     {
         return [
-            new Assert\NotBlank(['message' => 'Missing username']),
+            new Assert\NotBlank(['message' => 'Cannot be empty']),
             new Assert\Type([
                 'type' => 'string',
                 'message' => 'Name of the user must be a string',
@@ -81,7 +81,7 @@ class RegistrationConstraint
     public static function getMail(): array
     {
         return [
-            new Assert\NotBlank(['message' => 'Missing email']),
+            new Assert\NotBlank(['message' => 'Cannot be empty']),
             new Assert\Type([
                 'type' => 'string',
                 'message' => 'Email of the user must be a string',

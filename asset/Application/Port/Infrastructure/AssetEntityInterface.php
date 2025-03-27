@@ -23,4 +23,8 @@ interface AssetEntityInterface
     public function addPointer(AssetPointerInterface $pointer): self;
 
     public function removePointer(AssetPointerInterface $pointer): self;
+
+    public function getModified(): ?\DateTimeInterface;
+
+    public function setModified(\DateTimeInterface $modified): self;
 }

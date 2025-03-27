@@ -13,7 +13,7 @@ class BigAssetServer implements AssetServerInterface
     {
         header('Content-Description: File Transfer');
         header('Content-Type: ' . $asset->mimeType);
-        header('Content-Disposition: inline; filename="' . $asset->name . '"');
+        header('Content-Disposition: attachment; filename="' . $asset->name . '.' . $asset->extension . '"');
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');

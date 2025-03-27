@@ -18,6 +18,7 @@ use OpenApi\Attributes as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[SWG\Tag('Project Asset Management')]
@@ -34,9 +35,11 @@ class AssetManagmentController extends AbstractController
     }
 
     #[Route('/{id<\d+>}/jackrabbit', name: JackrabbitUrlResolver::IMAGE_PATH_NAME, methods: 'GET')]
-    public function serveJackrabbit(int $id): void
+    public function serveJackrabbit(int $id): Response
     {
         $this->assetServer->serve($this->assetService->get($id)->structure);
+
+        return new Response('');
     }
 
     #[Route('/{id<\d+>}', name: 'api_asset_management_get', methods: 'GET')]

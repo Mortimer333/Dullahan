@@ -101,6 +101,18 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
     public function remove(AssetEntityInterface $asset): void
     {
         $this->em->remove($asset);
+        $qb = $this->em->createQueryBuilder();
+        $likePath = rtrim($asset->getFullPath(), '/') . '/' . '%';
+        $query = $qb->delete(Asset::class, 'a')
+            ->where('a.fullPath LIKE :path')
+            ->setParameter('path', $likePath)
+            ->getQuery()
+        ;
+        $query->execute();
+        // Clearing whole runtime cache after removal of several assets, as it is quicker and easier to do.
+        // Otherwise, we would have to iterate over all items and generate key for each of them and in the end,
+        // clear it anyway, after the request has ended.
+        $this->runtimeCache->clear();
     }
 
     public function flush(): void
@@ -138,6 +150,17 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
         Asset $asset,
         Structure $structure,
     ): void {
+        // @TODO this is a very stupid solution - we are updating dependencies before the actual parent is updated
+        //      and outside of the transaction - if something fails we have corrupted our database
+        //      Our reasoning behind saving fullpath and directory in the db is to make searching easier,
+        //      But we could achive the same using View with calculated values and inner joining it with Assets.
+        //      Possible solution: make directories and fullpaths a separate table and move this resposibilities to
+        //      MySql trigger - https://dev.mysql.com/doc/refman/8.4/en/trigger-syntax.html.
+        if ($asset->getId()) {
+            $this->updateChildrenFullPaths($asset, $structure);
+        }
+
+        $asset->setModified(new \DateTime());
         $asset->setFullPath($structure->path);
         $asset->setDirectory(dirname($structure->path));
         $asset->setName($structure->name);
@@ -145,5 +168,32 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
         $asset->setExtension($structure->extension);
         $asset->setMimeType($structure->mimeType);
         $asset->setHidden('.' === ($asset->getName()[0] ?? null));
+    }
+
+    private function updateChildrenFullPaths(Asset $asset, Structure $structure): void
+    {
+        $genMainQuery = fn() => $this->em->createQueryBuilder()
+            ->update(Asset::class, 'a')
+            ->set('a.fullPath', 'REPLACE(a.fullPath, :oldPath, :pathToReplace)')
+            ->set('a.directory', 'REPLACE(a.directory, :oldPath, :pathToReplace)')
+            ->where('a.fullPath LIKE :oldPathLike')
+            ->orWhere('a.fullPath = :oldPathFull')
+            ->setParameter('pathToReplace', rtrim($structure->path , '/'))
+            ->setParameter('oldPath', rtrim($asset->getFullPath(), '/'))
+            ->setParameter('oldPathFull', rtrim($asset->getFullPath(), '/'))
+            ->setParameter('oldPathLike', rtrim($asset->getFullPath(), '/') . '/' . '%')
+        ;
+
+        $query = $genMainQuery()
+            ->andWhere('a.extension IS NULL')
+            ->getQuery()
+        ;
+        $query->execute();
+
+        $query = $genMainQuery()
+            ->andWhere('a.extension IS NOT NULL')
+            ->getQuery()
+        ;
+        $query->execute();
     }
 }

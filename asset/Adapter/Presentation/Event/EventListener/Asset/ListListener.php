@@ -38,8 +38,8 @@ final readonly class ListListener
         $group = $context->getProperty(self::GROUP);
 
         $assets = $this->assetPersistenceManager->list(
-            $context->getProperty(self::LIMIT, 100),
-            $context->getProperty(self::OFFSET, 0),
+            (int) $context->getProperty(self::LIMIT, 100),
+            (int) $context->getProperty(self::OFFSET, 0),
             $sort,
             $filter,
             $join,
