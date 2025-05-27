@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Application\Port\Infrastructure;
 
-use Dullahan\Asset\Entity\Asset;
+use Dullahan\Asset\Domain\Entity\Asset;
 
 interface AssetAwareInterface
 {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Asset\Adapter\Infrastructure\Doctrine\Mapper;
 
 use Dullahan\Asset\Application\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Asset\Entity\AssetPointer;
+use Dullahan\Asset\Domain\Entity\AssetPointer;
 
 /**
  * @TODO What's the point of this being static?

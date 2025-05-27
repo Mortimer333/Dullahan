@@ -1,10 +1,10 @@
 <?php
 
-namespace Dullahan\Thumbnail\Entity;
+namespace Dullahan\Thumbnail\Domain\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Dullahan\Asset\Application\Port\Presentation\AssetPointerInterface;
-use Dullahan\Asset\Entity\AssetPointer;
+use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Thumbnail\Adapter\Infrastructure\Database\Repository\AssetThumbnailPointerRepository;
 use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailPointerInterface;
 

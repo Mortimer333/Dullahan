@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Thumbnail\Application\Port\Presentation;
 
 use Dullahan\Asset\Application\Port\Presentation\AssetPointerInterface;
-use Dullahan\Thumbnail\Entity\Thumbnail;
+use Dullahan\Thumbnail\Domain\Entity\Thumbnail;
 
 interface ThumbnailPointerInterface
 {

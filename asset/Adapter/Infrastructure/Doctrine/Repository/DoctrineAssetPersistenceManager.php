@@ -8,8 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Asset\Application\Exception\AssetEntityNotFoundException;
 use Dullahan\Asset\Application\Port\Infrastructure\AssetEntityInterface;
 use Dullahan\Asset\Application\Port\Infrastructure\AssetPersistenceManagerInterface;
+use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Domain\Structure;
-use Dullahan\Asset\Entity\Asset;
 use Dullahan\Main\Entity\User;
 use Dullahan\Main\Service\RuntimeCachePoolService;
 

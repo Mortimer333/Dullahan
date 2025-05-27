@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset;
 
+use Dullahan\Asset\Adapter\DependencyInjection\DoctrineMappingPass;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -26,7 +27,11 @@ class DullahanAssetBundle extends AbstractBundle
         ContainerConfigurator $container,
         ContainerBuilder $builder,
     ): void {
-        //        $container->import('../config/services.yaml');
-        //        $container->import('../config/doctrine.yaml');
+    }
+
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+        $container->addCompilerPass(new DoctrineMappingPass());
     }
 }

@@ -9,7 +9,7 @@ use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Events;
 use Dullahan\Asset\Adapter\Infrastructure\Doctrine\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Application\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Asset\Entity\AssetPointer;
+use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Main\Service\Util\EntityUtilService;
 
 #[AsDoctrineListener(event: Events::postLoad)]

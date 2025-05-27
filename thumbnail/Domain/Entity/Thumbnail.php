@@ -1,11 +1,11 @@
 <?php
 
-namespace Dullahan\Thumbnail\Entity;
+namespace Dullahan\Thumbnail\Domain\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Dullahan\Asset\Entity\Asset;
+use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Thumbnail\Adapter\Infrastructure\Database\Repository\ThumbnailRepository;
 use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailEntityInterface;
 

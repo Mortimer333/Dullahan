@@ -12,8 +12,8 @@ use Dullahan\Asset\Domain\Asset;
 use Dullahan\Main\Service\Util\FileUtilService;
 use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailServiceInterface;
 use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailUrlResolverInterface;
+use Dullahan\Thumbnail\Domain\Entity\AssetThumbnailPointer;
 use Dullahan\Thumbnail\Domain\Thumbnail;
-use Dullahan\Thumbnail\Entity\AssetThumbnailPointer;
 
 /**
  * @TODO separate thumbnail service (by refactoring functionality to be Even based)

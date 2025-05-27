@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Dullahan\Thumbnail\Application\Port\Presentation;
 
-use Dullahan\Asset\Entity\Asset;
-use Dullahan\Thumbnail\Entity\AssetThumbnailPointer;
+use Dullahan\Asset\Domain\Entity\Asset;
+use Dullahan\Thumbnail\Domain\Entity\AssetThumbnailPointer;
 
 interface ThumbnailEntityInterface
 {

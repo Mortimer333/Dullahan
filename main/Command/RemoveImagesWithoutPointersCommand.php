@@ -6,7 +6,7 @@ namespace Dullahan\Main\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Asset\Application\Port\Presentation\AssetServiceInterface;
-use Dullahan\Asset\Entity\Asset;
+use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Main\Service\TraceService;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Psr\Log\LoggerInterface;

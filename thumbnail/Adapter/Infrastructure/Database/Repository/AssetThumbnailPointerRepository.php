@@ -4,7 +4,7 @@ namespace Dullahan\Thumbnail\Adapter\Infrastructure\Database\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Dullahan\Thumbnail\Entity\AssetThumbnailPointer;
+use Dullahan\Thumbnail\Domain\Entity\AssetThumbnailPointer;
 
 /**
  * @extends ServiceEntityRepository<AssetThumbnailPointer>

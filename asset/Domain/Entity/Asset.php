@@ -1,6 +1,6 @@
 <?php
 
-namespace Dullahan\Asset\Entity;
+namespace Dullahan\Asset\Domain\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

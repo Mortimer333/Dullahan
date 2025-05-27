@@ -6,7 +6,7 @@ namespace Dullahan\Main\Trait\EntityUtil;
 
 use Dullahan\Asset\Application\Attribute\Asset;
 use Dullahan\Asset\Application\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Asset\Entity\AssetPointer;
+use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Main\Contract\InheritanceAwareInterface;
 
 trait EntityUtilRemoveTrait

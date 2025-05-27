@@ -5,8 +5,6 @@ namespace Dullahan\Thumbnail\Adapter\Infrastructure\Database\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Dullahan\Asset\Adapter\Infrastructure\Doctrine\Repository\AssetPointerRepository;
-use Dullahan\Asset\Application\Attribute\Asset;
-use Dullahan\Asset\Application\Port\Infrastructure\AssetAwareInterface;
 use Dullahan\Asset\Application\Port\Infrastructure\AssetEntityInterface;
 use Dullahan\Asset\Application\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Application\Port\Presentation\AssetPointerInterface;
@@ -17,9 +15,9 @@ use Dullahan\Thumbnail\Application\Port\Infrastructure\Database\Repository\Thumb
 use Dullahan\Thumbnail\Application\Port\Infrastructure\Database\Repository\ThumbnailRetrieveInterface;
 use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailEntityInterface;
 use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailPointerInterface;
+use Dullahan\Thumbnail\Domain\Entity\AssetThumbnailPointer;
+use Dullahan\Thumbnail\Domain\Entity\Thumbnail;
 use Dullahan\Thumbnail\Domain\ThumbnailConfig;
-use Dullahan\Thumbnail\Entity\AssetThumbnailPointer;
-use Dullahan\Thumbnail\Entity\Thumbnail;
 
 /**
  * @extends ServiceEntityRepository<Thumbnail>
@@ -183,7 +181,7 @@ implements ThumbnailPersisterInterface, ThumbnailRetrieveInterface
 
         $thumbnail = new Thumbnail();
         $assetEntity = $this->getEntityManager()
-            ->getRepository(\Dullahan\Asset\Entity\Asset::class)
+            ->getRepository(\Dullahan\Asset\Domain\Entity\Asset::class)
             ->find($asset->getId())
         ;
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Asset\Application\Manager;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Asset\Entity\Asset;
+use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Main\Contract\Marker\UserServiceInterface;
 use Dullahan\Main\Entity\UserData;
 use Dullahan\Main\Service\CacheService;

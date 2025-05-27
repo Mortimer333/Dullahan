@@ -6,7 +6,7 @@ namespace Dullahan\Main\Trait\EntityUtil;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Dullahan\Asset\Entity\AssetPointer;
+use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Main\Contract\InheritanceAwareInterface;
 use Dullahan\Main\Doctrine\Mapper\EntityParentMapper;
 use Dullahan\Main\Service\CacheService;

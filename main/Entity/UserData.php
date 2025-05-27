@@ -7,7 +7,7 @@ namespace Dullahan\Main\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Dullahan\Asset\Entity\Asset;
+use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Main\Attribute\Field;
 use Dullahan\Main\Repository\UserDataRepository;
 

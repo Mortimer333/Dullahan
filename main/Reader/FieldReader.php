@@ -6,7 +6,7 @@ namespace Dullahan\Main\Reader;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Dullahan\Asset\Entity\AssetPointer;
+use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Main\Attribute\Field;
 use Dullahan\Main\Service\CacheService;
 

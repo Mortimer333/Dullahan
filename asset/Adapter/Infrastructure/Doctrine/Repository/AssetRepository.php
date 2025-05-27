@@ -4,7 +4,7 @@ namespace Dullahan\Asset\Adapter\Infrastructure\Doctrine\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Dullahan\Asset\Entity\Asset;
+use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Main\Entity\UserData;
 use Dullahan\Main\Service\ValidationService;
 use Dullahan\Main\Trait\PaginationTrait;

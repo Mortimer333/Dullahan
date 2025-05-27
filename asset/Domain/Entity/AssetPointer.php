@@ -1,6 +1,6 @@
 <?php
 
-namespace Dullahan\Asset\Entity;
+namespace Dullahan\Asset\Domain\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping as ORM;
