@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Dullahan\Asset\Domain\Entity\Asset;
-use Dullahan\Thumbnail\Adapter\Infrastructure\Database\Repository\ThumbnailRepository;
-use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailEntityInterface;
+use Dullahan\Thumbnail\Adapter\Symfony\Infrastructure\Database\Repository\ThumbnailRepository;
+use Dullahan\Thumbnail\Port\Presentation\ThumbnailEntityInterface;
 
 #[ORM\Entity(repositoryClass: ThumbnailRepository::class)]
 #[ORM\Index(name: 'duplicate_find_idx', fields: ['settings', 'asset'])]

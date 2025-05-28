@@ -6,11 +6,14 @@ namespace Dullahan\Asset\Application\Trait;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Dullahan\Asset\Application\Port\Infrastructure\AssetAwareInterface;
 use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
+use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
 use ICanBoogie\Inflector;
 
+/**
+ * @TODO Figure out where this should go and how to make it easier to test (ie. ICanBoogie\Inflector initialization)
+ */
 trait AssetHelperTrait
 {
     public function setAsset(string $column, Asset $asset): self

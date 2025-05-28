@@ -6,7 +6,6 @@ services:
     exclude:
       - '../asset/Application/Attribute'
       - '../asset/Application/Exception'
-      - '../asset/Domain'
 
   Dullahan\Thumbnail\:
     autowire: true
@@ -16,7 +15,6 @@ services:
       - '../thumbnail/Entity/'
       - '../thumbnail/Application/Attribute'
       - '../thumbnail/Application/Exception'
-      - '../thumbnail/Domain'
 
   Dullahan\Main\:
     autowire: true

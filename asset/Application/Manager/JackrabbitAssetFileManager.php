@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Application\Manager;
 
-use Doctrine\ODM\PHPCR\DocumentManagerInterface;
-use Dullahan\Asset\Application\Exception\AssetExistsException;
-use Dullahan\Asset\Application\Exception\AssetNotFoundException;
-use Dullahan\Asset\Application\Exception\MissingParentException;
-use Dullahan\Asset\Application\Port\Infrastructure\AssetFileManagerInterface;
-use Dullahan\Asset\Application\Port\Presentation\NewStructureInterface;
+use Doctrine\ODM\PHPCR\DocumentManagerInterface; // @TODO create wrapper interface for this
+use Dullahan\Asset\Domain\Exception\AssetExistsException;
+use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
+use Dullahan\Asset\Domain\Exception\MissingParentException;
 use Dullahan\Asset\Domain\Structure;
 use Dullahan\Asset\Domain\StructureTypeEnum;
+use Dullahan\Asset\Port\Infrastructure\AssetFileManagerInterface;
+use Dullahan\Asset\Port\Presentation\NewStructureInterface;
+// Intentional - we are commiting ourselves to this library
 use PHPCR\ItemExistsException;
 use PHPCR\NodeInterface;
 use PHPCR\PathNotFoundException;
@@ -307,18 +308,6 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
         }
     }
 
-    //    protected function updateNodeProperties(NodeInterface $node, UploadedFileInterface $file, Asset $asset): void
-    //    {
-    //        $this->updateEntity(
-    //            $asset,
-    //            $node->getPath(),
-    //            $node->getName(),
-    //            $file->getSize(),
-    //            $file->getExtension(),
-    //            $file->getMimeType(),
-    //        );
-    //    }
-
     protected function getNode(string $path): NodeInterface
     {
         try {
@@ -327,26 +316,6 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
             throw new AssetNotFoundException($path);
         }
     }
-
-    //    protected function generateJackrabbitAssetProxy(AssetInterface $asset, \Closure $nodeDecorator): JackrabbitAsset
-    //    {
-    //        return new JackrabbitAsset(
-    //            $asset,
-    //            $nodeDecorator,
-    //            function (JackrabbitAsset $asset): ?JackrabbitAsset {
-    //                if ('/' === $asset->getPath()) {
-    //                    return null;
-    //                }
-    //
-    //                return $this->getByPath(dirname($asset->getPath()));
-    //            },
-    //            function (JackrabbitAsset $asset, ?string $nameMatch = null, ?string $typeMatch = null): array|\Iterator {
-    //                foreach ($this->getNode($asset->getPath())->getNodes($nameMatch, $typeMatch) as $item) {
-    //                    yield $this->getByPath($item->getPath());
-    //                }
-    //            },
-    //        );
-    //    }
 
     protected function regenerateNode(string $path): NodeInterface
     {

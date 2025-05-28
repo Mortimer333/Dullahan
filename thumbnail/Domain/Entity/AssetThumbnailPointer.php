@@ -3,10 +3,10 @@
 namespace Dullahan\Thumbnail\Domain\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Dullahan\Asset\Application\Port\Presentation\AssetPointerInterface;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
-use Dullahan\Thumbnail\Adapter\Infrastructure\Database\Repository\AssetThumbnailPointerRepository;
-use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailPointerInterface;
+use Dullahan\Asset\Port\Presentation\AssetPointerInterface;
+use Dullahan\Thumbnail\Adapter\Symfony\Infrastructure\Database\Repository\AssetThumbnailPointerRepository;
+use Dullahan\Thumbnail\Port\Presentation\ThumbnailPointerInterface;
 
 #[ORM\Entity(repositoryClass: AssetThumbnailPointerRepository::class)]
 class AssetThumbnailPointer implements ThumbnailPointerInterface

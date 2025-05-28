@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Application\Server;
 
-use Dullahan\Asset\Application\Port\Presentation\AssetServerInterface;
 use Dullahan\Asset\Domain\Structure;
+use Dullahan\Asset\Port\Presentation\AssetServerInterface;
 
 class BigAssetServer implements AssetServerInterface
 {

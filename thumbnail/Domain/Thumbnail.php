@@ -6,7 +6,7 @@ namespace Dullahan\Thumbnail\Domain;
 
 use Dullahan\Asset\Domain\Context;
 use Dullahan\Asset\Domain\Structure;
-use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailEntityInterface;
+use Dullahan\Thumbnail\Port\Presentation\ThumbnailEntityInterface;
 
 final readonly class Thumbnail
 {

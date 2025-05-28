@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Dullahan\Main\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Asset\Application\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Asset\Application\Port\Presentation\AssetServiceInterface;
 use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
+use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
+use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Service\CacheService;
 use Dullahan\Main\Service\TraceService;
 use Dullahan\Main\Service\Util\BinUtilService;
-use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailServiceInterface;
+use Dullahan\Thumbnail\Port\Presentation\ThumbnailServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;

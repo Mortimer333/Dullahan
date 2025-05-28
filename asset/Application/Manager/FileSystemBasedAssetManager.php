@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Application\Manager;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityManagerInterface; // @TODO create a wrapper interface
 use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Main\Contract\Marker\UserServiceInterface;
 use Dullahan\Main\Entity\UserData;
@@ -13,7 +13,7 @@ use Dullahan\Main\Service\ProjectManagerService;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\FileUtilService;
 use Dullahan\Main\Service\ValidationService;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\UploadedFile; // @TODO create a wrapper interface
 
 /**
  * @internal Do not use, incomplete manager

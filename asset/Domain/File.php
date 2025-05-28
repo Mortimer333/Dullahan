@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Domain;
 
-use Dullahan\Asset\Application\Port\Presentation\NewStructureInterface;
+use Dullahan\Asset\Port\Presentation\NewStructureInterface;
 
 class File implements NewStructureInterface
 {

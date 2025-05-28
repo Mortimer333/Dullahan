@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Application;
 
-use Dullahan\Asset\Application\Port\Presentation\AssetPointerInterface;
-use Dullahan\Asset\Application\Port\Presentation\AssetSerializerInterface;
-use Dullahan\Asset\Application\Port\Presentation\AssetServiceInterface;
-use Dullahan\Asset\Application\Port\Presentation\AssetUrlResolverInterface;
 use Dullahan\Asset\Domain\Asset;
+use Dullahan\Asset\Port\Presentation\AssetPointerInterface;
+use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
+use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
+use Dullahan\Asset\Port\Presentation\AssetUrlResolverInterface;
 use Dullahan\Main\Service\Util\FileUtilService;
-use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailServiceInterface;
-use Dullahan\Thumbnail\Application\Port\Presentation\ThumbnailUrlResolverInterface;
 use Dullahan\Thumbnail\Domain\Entity\AssetThumbnailPointer;
 use Dullahan\Thumbnail\Domain\Thumbnail;
+use Dullahan\Thumbnail\Port\Presentation\ThumbnailServiceInterface;
+use Dullahan\Thumbnail\Port\Presentation\ThumbnailUrlResolverInterface;
 
 /**
  * @TODO separate thumbnail service (by refactoring functionality to be Even based)

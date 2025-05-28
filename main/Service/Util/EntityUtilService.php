@@ -6,8 +6,8 @@ namespace Dullahan\Main\Service\Util;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Dullahan\Asset\Application\Port\Presentation\AssetSerializerInterface;
-use Dullahan\Asset\Application\Port\Presentation\AssetServiceInterface;
+use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
+use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Contract\InheritanceAwareInterface;
 use Dullahan\Main\Contract\ManageableInterface;
 use Dullahan\Main\Contract\Marker\UserServiceInterface;

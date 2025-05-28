@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Domain;
 
-use Dullahan\Asset\Application\Port\Infrastructure\AssetEntityInterface;
+use Dullahan\Asset\Port\Infrastructure\AssetEntityInterface;
 
 final readonly class Asset
 {
