@@ -4,17 +4,20 @@ services:
     autoconfigure: true
     resource: '../asset/'
     exclude:
-      - '../asset/Application/Attribute'
-      - '../asset/Application/Exception'
+      - '../asset/Adapter/Symfony/DependencyInjection'
+      - '../asset/Domain/Entity/'
+      - '../asset/Domain/Attribute'
+      - '../asset/Domain/Exception'
 
   Dullahan\Thumbnail\:
     autowire: true
     autoconfigure: true
     resource: '../thumbnail/'
     exclude:
-      - '../thumbnail/Entity/'
-      - '../thumbnail/Application/Attribute'
-      - '../thumbnail/Application/Exception'
+      - '../thumbnail/Adapter/Symfony/DependencyInjection'
+      - '../thumbnail/Domain/Entity/'
+      - '../thumbnail/Domain/Attribute'
+      - '../thumbnail/Domain/Exception'
 
   Dullahan\Main\:
     autowire: true
