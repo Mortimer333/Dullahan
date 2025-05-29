@@ -6,7 +6,7 @@ namespace Dullahan\Main\Contract;
 
 /**
  * Copy of Symfony\Contracts\EventDispatcher\EventDispatcherInterface to have our own interface without Symfony
- * dependency
+ * dependency.
  */
 interface EventDispatcherInterface
 {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dullahan\Main\Service;
 
 use Dullahan\Main\Contract\EventDispatcherInterface;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcherInterface;
 
 class EventDispatcher implements EventDispatcherInterface

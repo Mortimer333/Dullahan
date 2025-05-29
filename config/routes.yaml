@@ -2,17 +2,28 @@ controllers:
     resource: ../main/Controller/
     type: attribute
     prefix: '/_'
-api.user.controllers:
+main.user.controllers:
     resource: ../main/Controller/User
     type: attribute
     prefix: '/_/user'
-api.user.super.controllers:
-    resource: ../main/Controller/Admin
+
+# USER
+api.user.controllers:
+    resource: ../user/Adapter/Symfony/Presentation/Http/Controller
     type: attribute
-    prefix: '/_/user/super'
+    prefix: '/_'
+api.user.secure.controllers:
+    resource: ../user/Adapter/Symfony/Presentation/Http/Controller/User
+    type: attribute
+    prefix: '/_/user'
+#api.user.super.controllers:
+#    resource: ../user/Adapter/Symfony/Presentation/Http/Controller/Admin
+#    type: attribute
+#    prefix: '/_/user/super'
 app_user_logout:
     path: /_/user/logout
     methods: GET
+#> USER
 
 # ASSET
 api.asset.controllers:

@@ -8,10 +8,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping;
 use Doctrine\Persistence\Proxy;
 use Dullahan\Main\Contract\InheritanceAwareInterface;
-use Dullahan\Main\Contract\ManageableInterface;
-use Dullahan\Main\Contract\OwnerlessManageableInterface;
-use Dullahan\Main\Contract\TransferableOwnerManageableInterface;
 use Dullahan\User\Domain\Entity\User;
+use Dullahan\User\Port\Domain\ManageableInterface;
+use Dullahan\User\Port\Domain\OwnerlessManageableInterface;
+use Dullahan\User\Port\Domain\TransferableOwnerManageableInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 trait EntityUtilHelperTrait

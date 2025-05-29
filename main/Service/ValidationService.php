@@ -9,7 +9,6 @@ use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\Main\Trait\Validate\EntityValidationTrait;
 use Dullahan\Main\Trait\Validate\SymfonyValidationHelperTrait;
 use Dullahan\User\Port\Application\UserServiceInterface;
-use Dullahan\User\Port\Application\UserValidationServiceInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationService

@@ -1,6 +1,6 @@
 <?php
 
-namespace Dullahan\Main\Event;
+namespace Dullahan\Main\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Dullahan\Main\Repository\InheritEmptyRepository;

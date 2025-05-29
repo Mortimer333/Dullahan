@@ -7,9 +7,9 @@ namespace Dullahan\Main\Trait\EntityUtil;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Dullahan\Main\Contract\ManageableInterface;
 use Dullahan\Main\Enum\FieldTypeEnum;
 use Dullahan\Main\Service\Helper\CastHelper;
+use Dullahan\User\Port\Domain\ManageableInterface;
 use ICanBoogie\Inflector;
 
 trait EntityUtilSetterTrait

@@ -17,7 +17,7 @@ class DoctrineMappingPass implements CompilerPassInterface
         }
 
         $namespace = 'Dullahan\\Asset\\Domain\\Entity';
-        $path = realpath(dirname(__FILE__) . '/../../../../Domain/Entity');
+        $path = (string) realpath(dirname(__FILE__) . '/../../../../Domain/Entity');
         $mappingDriver = DoctrineOrmMappingsPass::createAttributeMappingDriver(
             [$namespace],
             [$path],

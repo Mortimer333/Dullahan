@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dullahan\Main\Model;
 
 use Dullahan\Main\Contract\RequestInterface;
-use SplFileInfo;
 
 /**
  * @TODO Are we sure about mutability of this class? I mean Symfony does it but shouldn't this be immutable? It is not
@@ -14,10 +13,10 @@ use SplFileInfo;
 class Request implements RequestInterface
 {
     /**
-     * @param array<string, string|null|(string|null)[]> $headers
-     * @param array<string, mixed> $query
-     * @param array<string, mixed> $cookies
-     * @param array<string, SplFileInfo> $files
+     * @param array<string, string|(string|null)[]|null> $headers
+     * @param array<string, mixed>                       $query
+     * @param array<string, mixed>                       $cookies
+     * @param array<string, \SplFileInfo>                $files
      */
     public function __construct(
         private bool $isSecure,
@@ -30,6 +29,12 @@ class Request implements RequestInterface
         private array $cookies = [],
         private array $files = [],
     ) {
+        $flatHeaders = [];
+        foreach ($headers as $key => $header) {
+            $flatHeaders[$key] = is_array($header) && 1 === count($header) ? $header[0] : $header;
+        }
+
+        $this->headers = $flatHeaders;
     }
 
     public function getHost(): string
@@ -51,7 +56,7 @@ class Request implements RequestInterface
 
     public function getSchema(): string
     {
-        return $this->isSecure ? 'https': 'http';
+        return $this->isSecure ? 'https' : 'http';
     }
 
     public function setIsSecure(bool $isSecure): static
@@ -63,7 +68,7 @@ class Request implements RequestInterface
 
     public function getPath(): string
     {
-       return $this->path;
+        return $this->path;
     }
 
     public function setPath(string $path): static
@@ -102,7 +107,7 @@ class Request implements RequestInterface
         return $this->headers;
     }
 
-    public function getHeader(string $key, mixed $default = null): string|null
+    public function getHeader(string $key, mixed $default = null): mixed
     {
         return $this->headers[$key] ?? $default;
     }
@@ -116,7 +121,7 @@ class Request implements RequestInterface
 
     public function hasHeader(string $key): bool
     {
-        return array_key_exists($this->headers, $key);
+        return array_key_exists($key, $this->headers);
     }
 
     public function removeHeader(string $key): static
@@ -145,7 +150,7 @@ class Request implements RequestInterface
 
     public function hasQueryParameter(string $key): bool
     {
-        return array_key_exists($this->query, $key);
+        return array_key_exists($key, $this->query);
     }
 
     public function removeQueryParameter(string $key): static
@@ -174,7 +179,7 @@ class Request implements RequestInterface
 
     public function hasCookie(string $key): bool
     {
-        return array_key_exists($this->cookies, $key);
+        return array_key_exists($key, $this->cookies);
     }
 
     public function removeCookie(string $key): static
@@ -189,7 +194,7 @@ class Request implements RequestInterface
         return $this->files;
     }
 
-    public function getFile(string $key): SplFileInfo|null
+    public function getFile(string $key): ?\SplFileInfo
     {
         return $this->files[$key] ?? null;
     }
@@ -203,7 +208,7 @@ class Request implements RequestInterface
 
     public function hasFile(string $key): bool
     {
-        return array_key_exists($this->files, $key);
+        return array_key_exists($key, $this->files);
     }
 
     public function removeFile(string $key): static

@@ -21,7 +21,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 final class EntityListener
 {
-    /** @var Asset */
+    /** @var array< array<string, Asset>> */
     protected array $toSetAssetLater = [];
 
     public function __construct(

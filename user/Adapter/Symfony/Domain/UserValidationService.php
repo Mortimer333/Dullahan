@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\User\Adapter\Symfony\Domain;
 
+use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\Main\Trait\Validate\SymfonyValidationHelperTrait;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\ForgottenPasswordConstraint;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\ResetPasswordConstraint;
@@ -11,11 +12,29 @@ use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\UserUpdateConstra
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\UserUpdateMailConstraint;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\UserUpdatePasswordConstraint;
 use Dullahan\User\Domain\Entity\User;
+use Dullahan\User\Port\Domain\RegistrationValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserValidationServiceInterface;
+use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserValidationService implements UserValidationServiceInterface
 {
     use SymfonyValidationHelperTrait;
+
+    public function __construct(
+        protected UserVerifyAndSetServiceInterface $userVerifyAndSetService,
+        protected ValidatorInterface $validator,
+        protected HttpUtilService $httpUtilService,
+        protected RegistrationValidationServiceInterface $registrationValidationService,
+    ) {
+    }
+
+    public function validateUserRemoval(User $user, #[\SensitiveParameter] string $password): void
+    {
+        if (!$this->userVerifyAndSetService->verifyUserPassword($password, $user)) {
+            throw new \Exception("Sent password doesn't match, user was not removed", 403);
+        }
+    }
 
     /**
      * @param array<string, mixed> $update
@@ -40,7 +59,7 @@ class UserValidationService implements UserValidationServiceInterface
 
         /** @var string $password */
         $password = $update['password'] ?? throw new \Exception('Missing password', 500);
-        if (!$this->userValidateService->verifyUserPassword($password, $user)) {
+        if (!$this->userVerifyAndSetService->verifyUserPassword($password, $user)) {
             throw new \Exception("Sent password doesn't match, user email was not updated", 403);
         }
 
@@ -49,7 +68,7 @@ class UserValidationService implements UserValidationServiceInterface
         if ($email === $user->getEmail()) {
             throw new \Exception('New email cannot be the same as old one', 400);
         }
-        $this->validateEmailUniqueness($email);
+        $this->registrationValidationService->validateEmailUniqueness($email);
     }
 
     /**
@@ -64,7 +83,7 @@ class UserValidationService implements UserValidationServiceInterface
 
         /** @var string $password */
         $password = $update['oldPassword'] ?? throw new \Exception('Missing password', 500);
-        if (!$this->userValidateService->verifyUserPassword($password, $user)) {
+        if (!$this->userVerifyAndSetService->verifyUserPassword($password, $user)) {
             throw new \Exception("Sent password doesn't match, password was not changed", 403);
         }
 

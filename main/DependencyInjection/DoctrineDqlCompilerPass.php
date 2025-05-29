@@ -19,7 +19,7 @@ class DoctrineDqlCompilerPass implements CompilerPassInterface
             'orm' => [
                 'dql' => [
                     'string_functions' => [
-                        'replace' => 'DoctrineExtensions\Query\Mysql\Replace'
+                        'replace' => 'DoctrineExtensions\Query\Mysql\Replace',
                     ],
                 ],
             ],

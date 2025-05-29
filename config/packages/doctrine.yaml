@@ -1,9 +1,0 @@
-doctrine:
-  orm:
-    mappings:
-      Dullahan\Asset\Domain\Entity:
-        type: attribute
-        is_bundle: false
-        dir: '../asset/Domain/Entity'
-        prefix: 'Dullahan\Asset\Domain\Entity'
-        alias: DullahanAsset

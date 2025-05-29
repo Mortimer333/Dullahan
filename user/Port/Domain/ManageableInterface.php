@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\Main\Contract;
+namespace Dullahan\User\Port\Domain;
 
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Domain\Entity\UserData;

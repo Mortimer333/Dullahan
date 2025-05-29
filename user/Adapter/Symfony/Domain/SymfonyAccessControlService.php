@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Dullahan\User\Adapter\Symfony\Domain;
 
 use Dullahan\Main\Service\Util\BinUtilService;
-use Dullahan\User\Application\AccessControlService;
+use Dullahan\User\Adapter\Symfony\Application\AccessControlService;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Dullahan\Main\Model\Request;
 
 class SymfonyAccessControlService extends AccessControlService
 {
@@ -32,7 +30,7 @@ class SymfonyAccessControlService extends AccessControlService
         $request = $this->requestFactory->symfonyToDullahanRequest($symfonyRequest);
         $this->validateCSRFAttack($controller, $request);
         $this->validateTokenExists($controller, $request);
-        $this->validateRoutesAccess($request);
+        $this->validateRoutesAccess($controller, $request);
     }
 
     protected function isSwaggerRequest(): bool

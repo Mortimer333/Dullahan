@@ -15,7 +15,7 @@ interface ThumbnailMapperInterface
     public function mapField(AssetAwareInterface $entity, string $fieldName): array;
 
     /**
-     * @return ThumbnailConfig
+     * @return array<string, array<ThumbnailConfig>>
      */
     public function mapEntity(AssetAwareInterface $entity): array;
 }

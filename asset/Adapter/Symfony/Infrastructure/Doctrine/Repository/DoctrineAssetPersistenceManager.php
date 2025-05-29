@@ -102,7 +102,7 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
     {
         $this->em->remove($asset);
         $qb = $this->em->createQueryBuilder();
-        $likePath = rtrim($asset->getFullPath(), '/') . '/' . '%';
+        $likePath = rtrim($asset->getFullPath(), '/') . '/%';
         $query = $qb->delete(Asset::class, 'a')
             ->where('a.fullPath LIKE :path')
             ->setParameter('path', $likePath)
@@ -172,16 +172,16 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
 
     private function updateChildrenFullPaths(Asset $asset, Structure $structure): void
     {
-        $genMainQuery = fn() => $this->em->createQueryBuilder()
+        $genMainQuery = fn () => $this->em->createQueryBuilder()
             ->update(Asset::class, 'a')
             ->set('a.fullPath', 'REPLACE(a.fullPath, :oldPath, :pathToReplace)')
             ->set('a.directory', 'REPLACE(a.directory, :oldPath, :pathToReplace)')
             ->where('a.fullPath LIKE :oldPathLike')
             ->orWhere('a.fullPath = :oldPathFull')
-            ->setParameter('pathToReplace', rtrim($structure->path , '/'))
+            ->setParameter('pathToReplace', rtrim($structure->path, '/'))
             ->setParameter('oldPath', rtrim($asset->getFullPath(), '/'))
             ->setParameter('oldPathFull', rtrim($asset->getFullPath(), '/'))
-            ->setParameter('oldPathLike', rtrim($asset->getFullPath(), '/') . '/' . '%')
+            ->setParameter('oldPathLike', rtrim($asset->getFullPath(), '/') . '/%')
         ;
 
         $query = $genMainQuery()

@@ -2,17 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\User\Application;
+namespace Dullahan\User\Adapter\Symfony\Application;
 
 use Dullahan\Main\Contract\RequestInterface;
+use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Domain\Exception\AccessDeniedHttpException;
 use Dullahan\User\Port\Application\AccessControlInterface;
 use Dullahan\User\Port\Presentation\Http\DisableDoubleSubmitAuthenticationInterface;
 use Dullahan\User\Port\Presentation\Http\DisableTokenAuthenticationInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
+/**
+ * @TODO This shouldn't be framework specific
+ */
 class AccessControlService implements AccessControlInterface
 {
+    public function __construct(
+        protected Security $security,
+        protected BinUtilService $binUtilService,
+    ) {
+    }
+
     public function validateRoutesAccess(object $controller, RequestInterface $request): void
     {
         // @TODO this will probably a config parameter - where to put all the user related (and protected) routes
@@ -51,7 +62,18 @@ class AccessControlService implements AccessControlInterface
                 !$request->hasHeader('x-csrf-token')                                  // tokens don't match
                 || !isset($cookieToken)
                 || $request->getHeader('x-csrf-token') !== $cookieToken
-            );
+            )
+        ;
+
+
+        $file = fopen( '/var/www/html/Dullahan/var/test', 'w');
+        fwrite($file, json_encode([
+            $request->hasHeader('x-csrf-token'),
+            !isset($cookieToken),
+            $request->getHeader('x-csrf-token'),
+            $request->getHeader('x-csrf-token') !== $cookieToken
+        ], JSON_PRETTY_PRINT));
+        fclose($file);
 
         if ($res) {
             throw new AccessDeniedHttpException('CSRF attack');

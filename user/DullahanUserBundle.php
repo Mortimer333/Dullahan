@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\User;
 
-use Dullahan\Thumbnail\Adapter\Symfony\Application\DependencyInjection\DoctrineMappingPass;
+use Dullahan\User\Adapter\Symfony\Application\DependencyInjection\DoctrineMappingPass;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;

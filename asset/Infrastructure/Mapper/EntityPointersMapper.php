@@ -9,14 +9,16 @@ use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
 
 /**
  * @TODO What's the point of this being static?
+ *
+ * @phpstan-type AssertPointerCollection array<string, array<int, array<AssetPointer>>>
  */
 abstract class EntityPointersMapper
 {
-    /** @var AssetPointer */
+    /** @var AssertPointerCollection */
     protected static array $activePointers = [];
 
     /**
-     * @return AssetPointer
+     * @return AssertPointerCollection
      */
     public static function getActivePointers(): array
     {
@@ -24,7 +26,7 @@ abstract class EntityPointersMapper
     }
 
     /**
-     * @param AssetPointer $pointers
+     * @param AssertPointerCollection $pointers
      */
     public static function setActivePointers(array $pointers): void
     {
