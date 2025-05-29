@@ -10,8 +10,8 @@ use Dullahan\Asset\Domain\Exception\AssetEntityNotFoundException;
 use Dullahan\Asset\Domain\Structure;
 use Dullahan\Asset\Port\Infrastructure\AssetEntityInterface;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
-use Dullahan\Main\Entity\User;
 use Dullahan\Main\Service\RuntimeCachePoolService;
+use Dullahan\User\Domain\Entity\User;
 
 class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterface
 {

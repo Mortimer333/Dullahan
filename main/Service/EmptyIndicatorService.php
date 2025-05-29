@@ -6,7 +6,7 @@ namespace Dullahan\Main\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Main\Contract\InheritanceAwareInterface;
-use Dullahan\Main\Entity\InheritEmpty;
+use Dullahan\Main\Event\InheritEmpty;
 
 class EmptyIndicatorService
 {

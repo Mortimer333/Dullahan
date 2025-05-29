@@ -3,10 +3,10 @@
 namespace Dullahan\Main\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Main\Entity\User;
-use Dullahan\Main\Entity\UserData;
 use Dullahan\Main\Service\TraceService;
 use Dullahan\Main\Service\Util\BinUtilService;
+use Dullahan\User\Domain\Entity\User;
+use Dullahan\User\Domain\Entity\UserData;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;

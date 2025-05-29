@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 /**
+ * @TODO this is really framework specific - how to handle this?
  * Overrides RequestPayloadValueResolver to save errors into HttpUtil.
  */
 readonly class HttpErrorManagerAwareResolver implements ValueResolverInterface, EventSubscriberInterface

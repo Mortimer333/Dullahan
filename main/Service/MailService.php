@@ -4,24 +4,28 @@ declare(strict_types=1);
 
 namespace Dullahan\Main\Service;
 
-use Dullahan\Main\Contract\Marker\UserServiceInterface;
-use Dullahan\Main\Contract\Service\MailServiceInterface;
-use Dullahan\Main\Entity\User;
-use Dullahan\Main\Service\User\UserManageService;
 use Dullahan\Main\Service\Util\HttpUtilService;
+use Dullahan\User\Domain\Entity\User;
+use Dullahan\User\Port\Application\MailServiceInterface;
+use Dullahan\User\Port\Application\UserManagerServiceInterface;
+use Dullahan\User\Port\Application\UserServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
+/**
+ * @TODO This is a box of nails, all ready to get our hand hurt. We have to remove any Domain related methods
+ *   and create a tool MailService not MailBinService
+ */
 class MailService implements MailServiceInterface
 {
     public function __construct(
         protected HttpClientInterface $httpClient,
         protected LoggerInterface $logger,
         protected UserServiceInterface $userService,
-        protected UserManageService $userManageService,
+        protected UserManagerServiceInterface $userManageService,
     ) {
     }
 

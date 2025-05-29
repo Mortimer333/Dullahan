@@ -5,9 +5,9 @@ namespace Dullahan\Asset\Adapter\Symfony\Infrastructure\Doctrine\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Dullahan\Asset\Domain\Entity\Asset;
-use Dullahan\Main\Entity\UserData;
 use Dullahan\Main\Service\ValidationService;
 use Dullahan\Main\Trait\PaginationTrait;
+use Dullahan\User\Domain\Entity\UserData;
 
 /**
  * @extends ServiceEntityRepository<Asset>

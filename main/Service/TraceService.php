@@ -7,13 +7,16 @@ namespace Dullahan\Main\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Dullahan\Main\Entity\Trace;
-use Dullahan\Main\Entity\User;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\HttpUtilService;
+use Dullahan\User\Domain\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @TODO a semi-good start for monitoring module
+ */
 class TraceService
 {
     public function __construct(

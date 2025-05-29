@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Asset\Port\Infrastructure\AssetFileManagerInterface;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Presentation\Event\Transport\Create\CreateAssetEvent;
-use Dullahan\Main\Service\UserService;
+use Dullahan\User\Adapter\Symfony\Application\UserService;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 final readonly class CreateListener

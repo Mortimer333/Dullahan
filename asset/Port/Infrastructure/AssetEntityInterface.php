@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Asset\Port\Infrastructure;
 
 use Dullahan\Asset\Port\Presentation\AssetPointerInterface;
-use Dullahan\Main\Entity\User;
+use Dullahan\User\Domain\Entity\User;
 
 interface AssetEntityInterface
 {

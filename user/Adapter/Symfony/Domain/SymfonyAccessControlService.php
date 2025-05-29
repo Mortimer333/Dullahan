@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Dullahan\User\Adapter\Symfony\Domain;
+
+use Dullahan\Main\Service\Util\BinUtilService;
+use Dullahan\User\Application\AccessControlService;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Dullahan\Main\Model\Request;
+
+class SymfonyAccessControlService extends AccessControlService
+{
+    public function __construct(
+        protected Security $security,
+        protected BinUtilService $baseUtilService,
+        protected RequestStack $requestStack,
+        protected RequestFactory $requestFactory,
+    ) {
+    }
+
+    public function validate(object $controller, SymfonyRequest $symfonyRequest): void
+    {
+        // @TODO arbitrary rule, should be defined by the user not framework
+        if (!preg_match('/^\/(_\/(user|login))/', $symfonyRequest->getPathInfo())) {
+            return;
+        }
+
+        $request = $this->requestFactory->symfonyToDullahanRequest($symfonyRequest);
+        $this->validateCSRFAttack($controller, $request);
+        $this->validateTokenExists($controller, $request);
+        $this->validateRoutesAccess($request);
+    }
+
+    protected function isSwaggerRequest(): bool
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        return $this->baseUtilService->isDev() && $request && $request->headers->get('X-Swagger');
+    }
+}

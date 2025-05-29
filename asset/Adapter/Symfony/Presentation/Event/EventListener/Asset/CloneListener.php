@@ -8,7 +8,7 @@ use Dullahan\Asset\Domain\Asset;
 use Dullahan\Asset\Port\Infrastructure\AssetFileManagerInterface;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Presentation\Event\Transport\Clone\CloneAssetEvent;
-use Dullahan\Main\Service\UserService;
+use Dullahan\User\Adapter\Symfony\Application\UserService;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 final class CloneListener

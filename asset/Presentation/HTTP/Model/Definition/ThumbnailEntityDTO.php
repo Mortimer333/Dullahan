@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Presentation\HTTP\Model\Definition;
 
-use Dullahan\Main\Model\Definition\PointerEntityDTO;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;
 

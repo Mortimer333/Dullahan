@@ -15,7 +15,7 @@ use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetMiddlewareInterface;
 use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
-use Dullahan\Main\Contract\Marker\UserServiceInterface;
+use Dullahan\User\Port\Application\UserServiceInterface;
 
 class AssetMiddleware implements AssetMiddlewareInterface
 {

@@ -11,7 +11,7 @@ use Dullahan\Main\Contract\InheritanceAwareInterface;
 use Dullahan\Main\Contract\ManageableInterface;
 use Dullahan\Main\Contract\OwnerlessManageableInterface;
 use Dullahan\Main\Contract\TransferableOwnerManageableInterface;
-use Dullahan\Main\Entity\User;
+use Dullahan\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 
 trait EntityUtilHelperTrait

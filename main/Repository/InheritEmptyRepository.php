@@ -4,7 +4,7 @@ namespace Dullahan\Main\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Dullahan\Main\Entity\InheritEmpty;
+use Dullahan\Main\Event\InheritEmpty;
 
 /**
  * @extends ServiceEntityRepository<InheritEmpty>

@@ -16,7 +16,7 @@ use Dullahan\Thumbnail\Port\Presentation\ThumbnailServiceInterface;
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailUrlResolverInterface;
 
 /**
- * @TODO separate thumbnail service (by refactoring functionality to be Even based)
+ * @TODO separate thumbnail service (by refactoring functionality to be Event based)
  */
 class AssetSerializer implements AssetSerializerInterface
 {

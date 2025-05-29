@@ -6,7 +6,8 @@
         "psr-4": {
             "Dullahan\\Main\\": "main/",
             "Dullahan\\Thumbnail\\": "thumbnail/",
-            "Dullahan\\Asset\\": "asset/"
+            "Dullahan\\Asset\\": "asset/",
+            "Dullahan\\User\\": "user/"
         }
     },
     "minimum-stability": "stable",

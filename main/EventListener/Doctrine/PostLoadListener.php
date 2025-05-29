@@ -7,7 +7,7 @@ namespace Dullahan\Main\EventListener\Doctrine;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Events;
-use Dullahan\Main\Constraint\EntityManagerInjectionInterface;
+use Dullahan\Main\Contract\EntityManagerInjectionInterface;
 use Dullahan\Main\Contract\InheritanceAwareInterface;
 use Dullahan\Main\Doctrine\Mapper\EntityInheritanceMapper;
 use Dullahan\Main\Service\Util\EntityUtilService;

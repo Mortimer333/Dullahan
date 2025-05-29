@@ -35,7 +35,7 @@ use Dullahan\Asset\Presentation\Event\Transport\Replace\ReplaceAssetEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Retrieve\RetrieveByIdEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Retrieve\RetrieveByPathEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Validate\AsseNameEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Dullahan\Main\Contract\EventDispatcherInterface;
 
 class AssetEventFacadeService implements AssetServiceInterface
 {

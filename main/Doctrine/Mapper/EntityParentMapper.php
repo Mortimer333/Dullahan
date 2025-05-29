@@ -8,7 +8,7 @@ use Dullahan\Main\Contract\InheritanceAwareInterface;
 
 class EntityParentMapper
 {
-    /** @var array<class-string, array<int, array<InheritanceAwareInterface>>> */
+    /** @var InheritanceAwareInterface */
     protected static array $parents = [];
 
     /**

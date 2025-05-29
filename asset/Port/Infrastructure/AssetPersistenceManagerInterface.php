@@ -7,7 +7,7 @@ namespace Dullahan\Asset\Port\Infrastructure;
 use Dullahan\Asset\Domain\Exception\AssetEntityNotFoundException;
 use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
 use Dullahan\Asset\Domain\Structure;
-use Dullahan\Main\Entity\User;
+use Dullahan\User\Domain\Entity\User;
 
 // @TODO separate into persistence and retrieval
 /**

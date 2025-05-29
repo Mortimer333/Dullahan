@@ -9,9 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Dullahan\Asset\Adapter\Symfony\Infrastructure\Doctrine\Repository\AssetRepository;
 use Dullahan\Asset\Port\Infrastructure\AssetEntityInterface;
 use Dullahan\Asset\Port\Presentation\AssetPointerInterface;
-use Dullahan\Main\Entity\User;
-use Dullahan\Main\Entity\UserData;
-use Dullahan\Main\Trait\UserDataRelationTrait;
+use Dullahan\User\Domain\Entity\User;
+use Dullahan\User\Domain\Entity\UserData;
+use Dullahan\User\Domain\Trait\UserDataRelationTrait;
 
 #[ORM\Entity(repositoryClass: AssetRepository::class)]
 #[ORM\Index(name: 'path_search_idx', fields: ['directory', 'name', 'extension'])]

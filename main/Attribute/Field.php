@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Main\Attribute;
 
-use Doctrine\Common\Collections\Criteria;
-
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class Field
 {
@@ -23,8 +21,8 @@ class Field
         public ?string $plural = null,
         public ?string $enum = null,
     ) {
-        if (!is_null($this->order) && Criteria::ASC != $this->order && Criteria::DESC != $this->order) {
-            throw new \Exception('Wrongly defined order, use Criteria constants', 500);
+        if (!is_null($this->order) && 'ASC' != $this->order && 'DESC' != $this->order) {
+            throw new \Exception('Order must be either ASC or DESC', 500);
         }
     }
 }
