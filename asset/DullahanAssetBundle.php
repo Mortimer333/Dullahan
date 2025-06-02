@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset;
 
+use Dullahan\Asset\Adapter\Symfony\Application\DependencyInjection\DoctrineDqlCompilerPass;
 use Dullahan\Asset\Adapter\Symfony\Application\DependencyInjection\DoctrineMappingPass;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -33,5 +34,6 @@ class DullahanAssetBundle extends AbstractBundle
     {
         parent::build($container);
         $container->addCompilerPass(new DoctrineMappingPass());
+        $container->addCompilerPass(new DoctrineDqlCompilerPass());
     }
 }

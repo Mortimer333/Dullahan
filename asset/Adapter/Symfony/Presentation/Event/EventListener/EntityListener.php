@@ -10,12 +10,12 @@ use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Main\Event\Entity\PostCreate;
-use Dullahan\Main\Event\Entity\PostUpdate;
-use Dullahan\Main\Event\Entity\PreCreate;
-use Dullahan\Main\Event\Entity\PreUpdate;
+use Dullahan\Entity\Adapter\Symfony\Domain\EntityUtilService;
+use Dullahan\Entity\Presentation\Event\Transport\PostCreate;
+use Dullahan\Entity\Presentation\Event\Transport\PostUpdate;
+use Dullahan\Entity\Presentation\Event\Transport\PreCreate;
+use Dullahan\Entity\Presentation\Event\Transport\PreUpdate;
 use Dullahan\Main\Service\CacheService;
-use Dullahan\Main\Service\Util\EntityUtilService;
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailServiceInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 

@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Dullahan\Main\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Main\Contract\InheritanceAwareInterface;
+use Dullahan\Entity\Domain\Contract\InheritanceAwareInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
+/**
+ * @TODO add events when cache is removed and handle InheritanceAwareInterface there
+ */
 class CacheService
 {
     public const NO_CACHE = 'no:cache';

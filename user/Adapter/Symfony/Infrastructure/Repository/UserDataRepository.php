@@ -4,6 +4,7 @@ namespace Dullahan\User\Adapter\Symfony\Infrastructure\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
 use Dullahan\User\Domain\Entity\UserData;
 
 /**
@@ -14,7 +15,7 @@ use Dullahan\User\Domain\Entity\UserData;
  * @method UserData[]    findAll()
  * @method UserData[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserDataRepository extends ServiceEntityRepository
+class UserDataRepository extends ServiceEntityRepository implements EntityRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

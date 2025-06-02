@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Main;
 
-use Dullahan\Main\DependencyInjection\DoctrineDqlCompilerPass;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -26,14 +25,6 @@ class DullahanBundle extends AbstractBundle
                 ->end()
             ->end()
         ;
-    }
-
-    public function build(ContainerBuilder $container)
-    {
-        parent::build($container);
-
-        // Register the Compiler Pass to modify Doctrine config
-        $container->addCompilerPass(new DoctrineDqlCompilerPass());
     }
 
     /**

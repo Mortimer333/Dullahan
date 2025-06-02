@@ -7,10 +7,14 @@ namespace Dullahan\Main\Service;
 use EditorJS\EditorJS;
 use EditorJS\EditorJSException;
 
+/**
+ * @TODO this a specific class for specific FE WYSIWYG tool - might be to specific :D
+ */
 class EditorJsService
 {
     protected \HTMLPurifier_Config $sanitizer;
     protected \HTMLPurifier $purifier;
+    // @TODO put in as parameter
     public const ALLOWED_TEXT_TAGS = 'i,b,a[href|target|rel],u[class],s[class],font[style],mark[style]';
 
     /**

@@ -7,7 +7,8 @@
             "Dullahan\\Main\\": "main/",
             "Dullahan\\Thumbnail\\": "thumbnail/",
             "Dullahan\\Asset\\": "asset/",
-            "Dullahan\\User\\": "user/"
+            "Dullahan\\User\\": "user/",
+            "Dullahan\\Entity\\": "entity/"
         }
     },
     "minimum-stability": "stable",

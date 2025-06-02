@@ -55,8 +55,7 @@ class AccessControlService implements AccessControlInterface
     {
         $cookieToken = $request->getCookie('CSRF-Token');
 
-        $res = (!$this->isSwaggerRequest() || !$this->baseUtilService->isDev())       // is not swagger request on dev
-            && !$controller instanceof DisableDoubleSubmitAuthenticationInterface     // is double submit check control
+        $res = !$controller instanceof DisableDoubleSubmitAuthenticationInterface     // is double submit check control
             && !in_array($request->getMethod(), ['GET', 'HEAD', 'OPTIONS'])           // is change data request
             && (                                                                      // doesn't have csrf token or
                 !$request->hasHeader('x-csrf-token')                                  // tokens don't match
@@ -65,19 +64,8 @@ class AccessControlService implements AccessControlInterface
             )
         ;
 
-
-        $file = fopen( '/var/www/html/Dullahan/var/test', 'w');
-        fwrite($file, json_encode([
-            $request->hasHeader('x-csrf-token'),
-            !isset($cookieToken),
-            $request->getHeader('x-csrf-token'),
-            $request->getHeader('x-csrf-token') !== $cookieToken
-        ], JSON_PRETTY_PRINT));
-        fclose($file);
-
         if ($res) {
             throw new AccessDeniedHttpException('CSRF attack');
         }
     }
-
 }

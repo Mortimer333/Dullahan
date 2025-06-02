@@ -3,7 +3,8 @@
 namespace Dullahan\User\Adapter\Symfony\Infrastructure\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Dullahan\Main\Trait\PaginationTrait;
+use Dullahan\Entity\Adapter\Symfony\Domain\Trait\PaginationTrait;
+use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
 use Dullahan\User\Domain\Entity\User;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, EntityRepositoryInterface
 {
     use PaginationTrait;
 

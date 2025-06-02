@@ -28,12 +28,12 @@ class SymfonyAccessControlService extends AccessControlService
         }
 
         $request = $this->requestFactory->symfonyToDullahanRequest($symfonyRequest);
-        $this->validateCSRFAttack($controller, $request);
+        !$this->isSwaggerRequestOnDev() && $this->validateCSRFAttack($controller, $request);
         $this->validateTokenExists($controller, $request);
         $this->validateRoutesAccess($controller, $request);
     }
 
-    protected function isSwaggerRequest(): bool
+    protected function isSwaggerRequestOnDev(): bool
     {
         $request = $this->requestStack->getCurrentRequest();
 

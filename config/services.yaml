@@ -42,4 +42,13 @@ services:
       - '../user/Domain/Entity/'
       - '../user/Domain/Exception'
 
+  Dullahan\Entity\:
+    autowire: true
+    autoconfigure: true
+    resource: '../entity/'
+    exclude:
+      - '../entity/Adapter/Symfony/Application/DependencyInjection'
+      - '../entity/Domain/Entity/'
+      - '../entity/Domain/Exception'
+
   Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestPayloadValueResolver: '@argument_resolver.request_payload'

@@ -11,7 +11,7 @@ use Dullahan\Asset\Port\Presentation\AssetServerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Asset\Presentation\HTTP\Response\PAM\RetrieveImageResponse;
 use Dullahan\Asset\Presentation\HTTP\Response\PAM\RetrieveImagesResponse;
-use Dullahan\Main\Model\Parameter\PaginationDTO;
+use Dullahan\Entity\Presentation\Http\Model\Parameter\PaginationDTO;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;

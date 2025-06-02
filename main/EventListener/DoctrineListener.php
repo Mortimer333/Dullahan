@@ -9,6 +9,8 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 
 /**
+ * @deprecated
+ *
  * @TODO couldn't this be archived by changing database in .env.test.local? I think this is a left over from
  *      previous approach
  */

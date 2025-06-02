@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Dullahan\User\Adapter\Symfony\Domain;
 
 use Dullahan\Main\Contract\RequestInterface;
+use Dullahan\Main\Model\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
-use Dullahan\Main\Model\Request;
 
 class RequestFactory
 {
@@ -15,7 +15,7 @@ class RequestFactory
     {
         $files = [];
         /**
-         * @var string $key
+         * @var string       $key
          * @var UploadedFile $file
          */
         foreach ($request->files->all() as $key => $file) {

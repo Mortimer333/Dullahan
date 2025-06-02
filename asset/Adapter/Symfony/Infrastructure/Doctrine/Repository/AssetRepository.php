@@ -5,8 +5,9 @@ namespace Dullahan\Asset\Adapter\Symfony\Infrastructure\Doctrine\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Dullahan\Asset\Domain\Entity\Asset;
-use Dullahan\Main\Service\ValidationService;
-use Dullahan\Main\Trait\PaginationTrait;
+use Dullahan\Entity\Adapter\Symfony\Domain\Trait\PaginationTrait;
+use Dullahan\Entity\Port\Domain\EntityValidationInterface;
+use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
 use Dullahan\User\Domain\Entity\UserData;
 
 /**
@@ -17,12 +18,12 @@ use Dullahan\User\Domain\Entity\UserData;
  * @method Asset[]    findAll()
  * @method Asset[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AssetRepository extends ServiceEntityRepository
+class AssetRepository extends ServiceEntityRepository implements EntityRepositoryInterface
 {
     use PaginationTrait;
 
     public function __construct(
-        protected ValidationService $validationService,
+        protected EntityValidationInterface $validationService,
         ManagerRegistry $registry
     ) {
         parent::__construct($registry, Asset::class);

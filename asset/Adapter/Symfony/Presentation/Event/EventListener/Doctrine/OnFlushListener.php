@@ -9,7 +9,7 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Main\Service\Util\EntityUtilService;
+use Dullahan\Entity\Adapter\Symfony\Domain\EntityUtilService;
 
 #[AsDoctrineListener(event: Events::onFlush, priority: 256)]
 class OnFlushListener

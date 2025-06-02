@@ -19,8 +19,8 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
 {
     public function __construct(
         protected JWTManagerInterface $jwtService,
-        protected HttpUtilService     $httpUtilService,
-        protected BinUtilService      $baseUtilService,
+        protected HttpUtilService $httpUtilService,
+        protected BinUtilService $baseUtilService,
     ) {
     }
 

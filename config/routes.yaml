@@ -1,12 +1,3 @@
-controllers:
-    resource: ../main/Controller/
-    type: attribute
-    prefix: '/_'
-main.user.controllers:
-    resource: ../main/Controller/User
-    type: attribute
-    prefix: '/_/user'
-
 # USER
 api.user.controllers:
     resource: ../user/Adapter/Symfony/Presentation/Http/Controller
@@ -42,3 +33,14 @@ api.thumbnails.controllers:
     type: attribute
     prefix: '/_'
 #> THUMBNAIL
+
+# ENTITY
+api.entity.controllers:
+    resource: ../entity/Adapter/Symfony/Presentation/Http/Controller/
+    type: attribute
+    prefix: '/_'
+api.entity.user.controllers:
+    resource: ../entity/Adapter/Symfony/Presentation/Http/Controller/User/
+    type: attribute
+    prefix: '/_/user'
+#> ENTITY
