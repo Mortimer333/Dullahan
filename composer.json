@@ -8,7 +8,8 @@
             "Dullahan\\Thumbnail\\": "thumbnail/",
             "Dullahan\\Asset\\": "asset/",
             "Dullahan\\User\\": "user/",
-            "Dullahan\\Entity\\": "entity/"
+            "Dullahan\\Object\\": "object/",
+            "Dullahan\\Monitor\\": "monitor/"
         }
     },
     "minimum-stability": "stable",

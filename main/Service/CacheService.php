@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Main\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Entity\Domain\Contract\InheritanceAwareInterface;
+use Dullahan\Object\Domain\Contract\InheritanceAwareInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**

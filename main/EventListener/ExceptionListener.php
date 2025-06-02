@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dullahan\Main\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Dullahan\Main\Service\TraceService;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -18,7 +17,6 @@ class ExceptionListener implements EventSubscriberInterface
     public function __construct(
         protected BinUtilService $baseUtilService,
         protected HttpUtilService $httpUtilService,
-        protected TraceService $traceService,
         protected ManagerRegistry $managerRegistry,
     ) {
     }
@@ -35,14 +33,9 @@ class ExceptionListener implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
         $response = $this->httpUtilService->getProperResponseFromException($exception);
-        $status = $this->httpUtilService->getStatusCode($exception);
 
         if (!$this->baseUtilService->isProduction()) {
             $this->baseUtilService->saveLastErrorTrace($exception, $event->getRequest());
-        }
-
-        if ($status >= 500) {
-            $this->traceService->create($exception, $event->getRequest(), $response);
         }
 
         $event->setResponse($response);

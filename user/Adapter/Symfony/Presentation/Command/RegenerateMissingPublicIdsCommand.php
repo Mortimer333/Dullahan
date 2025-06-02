@@ -4,7 +4,6 @@ namespace Dullahan\User\Adapter\Symfony\Presentation\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Main\Command\BaseCommandAbstract;
-use Dullahan\Main\Service\TraceService;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Domain\Entity\UserData;
@@ -24,7 +23,6 @@ class RegenerateMissingPublicIdsCommand extends BaseCommandAbstract
         protected EntityManagerInterface $em,
         protected LoggerInterface $logger,
         protected BinUtilService $binUtilService,
-        protected TraceService $traceService,
     ) {
         parent::__construct();
     }

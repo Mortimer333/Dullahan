@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Command\BaseCommandAbstract;
-use Dullahan\Main\Service\TraceService;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -26,7 +25,6 @@ class RemoveImagesWithoutPointersCommand extends BaseCommandAbstract
         protected EntityManagerInterface $em,
         protected LoggerInterface $logger,
         protected BinUtilService $binUtilService,
-        protected TraceService $traceService,
         protected AssetServiceInterface $assetService,
     ) {
         parent::__construct();

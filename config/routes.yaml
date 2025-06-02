@@ -34,13 +34,13 @@ api.thumbnails.controllers:
     prefix: '/_'
 #> THUMBNAIL
 
-# ENTITY
-api.entity.controllers:
-    resource: ../entity/Adapter/Symfony/Presentation/Http/Controller/
+# OBJECT
+api.object.controllers:
+    resource: ../object/Adapter/Symfony/Presentation/Http/Controller/
     type: attribute
     prefix: '/_'
-api.entity.user.controllers:
-    resource: ../entity/Adapter/Symfony/Presentation/Http/Controller/User/
+api.object.user.controllers:
+    resource: ../object/Adapter/Symfony/Presentation/Http/Controller/User/
     type: attribute
     prefix: '/_/user'
-#> ENTITY
+#> OBJECT

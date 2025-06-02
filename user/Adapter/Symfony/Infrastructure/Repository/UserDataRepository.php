@@ -4,11 +4,13 @@ namespace Dullahan\User\Adapter\Symfony\Infrastructure\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Object\Port\Interface\EntityRepositoryInterface;
 use Dullahan\User\Domain\Entity\UserData;
 
 /**
  * @extends ServiceEntityRepository<UserData>
+ *
+ * @implements EntityRepositoryInterface<UserData>
  *
  * @method UserData|null find($id, $lockMode = null, $lockVersion = null)
  * @method UserData|null findOneBy(array $criteria, array $orderBy = null)
