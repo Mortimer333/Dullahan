@@ -7,10 +7,6 @@ api.user.secure.controllers:
     resource: ../user/Adapter/Symfony/Presentation/Http/Controller/User
     type: attribute
     prefix: '/_/user'
-#api.user.super.controllers:
-#    resource: ../user/Adapter/Symfony/Presentation/Http/Controller/Admin
-#    type: attribute
-#    prefix: '/_/user/super'
 app_user_logout:
     path: /_/user/logout
     methods: GET
