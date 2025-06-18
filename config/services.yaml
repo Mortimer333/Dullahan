@@ -61,3 +61,7 @@ services:
       - '../monitor/Domain/Exception'
 
   Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestPayloadValueResolver: '@argument_resolver.request_payload'
+
+  _defaults:
+    bind:
+      $secret: '%env(APP_SECRET)%'

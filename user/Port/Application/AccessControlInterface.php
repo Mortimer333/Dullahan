@@ -6,21 +6,22 @@ namespace Dullahan\User\Port\Application;
 
 use Dullahan\Main\Contract\RequestInterface;
 use Dullahan\User\Domain\Exception\AccessDeniedHttpException;
+use Random\RandomException;
 
 interface AccessControlInterface
 {
     /**
+     * @param array{
+     *     session?: string
+     * } $tokenPayload
+     *
      * @throws AccessDeniedHttpException
      */
-    public function validateCSRFAttack(object $controller, RequestInterface $request): void;
+    public function validateTokenCredibility(RequestInterface $request, array $tokenPayload): void;
 
     /**
+     * @throws RandomException
      * @throws AccessDeniedHttpException
      */
-    public function validateTokenExists(object $controller, RequestInterface $request): void;
-
-    /**
-     * @throws AccessDeniedHttpException
-     */
-    public function validateRoutesAccess(object $controller, RequestInterface $request): void;
+    public function generateCSRFToken(string $session, ?string $random = null): string;
 }

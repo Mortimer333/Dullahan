@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Main\Service\CacheService;
-use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Object\Domain\Contract\InheritanceAwareInterface;
 use Dullahan\Object\Domain\Mapper\EntityParentMapper;
 

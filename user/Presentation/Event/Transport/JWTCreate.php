@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\User\Presentation\Event\Transform;
+namespace Dullahan\User\Presentation\Event\Transport;
 
 use Dullahan\User\Domain\Entity\User;
 

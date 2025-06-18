@@ -1,9 +1,10 @@
 <?php
 
-namespace Dullahan\User\Adapter\Symfony\Presentation\Http\Security;
+namespace Dullahan\User\Adapter\Symfony\Domain;
 
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\HttpUtilService;
+use Dullahan\User\Port\Application\AccessControlInterface;
 use Dullahan\User\Port\Domain\JWTManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,17 +22,17 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
         protected JWTManagerInterface $jwtService,
         protected HttpUtilService $httpUtilService,
         protected BinUtilService $baseUtilService,
+        protected RequestFactory $requestFactory,
+        protected AccessControlInterface $accessControl,
     ) {
     }
 
     /**
-     * Called on every request to decide if this authenticator should be
-     * used for the request. Returning `false` will cause this authenticator
-     * to be skipped.
+     * Skip authenticator when login route is accesses to give way for the default one.
      */
     public function supports(Request $request): ?bool
     {
-        return $request->headers->has('Authorization');
+        return 'api_user_login' !== $request->attributes->get('_route');
     }
 
     public function authenticate(Request $request): Passport
@@ -49,6 +50,12 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
         }
 
         $payload = $this->jwtService->validateAndGetPayload($apiToken);
+
+        $this->accessControl->validateTokenCredibility(
+            $this->requestFactory->symfonyToDullahanRequest($request),
+            $payload,
+        );
+
         $request->attributes->set('_token_payload', $payload);
 
         return new SelfValidatingPassport(new UserBadge($payload['user']));
@@ -68,7 +75,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        $exception = new \Exception('Wrong password or username', 401);
+        $exception = new AuthenticationException('Wrong password or username', 401, $exception);
         $this->baseUtilService->saveLastErrorTrace($exception);
 
         return $this->httpUtilService->getProperResponseFromException($exception);

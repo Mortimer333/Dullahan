@@ -6,6 +6,8 @@ namespace Dullahan\User\Adapter\Symfony\Presentation\Http\Controller\User;
 
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\User\Domain\Entity\User;
+use Dullahan\User\Domain\Exception\AccessDeniedHttpException;
+use Dullahan\User\Port\Application\AccessControlInterface;
 use Dullahan\User\Port\Domain\JWTManagerInterface;
 use Dullahan\User\Presentation\Http\Response\Token\RefreshTokenResponseDTO;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -30,17 +32,24 @@ class TokenController extends AbstractController
         content: new Model(type: RefreshTokenResponseDTO::class),
         response: 200
     )]
-    public function refresh(JWTManagerInterface $jwtService, Security $security): JsonResponse
-    {
+    public function refresh(
+        JWTManagerInterface $jwtService,
+        Security $security,
+        AccessControlInterface $accessControl
+    ): JsonResponse {
         /** @var User $user */
         $user = $security->getUser();
 
         $token = $jwtService->createToken($user);
+        $payload = $jwtService->validateAndGetPayload($token);
 
         return $this->httpUtilService->jsonResponse(
             'Token refreshed',
             data: [
                 'token' => $token,
+                'csrf' => $accessControl->generateCSRFToken(
+                    $payload['session'] ?? throw new AccessDeniedHttpException('Missing session in token payload'),
+                ),
             ],
         );
     }

@@ -24,7 +24,7 @@ class UserService implements UserServiceInterface
     {
         $user = $this->em->getRepository(User::class)->find($id);
         if (!$user) {
-            throw new \Exception('Cannot find selected user', 400);
+            throw new \Exception('Cannot find selected user', 404);
         }
 
         return $user;
@@ -89,7 +89,7 @@ class UserService implements UserServiceInterface
         }
 
         if (!empty($user->getActivationToken()) && $user->getActivationToken() !== $token) {
-            throw new \Exception("Account wasn't activated", 400);
+            throw new \Exception("Account wasn't activated", 403);
         }
 
         $user->setWhenActivated(time());

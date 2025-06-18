@@ -9,6 +9,8 @@ use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\User\Adapter\Symfony\Domain\RequestFactory;
 use Dullahan\User\Domain\Entity\User;
+use Dullahan\User\Domain\Exception\AccessDeniedHttpException;
+use Dullahan\User\Port\Application\AccessControlInterface;
 use Dullahan\User\Port\Application\MailServiceInterface;
 use Dullahan\User\Port\Application\UserManagerServiceInterface;
 use Dullahan\User\Port\Application\UserServiceInterface;
@@ -16,11 +18,10 @@ use Dullahan\User\Port\Domain\JWTManagerInterface;
 use Dullahan\User\Port\Domain\RegistrationValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
-use Dullahan\User\Port\Presentation\Http\DisableTokenAuthenticationInterface;
-use Dullahan\User\Presentation\Event\Transform\PostLogin;
-use Dullahan\User\Presentation\Event\Transform\PostRegistration;
-use Dullahan\User\Presentation\Event\Transform\PostValidationRegistration;
-use Dullahan\User\Presentation\Event\Transform\PreRegistration;
+use Dullahan\User\Presentation\Event\Transport\PostLogin;
+use Dullahan\User\Presentation\Event\Transport\PostRegistration;
+use Dullahan\User\Presentation\Event\Transport\PostValidationRegistration;
+use Dullahan\User\Presentation\Event\Transport\PreRegistration;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordVerifyBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\LoginDto;
@@ -48,7 +49,7 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 #[SWG\Tag('Authentication')]
 #[Route(name: 'api_user_')]
-class AuthenticationController extends AbstractController implements DisableTokenAuthenticationInterface
+class AuthenticationController extends AbstractController
 {
     public function __construct(
         protected HttpUtilService $httpUtilService,
@@ -117,8 +118,12 @@ class AuthenticationController extends AbstractController implements DisableToke
         content: new Model(type: UnauthorizedResponseDTO::class),
         response: 401
     )]
-    public function login(Request $request, JWTManagerInterface $jwtService, Security $security): JsonResponse
-    {
+    public function login(
+        Request $request,
+        JWTManagerInterface $jwtService,
+        Security $security,
+        AccessControlInterface $accessControl,
+    ): JsonResponse {
         /** @var ?User $user */
         $user = $security->getUser();
 
@@ -136,11 +141,15 @@ class AuthenticationController extends AbstractController implements DisableToke
         ));
 
         $token = $jwtService->createToken($user);
+        $payload = $jwtService->validateAndGetPayload($token);
 
         return $this->httpUtilService->jsonResponse(
             'User authenticated',
             data: [
                 'token' => $token,
+                'csrf' => $accessControl->generateCSRFToken(
+                    $payload['session'] ?? throw new AccessDeniedHttpException('Missing session in token payload'),
+                ),
                 'user' => [
                     'details' => $this->userService->serialize($user),
                     'roles' => $user->getRoles(),

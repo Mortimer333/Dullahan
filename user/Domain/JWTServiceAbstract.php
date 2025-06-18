@@ -8,9 +8,10 @@ use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\User\Domain\Entity\User;
-use Dullahan\User\Presentation\Event\Transform\JWTCreate;
+use Dullahan\User\Presentation\Event\Transport\JWTCreate;
 use Jose\Component\Core\JWKSet;
 use Psr\Cache\CacheItemPoolInterface;
+use Ramsey\Uuid\Uuid;
 
 abstract class JWTServiceAbstract
 {
@@ -87,7 +88,11 @@ abstract class JWTServiceAbstract
      */
     protected function createPayload(User $user): array
     {
-        $payload = ['user' => $user->getUserIdentifier(), 'user_id' => $user->getId()];
+        $payload = [
+            'user' => $user->getUserIdentifier(),
+            'user_id' => $user->getId(),
+            'session' => Uuid::uuid7()->toString(),
+        ];
         $event = new JWTCreate($payload, $user);
         $this->eventDispatcher->dispatch($event);
 

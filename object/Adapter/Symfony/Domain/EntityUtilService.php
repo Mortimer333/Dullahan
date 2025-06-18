@@ -9,7 +9,6 @@ use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Service\CacheService;
 use Dullahan\Main\Service\EditorJsService;
-use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Object\Adapter\Symfony\Domain\Reader\FieldReader;
 use Dullahan\Object\Domain\Contract\InheritanceAwareInterface;
 use Dullahan\Object\Port\Domain\EntityServiceInterface;
