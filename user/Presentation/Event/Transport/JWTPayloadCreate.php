@@ -12,7 +12,7 @@ use Dullahan\User\Domain\Entity\User;
  *      user: string|null,
  *  }
  */
-class JWTCreate
+class JWTPayloadCreate
 {
     /**
      * @param TokenPayload $payload

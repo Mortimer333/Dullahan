@@ -20,9 +20,7 @@ interface UserServiceInterface
      *     id: int|null,
      *     email: string|null,
      *     data: array<string, mixed>,
-     *     activated: bool,
-     *     created: string,
-     *     storage: array{
+     *     storage?: array{
      *          readable: array{
      *              limit: string,
      *              limit: string,

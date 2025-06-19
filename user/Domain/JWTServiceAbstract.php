@@ -8,11 +8,15 @@ use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\User\Domain\Entity\User;
-use Dullahan\User\Presentation\Event\Transport\JWTCreate;
+use Dullahan\User\Presentation\Event\Transport\JWTHeaderCreate;
+use Dullahan\User\Presentation\Event\Transport\JWTPayloadCreate;
 use Jose\Component\Core\JWKSet;
 use Psr\Cache\CacheItemPoolInterface;
 use Ramsey\Uuid\Uuid;
 
+/**
+ * @phpstan-import-type TokenHeader from \Dullahan\User\Presentation\Event\Transport\JWTHeaderCreate
+ */
 abstract class JWTServiceAbstract
 {
     public const AUDIENCE = 'Users';
@@ -52,19 +56,22 @@ abstract class JWTServiceAbstract
     /**
      * @param array<mixed> $header
      *
-     * @return array<mixed>
+     * @return TokenHeader
      */
-    public function addRequiredToHeader(int $userId, array $header): array
+    public function addRequiredToHeader(User $user, array $header): array
     {
-        return array_merge([
+        /** @var TokenHeader $header */
+        $header = array_merge([
             'alg' => $header['alg'] ?? throw new \Exception('Missing algorithm header in token', 500),
-            'jti' => $header['jti'] ?? $this->createJTI($userId),
+            'jti' => $header['jti'] ?? $this->createJTI((int) $user->getId()),
             'iss' => $header['iss'] ?? $this->getIssuer(),
             'aud' => $header['aud'] ?? $this->getAudience(),
             'iat' => $header['iat'] ?? time(),
             'nbf' => $header['nbf'] ?? time(),
             'exp' => $header['exp'] ?? time() + $this->httpUtilService->getTokenExpTimeSeconds(),
         ], $header);
+
+        return $this->eventDispatcher->dispatch(new JWTHeaderCreate($header, $user))->getHeader();
     }
 
     public function createJTI(int $userId): string
@@ -88,15 +95,11 @@ abstract class JWTServiceAbstract
      */
     protected function createPayload(User $user): array
     {
-        $payload = [
+        return $this->eventDispatcher->dispatch(new JWTPayloadCreate([
             'user' => $user->getUserIdentifier(),
             'user_id' => $user->getId(),
             'session' => Uuid::uuid7()->toString(),
-        ];
-        $event = new JWTCreate($payload, $user);
-        $this->eventDispatcher->dispatch($event);
-
-        return $event->getPayload();
+        ], $user))->getPayload();
     }
 
     protected function getIssuer(): string

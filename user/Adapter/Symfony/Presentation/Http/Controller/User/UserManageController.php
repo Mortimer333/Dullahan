@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\User\Adapter\Symfony\Presentation\Http\Controller\User;
 
+use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\User\Port\Application\MailServiceInterface;
 use Dullahan\User\Port\Application\UserManagerServiceInterface;
@@ -38,6 +39,7 @@ class UserManageController extends AbstractController
         protected UserManagerServiceInterface $userManageService,
         protected MailServiceInterface $mailService,
         protected RegistrationValidationServiceInterface $registrationValidationService,
+        protected ErrorCollectorInterface $errorCollector,
     ) {
     }
 
@@ -107,7 +109,7 @@ class UserManageController extends AbstractController
             $this->registrationValidationService->validateUsernameUniqueness($update['username'], $user);
         }
 
-        if ($this->httpUtilService->hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \InvalidArgumentException("Couldn't update user details", 400);
         }
 
@@ -132,7 +134,7 @@ class UserManageController extends AbstractController
 
         $user = $this->userService->getLoggedInUser();
         $this->userValidateService->validateUpdateUserMail($update, $user);
-        if ($this->httpUtilService->hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \InvalidArgumentException("Couldn't update user email", 400);
         }
 

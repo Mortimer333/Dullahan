@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Main\Service\Util;
 
+use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +12,8 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 /**
  * Base service with http utilization methods.
+ *
+ * @phpstan-import-type Error from \Dullahan\Main\Contract\ErrorCollectorInterface
  */
 class HttpUtilService
 {
@@ -18,14 +21,13 @@ class HttpUtilService
     public const TOKEN_EXP_TIME_SECONDS = 60 * 60; // One hour
     public const TOKEN_EXP_TIME_DEV_SECONDS = 24 * 60 * 60; // One day
 
-    /** @var array<mixed> $errors */
-    protected static array $errors = [];
     protected static ?int $limit = null;
     protected static ?int $offset = null;
     protected static ?int $total = null;
 
     public function __construct(
         protected BinUtilService $binUtilService,
+        protected ErrorCollectorInterface $errorCollector,
     ) {
     }
 
@@ -59,69 +61,6 @@ class HttpUtilService
         return self::$offset;
     }
 
-    /**
-     * @param array<string>|null $path
-     */
-    public static function addError(string $error, ?array $path = null): void
-    {
-        if (null === $path) {
-            self::$errors[] = $error;
-
-            return;
-        }
-
-        self::createErrorPath($error, $path, self::$errors);
-    }
-
-    /**
-     * @param array<string> $path
-     * @param array<mixed>  $errors
-     */
-    protected static function createErrorPath(string $error, array $path, array &$errors, int $caret = 0): void
-    {
-        if (!isset($path[$caret])) {
-            $errors[] = $error;
-
-            return;
-        }
-
-        if (!isset($errors[$path[$caret]])) {
-            $errors[$path[$caret]] = [];
-        }
-
-        if (is_string($errors[$path[$caret]])) {
-            return;
-        }
-
-        self::createErrorPath($error, $path, $errors[$path[$caret]], $caret + 1);
-    }
-
-    /**
-     * @param array<string> $errors
-     */
-    public static function setErrors(array $errors): void
-    {
-        self::$errors = $errors;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public static function getErrors(): array
-    {
-        return self::$errors;
-    }
-
-    public static function hasErrors(): bool
-    {
-        return count(self::$errors) > 0;
-    }
-
-    public static function clearErrors(): void
-    {
-        self::$errors = [];
-    }
-
     public function getTokenExpTimeSeconds(): int
     {
         if ($this->binUtilService->isDev()) {
@@ -132,9 +71,9 @@ class HttpUtilService
     }
 
     /**
-     * @param array<mixed>  $data
-     * @param array<string> $errors
-     * @param array<mixed>  $headers
+     * @param array<mixed> $data
+     * @param Error        $errors
+     * @param array<mixed> $headers
      */
     public function jsonResponse(
         string $message,
@@ -204,11 +143,11 @@ class HttpUtilService
 
     public function getProperResponseFromException(\Throwable $exception): JsonResponse
     {
-        return self::jsonResponse(
+        return $this->jsonResponse(
             message: $exception->getMessage() ?: 'No message',
             status: $this->getStatusCode($exception),
             success: false,
-            errors: self::getErrors(),
+            errors: $this->errorCollector->getErrors(),
         );
     }
 

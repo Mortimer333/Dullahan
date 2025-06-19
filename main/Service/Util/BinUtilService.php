@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Main\Service\Util;
 
+use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -11,6 +12,11 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class BinUtilService
 {
+    public function __construct(
+        protected ErrorCollectorInterface $errorCollector,
+    ) {
+    }
+
     protected static string $projectDir;
 
     public static function getTmpPath(): string
@@ -41,7 +47,6 @@ class BinUtilService
 
     public function saveLastErrorTrace(\Throwable $e, ?Request $request = null): void
     {
-        $httpUtilService = new HttpUtilService(new self());
         $path = $this->getRootPath() . '/var/last_error_trace';
         $file = fopen($path, 'w');
         if ($file) {
@@ -49,8 +54,8 @@ class BinUtilService
                 $content = json_decode($request->getContent(), true);
                 fwrite($file, (json_encode($content, JSON_PRETTY_PRINT) ?: '') . PHP_EOL);
             }
-            if ($httpUtilService->hasErrors()) {
-                fwrite($file, json_encode($httpUtilService->getErrors(), JSON_PRETTY_PRINT) . PHP_EOL);
+            if ($this->errorCollector->hasErrors()) {
+                fwrite($file, json_encode($this->errorCollector->getErrors(), JSON_PRETTY_PRINT) . PHP_EOL);
             }
             fwrite($file, $e->getMessage() . ' => ' . $e->getFile() . ' => ' . $e->getLine() . PHP_EOL);
             fwrite($file, json_encode($e->getTrace(), JSON_PRETTY_PRINT) ?: '');
@@ -68,11 +73,9 @@ class BinUtilService
             return self::$projectDir = $_ENV['PROJECT_ROOT'];
         }
 
-        $r = new \ReflectionObject(new self());
-
-        if (!is_file($dir = $r->getFileName() ?: '')) {
+        if (!is_file($dir = __FILE__)) {
             throw new \LogicException(
-                sprintf('Cannot auto-detect project dir for kernel of class "%s".', $r->name)
+                sprintf('Cannot auto-detect project dir for kernel of class "%s".', basename($dir))
             );
         }
 

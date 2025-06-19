@@ -21,7 +21,7 @@ trait SymfonyValidationHelperTrait
     public function addViolations(ConstraintViolationListInterface $violations): void
     {
         foreach ($violations as $violation) {
-            $this->httpUtilService->addError(
+            $this->errorCollector->addError(
                 (string) $violation->getMessage(),
                 explode('][', ltrim(rtrim($violation->getPropertyPath(), ']'), '['))
             );

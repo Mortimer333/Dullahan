@@ -92,9 +92,6 @@ trait PaginationTrait
         bool $addGroupBy = true
     ): QueryBuilder {
         $this->validationService->validatePagination($pagination);
-        if (HttpUtilService::hasErrors()) {
-            throw new \Exception('Pagination is invalid', 400);
-        }
 
         /** @var int|bool $limit */
         $limit = $pagination['limit'] ?? false;

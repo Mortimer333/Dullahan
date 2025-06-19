@@ -61,7 +61,7 @@ class JWSService extends JWTServiceAbstract implements JWTManagerInterface
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)
-            ->addSignature($sigJWK, $this->addRequiredToHeader((int) $user->getId(), ['alg' => $signatureAlgorithm]))
+            ->addSignature($sigJWK, $this->addRequiredToHeader($user, ['alg' => $signatureAlgorithm]))
             ->build()
         ;
 

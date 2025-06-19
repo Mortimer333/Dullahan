@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Main\Service;
 
-use Dullahan\Main\Service\Util\HttpUtilService;
+use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Port\Application\MailServiceInterface;
 use Dullahan\User\Port\Application\UserManagerServiceInterface;
@@ -26,6 +26,7 @@ class MailService implements MailServiceInterface
         protected LoggerInterface $logger,
         protected UserServiceInterface $userService,
         protected UserManagerServiceInterface $userManageService,
+        protected ErrorCollectorInterface $errorCollector,
     ) {
     }
 
@@ -137,7 +138,7 @@ class MailService implements MailServiceInterface
             if (!isset($jsonResponse['message'])) {
                 throw new \Exception('Unexpected error, please contact administrator', 500);
             }
-            HttpUtilService::setErrors($jsonResponse['errors'] ?? []);
+            $this->errorCollector->setErrors($jsonResponse['errors'] ?? []);
             throw new \Exception($jsonResponse['message'], $response->getStatusCode());
         }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Object\Adapter\Symfony\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\Main\Trait\Validate\SymfonyValidationHelperTrait;
 use Dullahan\Object\Adapter\Symfony\Domain\Reader\EntityReader;
@@ -28,6 +29,7 @@ class EntityValidationService implements EntityValidationInterface
         protected ValidatorInterface $validator,
         protected EntityManagerInterface $em,
         protected UserServiceInterface $userService,
+        protected ErrorCollectorInterface $errorCollector,
     ) {
     }
 
@@ -39,7 +41,7 @@ class EntityValidationService implements EntityValidationInterface
     public function validateDataSetCriteria(array $criteria): void
     {
         $this->validate($criteria, DataSetCriteriaConstraint::get());
-        if (HttpUtilService::hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Entity selection has failed', 400);
         }
     }
@@ -47,7 +49,7 @@ class EntityValidationService implements EntityValidationInterface
     public function validatePagination(array $pagination): void
     {
         $this->validate($pagination, PaginationConstraint::get());
-        if (HttpUtilService::hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Entity pagination has failed', 400);
         }
     }
@@ -68,7 +70,7 @@ class EntityValidationService implements EntityValidationInterface
             $this->runValidationConstraint($payload, $reader->getCreationConstraint(), $entity);
         }
 
-        if (HttpUtilService::hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Entity creation has failed', 400);
         }
     }
@@ -101,7 +103,7 @@ class EntityValidationService implements EntityValidationInterface
             $this->runValidationConstraint($payload, $reader->getUpdateConstraint(), $entity);
         }
 
-        if (HttpUtilService::hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Entity update has failed', 400);
         }
     }

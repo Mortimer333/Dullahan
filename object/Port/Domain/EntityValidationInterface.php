@@ -16,7 +16,7 @@ interface EntityValidationInterface
     /**
      * @param array<string, mixed> $pagination
      *
-     * @throws \Exception
+     * @throws \Exception Throws when validation is invalid
      */
     public function validatePagination(array $pagination): void;
 

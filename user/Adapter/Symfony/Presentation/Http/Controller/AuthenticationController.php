@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Dullahan\User\Adapter\Symfony\Presentation\Http\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Main\Contract\ErrorCollectorInterface;
+use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\User\Adapter\Symfony\Domain\RequestFactory;
@@ -39,7 +41,6 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -63,6 +64,7 @@ class AuthenticationController extends AbstractController
         protected EventDispatcherInterface $eventDispatcher,
         protected UserVerifyAndSetServiceInterface $userVerifyAndSetService,
         protected RequestFactory $requestFactory,
+        protected ErrorCollectorInterface $errorCollector,
     ) {
     }
 
@@ -93,7 +95,7 @@ class AuthenticationController extends AbstractController
             $this->requestFactory->symfonyToDullahanRequest($request),
         ));
 
-        if ($this->httpUtilService->hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \InvalidArgumentException('Registration attempt failed', 400);
         }
 
@@ -146,7 +148,7 @@ class AuthenticationController extends AbstractController
         return $this->httpUtilService->jsonResponse(
             'User authenticated',
             data: [
-                'token' => $token,
+                'auth' => $token,
                 'csrf' => $accessControl->generateCSRFToken(
                     $payload['session'] ?? throw new AccessDeniedHttpException('Missing session in token payload'),
                 ),

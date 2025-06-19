@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\User\Adapter\Symfony\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\Main\Trait\Validate\SymfonyValidationHelperTrait;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\RegistrationConstraint;
@@ -21,6 +22,7 @@ class RegistrationValidationService implements RegistrationValidationServiceInte
         protected HttpUtilService $httpUtilService,
         protected ValidatorInterface $validator,
         protected EntityManagerInterface $em,
+        protected ErrorCollectorInterface $errorCollector,
     ) {
     }
 
@@ -30,7 +32,7 @@ class RegistrationValidationService implements RegistrationValidationServiceInte
     public function validateRegistration(array $registration): void
     {
         $this->validate($registration, RegistrationConstraint::get());
-        if ($this->httpUtilService->hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Registration failed', 400);
         }
     }
@@ -49,9 +51,9 @@ class RegistrationValidationService implements RegistrationValidationServiceInte
         }
 
         if (!is_null($userWithEmail) && $userWithEmail->getEmail() === $email) {
-            $this->httpUtilService->addError('User with this e-mail already exists', ['email']);
+            $this->errorCollector->addError('User with this e-mail already exists', ['email']);
         } elseif (!is_null($userWithEmail) && $userWithEmail->getNewEmail() === $email) {
-            $this->httpUtilService->addError('Someone is changing their email to the one you\'ve chosen', ['email']);
+            $this->errorCollector->addError('Someone is changing their email to the one you\'ve chosen', ['email']);
         }
     }
 
@@ -63,14 +65,14 @@ class RegistrationValidationService implements RegistrationValidationServiceInte
         }
 
         if (!is_null($userDataWithName)) {
-            $this->httpUtilService->addError('User with this name already exists', ['username']);
+            $this->errorCollector->addError('User with this name already exists', ['username']);
         }
     }
 
     public function validateUserPassword(string $password, string $repeated): void
     {
         if ($password !== $repeated) {
-            $this->httpUtilService->addError("Passwords don't match", ['passwordRepeat']);
+            $this->errorCollector->addError("Passwords don't match", ['passwordRepeat']);
         }
     }
 }

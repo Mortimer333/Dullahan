@@ -46,7 +46,7 @@ class TokenController extends AbstractController
         return $this->httpUtilService->jsonResponse(
             'Token refreshed',
             data: [
-                'token' => $token,
+                'auth' => $token,
                 'csrf' => $accessControl->generateCSRFToken(
                     $payload['session'] ?? throw new AccessDeniedHttpException('Missing session in token payload'),
                 ),

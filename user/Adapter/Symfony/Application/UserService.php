@@ -57,8 +57,6 @@ class UserService implements UserServiceInterface
             'id' => $user->getId(),
             'email' => $user->getEmail(),
             'data' => $this->serializeData($data),
-            'activated' => (bool) $user->isActivated(),
-            'created' => date('Y-m-d H:i:s', $user->getCreated()),
             'storage' => [
                 'readable' => [
                     'limit' => FileUtilService::humanFilesize((int) $data->getFileLimitBytes()),

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Dullahan\User\Domain;
 
+use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Contract\RequestInterface;
 use Dullahan\User\Domain\Exception\AccessDeniedHttpException;
 use Dullahan\User\Port\Application\AccessControlInterface;
 use Dullahan\User\Port\Domain\AuthorizationCheckerInterface;
+use Dullahan\User\Presentation\Event\Transport\GetCSRF;
 
 // @TODO move this to Event - handling should be done on an event
 class AccessControlService implements AccessControlInterface
@@ -15,6 +17,7 @@ class AccessControlService implements AccessControlInterface
     public function __construct(
         protected string $secret,
         protected AuthorizationCheckerInterface $authorizationChecker,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -24,8 +27,7 @@ class AccessControlService implements AccessControlInterface
             return;
         }
 
-        // @TODO make it a parameter
-        $csrfToken = $request->getHeader('x-csrf-token');
+        $csrfToken = $this->getCsrfToken($request);
         if (!$csrfToken) {
             throw new AccessDeniedHttpException('CSRF token missing');
         }
@@ -54,5 +56,12 @@ class AccessControlService implements AccessControlInterface
         $hmac = hash_hmac('sha256', $message, $this->secret) . '.' . $random;
 
         return $hmac;
+    }
+
+    private function getCsrfToken(RequestInterface $request): ?string
+    {
+        $event = $this->eventDispatcher->dispatch(new GetCSRF($request));
+
+        return $event->getCsrf();
     }
 }

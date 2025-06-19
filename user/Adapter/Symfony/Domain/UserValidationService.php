@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\User\Adapter\Symfony\Domain;
 
+use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\Main\Trait\Validate\SymfonyValidationHelperTrait;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\ForgottenPasswordConstraint;
@@ -26,6 +27,7 @@ class UserValidationService implements UserValidationServiceInterface
         protected ValidatorInterface $validator,
         protected HttpUtilService $httpUtilService,
         protected RegistrationValidationServiceInterface $registrationValidationService,
+        protected ErrorCollectorInterface $errorCollector,
     ) {
     }
 
@@ -42,7 +44,7 @@ class UserValidationService implements UserValidationServiceInterface
     public function validateUpdateUser(array $update): void
     {
         $this->validate($update, UserUpdateConstraint::get());
-        if ($this->httpUtilService->hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Updating your details has failed', 400);
         }
     }
@@ -53,7 +55,7 @@ class UserValidationService implements UserValidationServiceInterface
     public function validateUpdateUserMail(array $update, User $user): void
     {
         $this->validate($update, UserUpdateMailConstraint::get());
-        if ($this->httpUtilService->hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Updating your email has failed', 400);
         }
 
@@ -77,7 +79,7 @@ class UserValidationService implements UserValidationServiceInterface
     public function validatePasswordChange(#[\SensitiveParameter] array $update, User $user): void
     {
         $this->validate($update, UserUpdatePasswordConstraint::get());
-        if ($this->httpUtilService->hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Updating your password has failed', 400);
         }
 
@@ -90,7 +92,7 @@ class UserValidationService implements UserValidationServiceInterface
         /** @var string $newPassword */
         $newPassword = $update['newPassword'] ?? throw new \Exception('Missing new password', 500);
         $this->validatePasswordStrength($newPassword, length: 12);
-        if ($this->httpUtilService->hasErrors()) { // @phpstan-ignore-line
+        if ($this->errorCollector->hasErrors()) { // @phpstan-ignore-line
             throw new \Exception('Changing your password has failed', 400);
         }
 
@@ -107,7 +109,7 @@ class UserValidationService implements UserValidationServiceInterface
     public function validateForgottenPassword(#[\SensitiveParameter] array $forgotten): void
     {
         $this->validate($forgotten, ForgottenPasswordConstraint::get());
-        if ($this->httpUtilService->hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Resetting your password has failed', 400);
         }
     }
@@ -118,14 +120,14 @@ class UserValidationService implements UserValidationServiceInterface
     public function validateResetPassword(#[\SensitiveParameter] array $forgotten): void
     {
         $this->validate($forgotten, ResetPasswordConstraint::get());
-        if ($this->httpUtilService->hasErrors()) {
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Resetting your password has failed', 400);
         }
 
         /** @var string $password */
         $password = $forgotten['password'] ?? throw new \Exception('Missing new password', 500);
         $this->validatePasswordStrength($password, length: 12);
-        if ($this->httpUtilService->hasErrors()) { // @phpstan-ignore-line
+        if ($this->errorCollector->hasErrors()) { // @phpstan-ignore-line
             throw new \Exception('Changing your password has failed', 400);
         }
 
@@ -150,27 +152,27 @@ class UserValidationService implements UserValidationServiceInterface
         $valid = true;
         if (mb_strlen($password) < $length) {
             $valid = false;
-            $this->httpUtilService->addError("Password is too short, it is required to have $length characters");
+            $this->errorCollector->addError("Password is too short, it is required to have $length characters");
         }
 
         if ($upper && !preg_match('@[A-Z]@', $password)) {
             $valid = false;
-            $this->httpUtilService->addError('Password is required to have uppercase characters');
+            $this->errorCollector->addError('Password is required to have uppercase characters');
         }
 
         if ($lower && !preg_match('@[a-z]@', $password)) {
             $valid = false;
-            $this->httpUtilService->addError('Password is required to have lowercase characters');
+            $this->errorCollector->addError('Password is required to have lowercase characters');
         }
 
         if ($number && !preg_match('@[0-9]@', $password)) {
             $valid = false;
-            $this->httpUtilService->addError('Password is required to have numeric characters');
+            $this->errorCollector->addError('Password is required to have numeric characters');
         }
 
         if ($special && !preg_match('@[^\w]@', $password)) {
             $valid = false;
-            $this->httpUtilService->addError('Password is required to have special characters');
+            $this->errorCollector->addError('Password is required to have special characters');
         }
 
         return $valid;
