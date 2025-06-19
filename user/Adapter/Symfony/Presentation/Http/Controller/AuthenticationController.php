@@ -217,13 +217,6 @@ class AuthenticationController extends AbstractController
         $forgotten = $parameters['forgotten'] ?? [];
         $this->userValidateService->validateForgottenPassword($forgotten);
 
-        // TODO #recaptcha
-        //        $recaptcha = $parameters['recaptcha'] ?? throw new \Exception('Missing reCaptcha token', 400);
-        //        if (!is_string($recaptcha)) {
-        //            throw new \Exception('reCaptcha token has incorrect type', 400);
-        //        }
-        //        $this->recaptchaService->verify($recaptcha);
-
         $mail = $forgotten['mail'] ?? throw new \Exception('Missing mail', 500);
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => $mail]);
         if ($user) {
@@ -245,13 +238,6 @@ class AuthenticationController extends AbstractController
         $parameters = $this->httpUtilService->getBody($request);
         $forgotten = $parameters['forgotten'] ?? [];
         $this->userValidateService->validateResetPassword($forgotten);
-
-        // TODO #recaptcha
-        //        $recaptcha = $parameters['recaptcha'] ?? throw new \Exception('Missing reCaptcha token', 400);
-        //        if (!is_string($recaptcha)) {
-        //            throw new \Exception('reCaptcha token has incorrect type', 400);
-        //        }
-        //        $this->recaptchaService->verify($recaptcha);
 
         $token = $parameters['token'] ?? throw new \Exception('Missing verification token', 400);
         if (!is_string($token)) {

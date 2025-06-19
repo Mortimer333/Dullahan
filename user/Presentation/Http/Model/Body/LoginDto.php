@@ -15,10 +15,4 @@ class LoginDto
             ' one small letter, one number and one special character'
     )]
     public string $password;
-
-    #[SWG\Property(
-        example: '03AFY_a8URlKX2b....gLHkKDHYrsaG3RsJJByHAnraVVZkk2w',
-        description: 'reCaptcha client-side generated token'
-    )]
-    public string $recaptcha;
 }
