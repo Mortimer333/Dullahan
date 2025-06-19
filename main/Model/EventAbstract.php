@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Dullahan\Main\Model;
 
-abstract class EventAbstract
+use Dullahan\Main\Contract\PreventableEventInterface;
+
+abstract class EventAbstract implements PreventableEventInterface
 {
     private bool $defaultPrevented = false;
 

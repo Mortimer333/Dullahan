@@ -32,9 +32,6 @@ class RegistrationValidationService implements RegistrationValidationServiceInte
     public function validateRegistration(array $registration): void
     {
         $this->validate($registration, RegistrationConstraint::get());
-        if ($this->errorCollector->hasErrors()) {
-            throw new \Exception('Registration failed', 400);
-        }
     }
 
     public function validateUserUniqueness(string $email, string $name): void

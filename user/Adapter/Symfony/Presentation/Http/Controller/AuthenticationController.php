@@ -22,8 +22,8 @@ use Dullahan\User\Port\Domain\UserValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\PostLogin;
 use Dullahan\User\Presentation\Event\Transport\PostRegistration;
-use Dullahan\User\Presentation\Event\Transport\PostValidationRegistration;
 use Dullahan\User\Presentation\Event\Transport\PreRegistration;
+use Dullahan\User\Presentation\Event\Transport\RegistrationValidation;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordVerifyBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\LoginDto;
@@ -46,6 +46,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
+ * @TODO All of this should be moved to facade service
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 #[SWG\Tag('Authentication')]
@@ -82,28 +84,18 @@ class AuthenticationController extends AbstractController
     )]
     public function register(Request $request): JsonResponse
     {
-        $this->eventDispatcher->dispatch(new PreRegistration(
-            $this->requestFactory->symfonyToDullahanRequest($request),
-        ));
-        $parameters = $this->httpUtilService->getBody($request);
-
-        $registration = $parameters['register'] ?? [];
-        $this->registrationValidationService->validateRegistration($registration);
-        $this->registrationValidationService->validateUserPassword($registration['password'], $registration['passwordRepeat']);
-        $this->registrationValidationService->validateUserUniqueness($registration['email'], $registration['username']);
-        $this->eventDispatcher->dispatch(new PostValidationRegistration(
-            $this->requestFactory->symfonyToDullahanRequest($request),
-        ));
-
-        if ($this->errorCollector->hasErrors()) {
+        $dullahanRequest = $this->requestFactory->symfonyToDullahanRequest($request);
+        $this->eventDispatcher->dispatch(new PreRegistration($dullahanRequest));
+        $registration = $this->httpUtilService->getBody($request)['register'] ?? [];
+        $registrationValidationEvent = $this->eventDispatcher->dispatch(
+            new RegistrationValidation($dullahanRequest, $registration),
+        );
+        if (!$registrationValidationEvent->isValid()) {
             throw new \InvalidArgumentException('Registration attempt failed', 400);
         }
 
-        $user = $this->userManageService->create($registration);
-        $this->eventDispatcher->dispatch(new PostRegistration(
-            $this->requestFactory->symfonyToDullahanRequest($request),
-            $user,
-        ));
+        $user = $this->userManageService->create($registrationValidationEvent->getRegistration());
+        $this->eventDispatcher->dispatch(new PostRegistration($dullahanRequest, $user));
 
         return $this->httpUtilService->jsonResponse('User registered');
     }

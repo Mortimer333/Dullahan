@@ -51,6 +51,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
 
         $payload = $this->jwtService->validateAndGetPayload($apiToken);
 
+        // @TODO this should be a event
         $this->accessControl->validateTokenCredibility(
             $this->requestFactory->symfonyToDullahanRequest($request),
             $payload,
