@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Dullahan\Entity\Port\Application;
 
 /**
- * @template T of object
- *
  * @TODO I dislike how `type` field works - it should only be made of string like types and additional
  *      context attributes - not be an actual object
  *
@@ -37,8 +35,6 @@ namespace Dullahan\Entity\Port\Application;
 interface EntityDefinitionManagerInterface
 {
     /**
-     * @param T $entity
-     *
      * @return EntityDefinition|null
      *
      * @throws \Psr\Cache\InvalidArgumentException
@@ -46,9 +42,7 @@ interface EntityDefinitionManagerInterface
     public function getEntityDefinition(object $entity): ?array;
 
     /**
-     * @param T $entity
-     *
-     * @return class-string<T>
+     * @return class-string
      */
     public function getEntityTrueClass(object $entity): ?string;
 }

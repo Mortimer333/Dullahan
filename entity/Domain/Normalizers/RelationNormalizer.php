@@ -9,15 +9,10 @@ use Dullahan\Entity\Port\Domain\NormalizerInterface;
 use Dullahan\Main\Model\Context;
 
 /**
- * @template T of object
- *
  * @phpstan-import-type EntityFieldTypeNested from \Dullahan\Entity\Port\Application\EntityDefinitionManagerInterface
  */
 class RelationNormalizer implements NormalizerInterface
 {
-    /**
-     * @param EntityDefinitionManagerInterface<T> $entityDefinitionManager
-     */
     public function __construct(
         protected EntityDefinitionManagerInterface $entityDefinitionManager,
     ) {
@@ -25,7 +20,6 @@ class RelationNormalizer implements NormalizerInterface
 
     /**
      * @param \Countable $value
-     * @param T          $entity
      */
     public function normalize(
         string $fieldName,
@@ -33,7 +27,7 @@ class RelationNormalizer implements NormalizerInterface
         array $definition,
         object $entity,
         Context $context,
-    ): array|string|int|float|bool|\ArrayObject|null {
+    ): mixed {
         /** @var EntityFieldTypeNested $type */
         $type = $definition['type'];
 
@@ -56,7 +50,6 @@ class RelationNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param T                     $entity
      * @param EntityFieldTypeNested $type
      *
      * @return array<mixed>

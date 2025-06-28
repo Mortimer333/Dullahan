@@ -7,14 +7,11 @@ namespace Dullahan\Entity\Presentation\Event\Transport;
 use Dullahan\Main\Model\EventAbstract;
 
 /**
- * @template T of object
- *
  * @phpstan-import-type SerializedEntity from \Dullahan\Entity\Port\Application\EntitySerializerInterface
  */
 class StripSerializedEntity extends EventAbstract
 {
     /**
-     * @param T                    $entity
      * @param array<string, mixed> $dataSet
      * @param SerializedEntity     $serialized
      */

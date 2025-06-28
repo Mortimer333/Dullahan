@@ -21,15 +21,6 @@ use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Port\Application\UserServiceInterface;
 
-/**
- * @template T of object
- *
- * @implements EntityPersistManagerInterface<T>
- * @implements EntityRetrievalManagerInterface<T>
- * @implements EntityDefinitionManagerInterface<T>
- * @implements EntityCacheManagerInterface<T>
- * @implements EntitySerializerInterface<T>
- */
 class EntityManagerFacade
 implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, EntityDefinitionManagerInterface,
     EntityCacheManagerInterface, EntitySerializerInterface
@@ -48,7 +39,6 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
             return null;
         }
 
-        /** @var T|null $entity */
         $entity = $this->eventDispatcher->dispatch(new Transport\GetEntity($class, $id, $repository))->entity;
         if ($entity) {
             $this->dispatchOwnerVerification($entity);
@@ -181,9 +171,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
     }
 
     /**
-     * @param T $entity
-     *
-     * @return Transport\VerifyEntityOwnership<T>
+     * @return Transport\VerifyEntityOwnership<object>
      */
     protected function dispatchOwnerVerification(object $entity): Transport\VerifyEntityOwnership
     {
@@ -196,9 +184,9 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
     }
 
     /**
-     * @param class-string<T> $className
+     * @param class-string $className
      *
-     * @return Transport\VerifyEntityAccess<T>
+     * @return Transport\VerifyEntityAccess<object>
      */
     protected function dispatchAccessVerification(string $className, string $type): Transport\VerifyEntityAccess
     {

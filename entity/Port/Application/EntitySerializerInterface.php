@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Dullahan\Entity\Port\Application;
 
 /**
- * @template T of object
- *
  * @phpstan-type SerializedEntity array<string, mixed>
  */
 interface EntitySerializerInterface
 {
     /**
+     * @template T of object
+     *
      * @param T                         $entity
      * @param array<string, mixed>|null $dataSet
      *

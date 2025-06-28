@@ -12,16 +12,8 @@ use Dullahan\Entity\Presentation\Event\Transport\SerializeEntity;
 use Dullahan\Entity\Presentation\Event\Transport\StripSerializedEntity;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-/**
- * @template T of object
- */
 class EntitySerializerListener
 {
-    /**
-     * @param SerializeEntityFunctor<T>            $serializeEntity
-     * @param PrepareEntityRequestedDataFunctor<T> $prepareEntityRequestedData
-     * @param RegisterEntityNormalizersFunctor<T>  $registerEntityNormalizers
-     */
     public function __construct(
         protected SerializeEntityFunctor $serializeEntity,
         protected PrepareEntityRequestedDataFunctor $prepareEntityRequestedData,
@@ -29,9 +21,6 @@ class EntitySerializerListener
     ) {
     }
 
-    /**
-     * @param SerializeEntity<T> $event
-     */
     #[AsEventListener(event: SerializeEntity::class)]
     public function onSerializeEntity(SerializeEntity $event): void
     {
@@ -47,9 +36,6 @@ class EntitySerializerListener
         );
     }
 
-    /**
-     * @param StripSerializedEntity<T> $event
-     */
     #[AsEventListener(event: StripSerializedEntity::class)]
     public function onStripSerializedEntity(StripSerializedEntity $event): void
     {
@@ -64,9 +50,6 @@ class EntitySerializerListener
         );
     }
 
-    /**
-     * @param RegisterEntityNormalizer<T> $event
-     */
     #[AsEventListener(event: RegisterEntityNormalizer::class)]
     public function onRegisterEntityNormalizer(RegisterEntityNormalizer $event): void
     {

@@ -8,8 +8,6 @@ use Dullahan\Entity\Domain\Exception\EntityNotAuthorizedException;
 use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
 
 /**
- * @template T of object
- *
  * @phpstan-import-type SerializedEntity from \Dullahan\Entity\Port\Application\EntitySerializerInterface
  */
 interface EntityRetrievalManagerInterface
@@ -19,11 +17,15 @@ interface EntityRetrievalManagerInterface
      *
      * @return T
      *
+     * @template T of object
+     *
      * @throws EntityNotAuthorizedException
      */
     public function get(string $class, int $id): ?object;
 
     /**
+     * @template T of object
+     *
      * @param class-string<T> $class
      *
      * @return EntityRepositoryInterface<T>
@@ -31,6 +33,8 @@ interface EntityRetrievalManagerInterface
     public function getRepository(string $class): ?EntityRepositoryInterface;
 
     /**
+     * @template T of object
+     *
      * @param T                         $entity
      * @param array<string, mixed>|null $dataSet
      *

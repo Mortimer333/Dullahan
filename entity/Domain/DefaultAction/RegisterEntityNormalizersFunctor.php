@@ -12,14 +12,8 @@ use Dullahan\Entity\Domain\Normalizers\InheritedValueNormalizer;
 use Dullahan\Entity\Domain\Normalizers\RelationNormalizer;
 use Dullahan\Entity\Presentation\Event\Transport\RegisterEntityNormalizer;
 
-/**
- * @template T of object
- */
 class RegisterEntityNormalizersFunctor
 {
-    /**
-     * @param RelationNormalizer<T> $relationNormalizer
-     */
     public function __construct(
         protected AssetPointerNormalizer $assetPointerNormalizer,
         protected CacheReferenceReplacerNormalizer $cacheReferenceReplacerNormalizer,
@@ -30,9 +24,6 @@ class RegisterEntityNormalizersFunctor
     ) {
     }
 
-    /**
-     * @param RegisterEntityNormalizer<T> $event
-     */
     public function __invoke(RegisterEntityNormalizer $event): void
     {
         /**

@@ -8,8 +8,6 @@ use Dullahan\Entity\Port\Domain\NormalizerInterface;
 use Dullahan\Main\Model\EventAbstract;
 
 /**
- * @template T of object
- *
  * @phpstan-import-type SerializedEntity from \Dullahan\Entity\Port\Application\EntitySerializerInterface
  * @phpstan-import-type EntityDefinition from \Dullahan\Entity\Port\Application\EntityDefinitionManagerInterface
  */
@@ -19,7 +17,6 @@ class SerializeEntity extends EventAbstract
     public ?array $serialized = null;
 
     /**
-     * @param T                          $entity
      * @param EntityDefinition           $definition
      * @param array<NormalizerInterface> $normalizers
      */

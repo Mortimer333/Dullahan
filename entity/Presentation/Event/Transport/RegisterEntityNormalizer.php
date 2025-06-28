@@ -8,8 +8,6 @@ use Dullahan\Entity\Port\Domain\NormalizerInterface;
 use Dullahan\Main\Model\EventAbstract;
 
 /**
- * @template T of object
- *
  * @phpstan-type NormalizerRegistry array<array{
  *     0: NormalizerInterface,
  *     1: number,
@@ -20,9 +18,6 @@ class RegisterEntityNormalizer extends EventAbstract
     /** @var NormalizerRegistry */
     protected array $normalizers = [];
 
-    /**
-     * @param T $entity
-     */
     public function __construct(
         public readonly object $entity,
     ) {

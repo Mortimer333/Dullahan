@@ -10,15 +10,10 @@ use Dullahan\Entity\Port\Domain\EntityCacheServiceInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
- * @template T of object
- *
  * @phpstan-import-type EntityDefinition from \Dullahan\Entity\Port\Application\EntityDefinitionManagerInterface
  */
 class GetEntityDefinitionFunctor
 {
-    /**
-     * @param EntityDefinitionManagerInterface<T> $entityDefinitionManager
-     */
     public function __construct(
         protected EntityCacheServiceInterface $entityCacheService,
         protected CacheItemPoolInterface $cache,
@@ -28,8 +23,6 @@ class GetEntityDefinitionFunctor
 
     /**
      * @TODO this should be decoupled into three phases: Cache Retrieve, Generate definition, Cache save
-     *
-     * @param T $entity
      *
      * @return EntityDefinition
      */

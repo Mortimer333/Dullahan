@@ -23,17 +23,10 @@ use Dullahan\Main\Model\Context;
  *      is a correct choice (but maybe we would be able to find query builder with multiple
  *      supported schemas?).
  *
- * @template T of object
- *
  * @phpstan-import-type SerializedEntity from \Dullahan\Entity\Port\Application\EntitySerializerInterface
  */
 class PrepareEntityRequestedDataFunctor
 {
-    /**
-     * @param EntityRetrievalManagerInterface<T>  $entityRetrievalManager
-     * @param EntityDefinitionManagerInterface<T> $entityDefinitionManager
-     * @param EntitySerializerInterface<T>        $entitySerializer
-     */
     public function __construct(
         protected EntityRetrievalManagerInterface $entityRetrievalManager,
         protected EntityDefinitionManagerInterface $entityDefinitionManager,
@@ -208,7 +201,7 @@ class PrepareEntityRequestedDataFunctor
         // @TODO cache key to class should be handled by EntityCacheService
         [,, $class, $id] = explode(':', $cacheKey);
 
-        /** @var class-string<T> $class */
+        /** @var class-string $class */
         $class = str_replace('-', '\\', $class);
         $entity = $this->entityRetrievalManager->getRepository($class)?->find($id);
         if (!$entity) {
