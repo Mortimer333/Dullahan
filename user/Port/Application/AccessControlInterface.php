@@ -24,4 +24,6 @@ interface AccessControlInterface
      * @throws AccessDeniedHttpException
      */
     public function generateCSRFToken(string $session, ?string $random = null): string;
+
+    public function getCsrfToken(RequestInterface $request): ?string;
 }

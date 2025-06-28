@@ -27,12 +27,9 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
     ) {
     }
 
-    /**
-     * Skip authenticator when login route is accesses to give way for the default one.
-     */
     public function supports(Request $request): ?bool
     {
-        return 'api_user_login' !== $request->attributes->get('_route');
+        return (bool) $request->headers->get('Authorization');
     }
 
     public function authenticate(Request $request): Passport

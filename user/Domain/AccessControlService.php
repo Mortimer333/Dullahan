@@ -58,10 +58,8 @@ class AccessControlService implements AccessControlInterface
         return $hmac;
     }
 
-    private function getCsrfToken(RequestInterface $request): ?string
+    public function getCsrfToken(RequestInterface $request): ?string
     {
-        $event = $this->eventDispatcher->dispatch(new GetCSRF($request));
-
-        return $event->getCsrf();
+        return $this->eventDispatcher->dispatch(new GetCSRF($request))->getCsrf();
     }
 }
