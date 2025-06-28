@@ -13,18 +13,7 @@ class DullahanBundle extends AbstractBundle
 {
     public function configure(DefinitionConfigurator $definition): void
     {
-        $definition->rootNode() // @phpstan-ignore method.notFound
-            ->children()
-                ->arrayNode('projects')
-                    ->useAttributeAsKey('name')
-                    ->arrayPrototype()
-                        ->children()
-                            ->scalarNode('class')->isRequired()->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ;
+        $definition->rootNode();
     }
 
     /**
@@ -38,8 +27,5 @@ class DullahanBundle extends AbstractBundle
         ContainerBuilder $builder,
     ): void {
         $container->import('../config/services.yaml');
-        $builder->getDefinition('Dullahan\Main\Service\ProjectManagerService')
-            ->setArgument('$projects', $config['projects'])
-        ;
     }
 }

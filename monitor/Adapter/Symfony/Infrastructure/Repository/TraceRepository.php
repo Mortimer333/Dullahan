@@ -4,9 +4,9 @@ namespace Dullahan\Monitor\Adapter\Symfony\Infrastructure\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Dullahan\Entity\Adapter\Symfony\Domain\Trait\PaginationTrait;
+use Dullahan\Entity\Port\Domain\EntityValidationInterface;
 use Dullahan\Monitor\Domain\Entity\Trace;
-use Dullahan\Object\Adapter\Symfony\Domain\Trait\PaginationTrait;
-use Dullahan\Object\Port\Domain\EntityValidationInterface;
 
 /**
  * @extends ServiceEntityRepository<Trace>

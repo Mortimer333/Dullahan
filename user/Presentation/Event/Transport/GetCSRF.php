@@ -14,6 +14,7 @@ class GetCSRF extends EventAbstract
     public function __construct(
         protected RequestInterface $request,
     ) {
+        parent::__construct();
     }
 
     public function getRequest(): RequestInterface

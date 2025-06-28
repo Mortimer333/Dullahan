@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Presentation\Event\Transport\Exist;
 
-use Dullahan\Asset\Domain\Context;
+use Dullahan\Main\Model\Context;
 
 final class AssetExistEvent
 {

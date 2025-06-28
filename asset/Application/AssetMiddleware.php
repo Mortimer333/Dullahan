@@ -6,7 +6,6 @@ namespace Dullahan\Asset\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Asset\Adapter\Symfony\Presentation\Event\EventListener\Asset\ListListener;
-use Dullahan\Asset\Domain\Context;
 use Dullahan\Asset\Domain\Directory;
 use Dullahan\Asset\Domain\Exception\AssetExistsException;
 use Dullahan\Asset\Domain\Exception\AssetInvalidNameException;
@@ -15,6 +14,7 @@ use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetMiddlewareInterface;
 use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
+use Dullahan\Main\Model\Context;
 use Dullahan\User\Port\Application\UserServiceInterface;
 
 class AssetMiddleware implements AssetMiddlewareInterface

@@ -9,6 +9,8 @@ use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Main\Service\Util\FileUtilService;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Domain\Entity\UserData;
+use Dullahan\User\Domain\Exception\UserNotFoundException;
+use Dullahan\User\Domain\Exception\UserNotLoggedInException;
 use Dullahan\User\Port\Application\UserServiceInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -24,7 +26,7 @@ class UserService implements UserServiceInterface
     {
         $user = $this->em->getRepository(User::class)->find($id);
         if (!$user) {
-            throw new \Exception('Cannot find selected user', 404);
+            throw new UserNotFoundException('Cannot find selected user');
         }
 
         return $user;
@@ -35,7 +37,7 @@ class UserService implements UserServiceInterface
         /** @var ?User $user */
         $user = $this->security->getUser();
         if (!$user) {
-            throw new \Exception('User is not logged in', 400);
+            throw new UserNotLoggedInException('User is not logged in');
         }
 
         return $this->get((int) $user->getId());

@@ -1,0 +1,9 @@
+services:
+  Dullahan\Entity\:
+    autowire: true
+    autoconfigure: true
+    resource: '../entity/'
+    exclude:
+      - '../entity/Adapter/Symfony/Application/DependencyInjection'
+      - '../entity/Domain/Entity/'
+      - '../entity/Domain/Exception'

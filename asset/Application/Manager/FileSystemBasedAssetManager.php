@@ -6,8 +6,8 @@ namespace Dullahan\Asset\Application\Manager;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Asset\Domain\Entity\Asset;
-use Dullahan\Main\Service\CacheService;
-use Dullahan\Main\Service\ProjectManagerService;
+use Dullahan\Entity\Domain\Service\EntityCacheService;
+use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\FileUtilService;
 use Dullahan\Main\Service\ValidationService;
@@ -29,9 +29,9 @@ class FileSystemBasedAssetManager // implements AssetManagerInterface
     public function __construct(
         protected EntityManagerInterface $em,
         protected UserServiceInterface $userService,
-        protected CacheService $cacheService,
+        protected EntityCacheService $cacheService,
         protected ValidationService $validationService,
-        protected ProjectManagerService $projectManagerService,
+        protected MappingsManagerInterface $projectManagerService,
     ) {
     }
 
@@ -266,7 +266,7 @@ class FileSystemBasedAssetManager // implements AssetManagerInterface
             throw new \Exception('Relative path to image folder is not set', 500);
         }
 
-        $projects = $this->projectManagerService->getProjects();
+        $projects = $this->projectManagerService->getMappings();
         $i = 0;
         foreach ($projects as $name => $properties) {
             if ($name == $project) {

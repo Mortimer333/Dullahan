@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Dullahan\Asset\Port\Presentation;
 
 use Dullahan\Asset\Domain\Asset;
-use Dullahan\Asset\Domain\Context;
 use Dullahan\Asset\Domain\Exception\AssetNotClonedException;
 use Dullahan\Asset\Domain\Exception\AssetNotCreatedException;
 use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
 use Dullahan\Asset\Domain\Exception\AssetNotMovedException;
 use Dullahan\Asset\Domain\Exception\AssetNotReplacedException;
+use Dullahan\Main\Model\Context;
 
 interface AssetServiceInterface
 {

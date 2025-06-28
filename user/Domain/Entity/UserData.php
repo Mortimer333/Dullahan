@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Dullahan\Asset\Domain\Entity\Asset;
-use Dullahan\Object\Domain\Attribute\Field;
+use Dullahan\Entity\Domain\Attribute\Field;
 use Dullahan\User\Adapter\Symfony\Infrastructure\Repository\UserDataRepository;
 
 /**

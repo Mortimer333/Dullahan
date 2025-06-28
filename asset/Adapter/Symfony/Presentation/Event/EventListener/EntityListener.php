@@ -10,12 +10,12 @@ use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Main\Service\CacheService;
-use Dullahan\Object\Adapter\Symfony\Domain\EntityUtilService;
-use Dullahan\Object\Presentation\Event\Transport\PostCreate;
-use Dullahan\Object\Presentation\Event\Transport\PostUpdate;
-use Dullahan\Object\Presentation\Event\Transport\PreCreate;
-use Dullahan\Object\Presentation\Event\Transport\PreUpdate;
+use Dullahan\Entity\Adapter\Symfony\Domain\EntityUtilService;
+use Dullahan\Entity\Domain\Service\EntityCacheService;
+use Dullahan\Entity\Presentation\Event\Transport\PostCreate;
+use Dullahan\Entity\Presentation\Event\Transport\PostUpdate;
+use Dullahan\Entity\Presentation\Event\Transport\PreCreate;
+use Dullahan\Entity\Presentation\Event\Transport\PreUpdate;
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailServiceInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
@@ -28,7 +28,7 @@ final class EntityListener
         protected EntityManagerInterface $em,
         protected EntityUtilService $entityUtilService,
         protected FileSystemBasedAssetManager $assetService,
-        protected CacheService $cacheService,
+        protected EntityCacheService $cacheService,
         protected ThumbnailServiceInterface $thumbnailService,
     ) {
     }

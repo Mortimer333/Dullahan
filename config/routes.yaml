@@ -29,14 +29,3 @@ api.thumbnails.controllers:
     type: attribute
     prefix: '/_'
 #> THUMBNAIL
-
-# OBJECT
-api.object.controllers:
-    resource: ../object/Adapter/Symfony/Presentation/Http/Controller/
-    type: attribute
-    prefix: '/_'
-api.object.user.controllers:
-    resource: ../object/Adapter/Symfony/Presentation/Http/Controller/User/
-    type: attribute
-    prefix: '/_/user'
-#> OBJECT

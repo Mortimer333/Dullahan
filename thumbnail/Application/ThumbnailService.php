@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dullahan\Thumbnail\Application;
 
 use Dullahan\Asset\Domain\Asset;
-use Dullahan\Asset\Domain\Context;
 use Dullahan\Asset\Domain\Directory;
 use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
 use Dullahan\Asset\Domain\File;
@@ -13,6 +12,7 @@ use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
 use Dullahan\Asset\Port\Infrastructure\AssetFileManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetPointerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
+use Dullahan\Main\Model\Context;
 use Dullahan\Thumbnail\Domain\Thumbnail;
 use Dullahan\Thumbnail\Domain\ThumbnailConfig;
 use Dullahan\Thumbnail\Port\Infrastructure\Database\Repository\ThumbnailPersisterInterface;

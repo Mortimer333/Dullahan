@@ -9,8 +9,8 @@ use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
+use Dullahan\Entity\Domain\Service\EntityCacheService;
 use Dullahan\Main\Command\BaseCommandAbstract;
-use Dullahan\Main\Service\CacheService;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailServiceInterface;
 use Psr\Log\LoggerInterface;
@@ -29,7 +29,7 @@ class RecreateThumbnailsCommand extends BaseCommandAbstract
         protected EntityManagerInterface $em,
         protected LoggerInterface $logger,
         protected BinUtilService $binUtilService,
-        protected CacheService $cacheService,
+        protected EntityCacheService $cacheService,
         protected ThumbnailServiceInterface $thumbnailService,
         protected AssetServiceInterface $assetService,
     ) {

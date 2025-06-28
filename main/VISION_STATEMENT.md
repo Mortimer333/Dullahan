@@ -91,3 +91,10 @@ be using, so it makes sens that we won't be importing from it.
 
 If there is an import of framework related libraries like `Symfony\Component\HttpFoundation\Request` in your root or 
 Ports directory something is wrong and you have to abstract.
+
+### Keep all interfaces in the Ports at top level
+
+Ports is a place where all interfaces go - quite obvious for numerous reasons like ability to freely change application 
+architecture outside of Ports. To make is as simple as possible all interfaces in ports should be at top level 
+(in Presentation, Application, Domain or Infrastructure layer) without any nested folders. This way we can keep this part
+of the application simple and don't decide how should the implementation be structured.

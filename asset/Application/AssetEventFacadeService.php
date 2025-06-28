@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dullahan\Asset\Application;
 
 use Dullahan\Asset\Domain\Asset;
-use Dullahan\Asset\Domain\Context;
 use Dullahan\Asset\Domain\Exception\AssetNotClonedException;
 use Dullahan\Asset\Domain\Exception\AssetNotCreatedException;
 use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
@@ -36,6 +35,7 @@ use Dullahan\Asset\Presentation\Event\Transport\Retrieve\RetrieveByIdEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Retrieve\RetrieveByPathEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Validate\AsseNameEvent;
 use Dullahan\Main\Contract\EventDispatcherInterface;
+use Dullahan\Main\Model\Context;
 
 class AssetEventFacadeService implements AssetServiceInterface
 {

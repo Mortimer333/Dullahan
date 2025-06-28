@@ -18,6 +18,7 @@ final class RegistrationValidation extends EventAbstract
         private RequestInterface $request,
         private array $registration,
     ) {
+        parent::__construct();
     }
 
     public function getRequest(): RequestInterface

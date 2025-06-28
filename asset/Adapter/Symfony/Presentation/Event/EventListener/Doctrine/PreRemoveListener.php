@@ -9,7 +9,7 @@ use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Events;
 use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Object\Adapter\Symfony\Domain\EntityUtilService;
+use Dullahan\Entity\Adapter\Symfony\Domain\EntityUtilService;
 
 #[AsDoctrineListener(event: Events::preRemove, priority: 10)]
 class PreRemoveListener

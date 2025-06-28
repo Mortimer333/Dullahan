@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Dullahan\Thumbnail\Domain;
 
-use Dullahan\Asset\Domain\Context;
 use Dullahan\Asset\Domain\Structure;
+use Dullahan\Main\Model\Context;
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailEntityInterface;
 
 final readonly class Thumbnail

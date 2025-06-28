@@ -42,15 +42,6 @@ services:
       - '../user/Domain/Entity/'
       - '../user/Domain/Exception'
 
-  Dullahan\Object\:
-    autowire: true
-    autoconfigure: true
-    resource: '../object/'
-    exclude:
-      - '../object/Adapter/Symfony/Application/DependencyInjection'
-      - '../object/Domain/Entity/'
-      - '../object/Domain/Exception'
-
   Dullahan\Monitor\:
     autowire: true
     autoconfigure: true
