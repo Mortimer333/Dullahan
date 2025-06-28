@@ -37,7 +37,7 @@ class EntityCacheService implements EntityCacheServiceInterface
     {
         $this->cache->deleteItem($this->getSerializedCacheKey($id, $class, $inherit));
         if (class_implements($class)[InheritanceAwareInterface::class] ?? false) {
-            $entity = $this->databaseConnection->getRepository($class)->find($id);
+            $entity = $this->databaseConnection->getRepository($class)?->find($id);
             if (!$entity || !$entity instanceof InheritanceAwareInterface) {
                 return;
             }

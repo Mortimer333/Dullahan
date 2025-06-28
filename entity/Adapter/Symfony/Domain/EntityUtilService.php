@@ -94,8 +94,10 @@ class EntityUtilService implements EntityServiceInterface
             throw new \Exception(sprintf("Class %s doesn't exist", $class), 400);
         }
 
-        /** @var EntityRepositoryInterface<T> $repository */
         $repository = $this->em->getRepository($class);
+        if (!$repository instanceof EntityRepositoryInterface) {
+            throw new \Exception('Repository is not managed', 422);
+        }
 
         return $repository;
     }

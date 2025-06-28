@@ -20,17 +20,13 @@ final class DoctrineDatabaseActionsImpl implements DatabaseActionsInterface, Dat
     ) {
     }
 
-    /**
-     * @template T of object
-     *
-     * @param class-string<T> $className
-     *
-     * @return EntityRepositoryInterface<T>
-     */
-    public function getRepository(string $className): EntityRepositoryInterface
+    public function getRepository(string $className): ?EntityRepositoryInterface
     {
-        /** @var EntityRepositoryInterface<T> $repository */
         $repository = $this->em->getRepository($className);
+
+        if (!$repository instanceof EntityRepositoryInterface) {
+            return null;
+        }
 
         return $repository;
     }

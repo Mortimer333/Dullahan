@@ -11,11 +11,11 @@ interface DatabaseActionsInterface
     /**
      * @param class-string<T> $className
      *
-     * @return EntityRepositoryInterface<T>
+     * @return EntityRepositoryInterface<T>|null
      *
      * @template T of object
      */
-    public function getRepository(string $className): EntityRepositoryInterface;
+    public function getRepository(string $className): ?EntityRepositoryInterface;
 
     /**
      * Starts a transaction on the underlying database connection.
