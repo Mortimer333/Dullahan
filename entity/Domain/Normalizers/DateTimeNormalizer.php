@@ -18,7 +18,7 @@ class DateTimeNormalizer implements NormalizerInterface
         array $definition,
         object $entity,
         Context $context,
-    ): array|string|int|float|bool|\ArrayObject|null {
+    ): mixed {
         return $value->getTimestamp();
     }
 

@@ -9,8 +9,6 @@ use Dullahan\Entity\Port\Domain\NormalizerInterface;
 use Dullahan\Main\Model\Context;
 
 /**
- * @template T of object
- *
  * @phpstan-import-type SerializedEntity from \Dullahan\Entity\Port\Application\EntitySerializerInterface
  * @phpstan-import-type EntityDefinition from \Dullahan\Entity\Port\Application\EntityDefinitionManagerInterface
  */
@@ -19,7 +17,6 @@ class SerializeEntityFunctor
     use NormalizerHelperTrait;
 
     /**
-     * @param T                     $entity
      * @param EntityDefinition      $definition
      * @param NormalizerInterface[] $normalizers
      *
@@ -29,14 +26,15 @@ class SerializeEntityFunctor
     {
         $serialized = [];
         foreach ($definition as $fieldName => $field) {
+            $serialized[$fieldName] = $this->tryReadField($entity, $fieldName);
             foreach ($normalizers as $normalizer) {
-                $value = array_key_exists($fieldName, $serialized)
-                    ? $serialized[$fieldName]
-                    : $this->tryReadField($entity, $fieldName)
-                ;
-                if ($normalizer->canNormalize($fieldName, $value, $field, $entity, $context)) {
-                    $serialized[$fieldName] = $normalizer->normalize($fieldName, $value, $field, $entity, $context);
+                if ($normalizer->canNormalize($fieldName, $serialized[$fieldName], $field, $entity, $context)) {
+                    $serialized[$fieldName] = $normalizer->normalize($fieldName, $serialized[$fieldName], $field, $entity, $context);
                 }
+            }
+
+            if (!array_key_exists($fieldName, $serialized)) {
+                $serialized[$fieldName] = null;
             }
         }
 

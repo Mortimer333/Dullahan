@@ -21,7 +21,7 @@ class CacheReferenceReplacerNormalizer implements NormalizerInterface
         array $definition,
         object $entity,
         Context $context,
-    ): array|string|int|float|bool|\ArrayObject|null {
+    ): mixed {
         return [
             '__cached' => $this->entityCacheService->getEntitySerializedCacheKey(
                 $value,

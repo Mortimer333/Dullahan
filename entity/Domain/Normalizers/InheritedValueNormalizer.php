@@ -31,8 +31,8 @@ class InheritedValueNormalizer implements NormalizerInterface
         array $definition,
         object $entity,
         Context $context,
-    ): array|string|int|float|bool|\ArrayObject|null {
-        return $this->getInheritedValue($entity, $value, $definition);
+    ): mixed {
+        return $this->getInheritedValue($entity, $fieldName, $definition);
     }
 
     public function canNormalize(

@@ -13,8 +13,6 @@ interface NormalizerInterface
 {
     /**
      * @param EntityFieldDefinition $definition
-     *
-     * @return array<mixed>|string|int|float|bool|\ArrayObject<int|string, mixed>|null
      */
     public function normalize(
         string $fieldName,
@@ -22,7 +20,7 @@ interface NormalizerInterface
         array $definition,
         object $entity,
         Context $context,
-    ): array|string|int|float|bool|\ArrayObject|null;
+    ): mixed;
 
     /**
      * @param EntityFieldDefinition $definition
