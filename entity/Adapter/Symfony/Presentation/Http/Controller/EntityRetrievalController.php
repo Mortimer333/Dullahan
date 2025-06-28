@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Dullahan\Entity\Adapter\Symfony\Presentation\Http\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Dullahan\Entity\Domain\Exception\EntityNotFoundException;
+use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
+use Dullahan\Entity\Port\Application\EntitySerializerInterface;
 use Dullahan\Entity\Port\Domain\EntityServiceInterface;
 use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
 use Dullahan\Entity\Presentation\Http\Model\Parameter\BulkDTO;
@@ -26,6 +30,9 @@ class EntityRetrievalController extends AbstractController
         protected HttpUtilService $httpUtilService,
         protected EntityServiceInterface $entityUtilService,
         protected MappingsManagerInterface $projectManagerService,
+        protected EntityRetrievalManagerInterface $entityRetrievalManager,
+        protected EntitySerializerInterface $entitySerializer,
+        protected EntityManagerInterface $entityManagerInterface,
     ) {
     }
 
@@ -174,9 +181,11 @@ class EntityRetrievalController extends AbstractController
         $class = $this->projectManagerService->mappingToClassName($mapping, $path);
         $dataSet = json_decode($request->get('dataSet') ?? '', true) ?: null;
         $inherit = json_decode($request->get('inherit') ?? '', true) ?: true;
-        $entity = $this->entityUtilService->get($class, $id);
-
-        $serialized = $this->entityUtilService->serialize($entity, $dataSet, $inherit);
+        $entity = $this->entityRetrievalManager->get($class, $id);
+        if (!$entity) {
+            throw new EntityNotFoundException('Entity was not found');
+        }
+        $serialized = $this->entityRetrievalManager->serialize($entity, $dataSet, $inherit);
 
         return $this->httpUtilService->jsonResponse('Entity retrieved successfully', data: [
             'entity' => $serialized,
