@@ -31,7 +31,6 @@ class EntitySerializerListener
         $event->serialized = ($this->serializeEntity)(
             $event->entity,
             $event->definition,
-            $event->normalizers,
             $event->context,
         );
     }

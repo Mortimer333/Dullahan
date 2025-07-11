@@ -14,6 +14,9 @@ use Dullahan\Entity\Port\Domain\TransferableOwnerManageableInterface;
 use Dullahan\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @deprecated
+ */
 trait EntityUtilHelperTrait
 {
     /**

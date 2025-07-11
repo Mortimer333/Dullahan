@@ -18,13 +18,10 @@ class RetrieveEntityFunctor
      */
     public function __invoke(GetEntity $event): ?object
     {
-        $class = $event->class;
-        $id = $event->id;
-        $repository = $event->repository;
-        if (!class_exists($class)) {
+        if (!class_exists($event->class)) {
             return null;
         }
 
-        return $repository->find($id);
+        return $event->repository->find($event->id);
     }
 }

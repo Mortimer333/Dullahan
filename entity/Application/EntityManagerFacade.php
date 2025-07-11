@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Dullahan\Entity\Application;
 
 use Dullahan\Entity\Domain\Enum\AccessTypeEnum;
+use Dullahan\Entity\Domain\Enum\EntityCacheCaseEnum;
+use Dullahan\Entity\Domain\Enum\EntityCacheCastEnum;
 use Dullahan\Entity\Domain\Exception\EntityCreationFailedException;
 use Dullahan\Entity\Domain\Exception\EntityNotAuthorizedException;
 use Dullahan\Entity\Domain\Exception\EntityNotFoundException;
@@ -14,13 +16,16 @@ use Dullahan\Entity\Port\Application\EntityDefinitionManagerInterface;
 use Dullahan\Entity\Port\Application\EntityPersistManagerInterface;
 use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
 use Dullahan\Entity\Port\Application\EntitySerializerInterface;
+use Dullahan\Entity\Port\Domain\EntityCacheServiceInterface;
 use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
 use Dullahan\Entity\Presentation\Event\Transport;
-use Dullahan\Entity\Presentation\Event\Transport\GetEntityRepository;
 use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Port\Application\UserServiceInterface;
 
+/**
+ * @phpstan-import-type SerializedEntity from \Dullahan\Entity\Port\Application\EntitySerializerInterface
+ */
 class EntityManagerFacade
 implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, EntityDefinitionManagerInterface,
     EntityCacheManagerInterface, EntitySerializerInterface
@@ -28,13 +33,14 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
     public function __construct(
         protected EventDispatcherInterface $eventDispatcher,
         protected UserServiceInterface $userManagerService,
+        protected EntityCacheServiceInterface $entityCacheService,
     ) {
     }
 
     public function get(string $class, int $id): ?object
     {
         $this->dispatchAccessVerification($class, AccessTypeEnum::GET->value);
-        $repository = $this->eventDispatcher->dispatch(new GetEntityRepository($class))->repository;
+        $repository = $this->eventDispatcher->dispatch(new Transport\GetEntityRepository($class))->repository;
         if (!$repository) {
             return null;
         }
@@ -49,37 +55,53 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
 
     public function getRepository(string $class): ?EntityRepositoryInterface
     {
-        return $this->eventDispatcher->dispatch(new GetEntityRepository($class))->repository;
+        return $this->eventDispatcher->dispatch(new Transport\GetEntityRepository($class))->repository;
     }
 
     /**
-     * @TODO I really dislike how inherit is handled here. We might want to move it to separate bundle
-     *      and with current implementation it would be a nightmare.
+     * @TODO I quite dislike how inherit is handled here. We might want to move it to separate bundle
+     *      and with current implementation it would be a nightmare. We probably should allow for setting one context
+     *      at the start and then passing it the rest of the events
      */
     public function serialize(object $entity, ?array $dataSet = null, bool $inherit = true): ?array
     {
+        /** @var Transport\GetEntityCache<array<mixed>> $eventGetCache */
+        $eventGetCache = new Transport\GetEntityCache(
+            $this->entityCacheService->getEntitySerializedCacheKey($entity, $inherit),
+            EntityCacheCaseEnum::SERIALIZATION->value,
+            EntityCacheCastEnum::JSON_ARRAY->value,
+        );
+        $eventGetCache->context->setProperty('dataSet', $dataSet);
+        $eventGetCache->context->setProperty('entity', $entity);
+        $eventGetCache->context->setProperty('inherit', $inherit);
+        $eventGetCache = $this->eventDispatcher->dispatch($eventGetCache);
+        if ($eventGetCache->isHit) {
+            return $eventGetCache->cached;
+        }
+
         $definition = $this->getEntityDefinition($entity);
         if (!$definition) {
             return null;
         }
 
-        $eventRegister = new Transport\RegisterEntityNormalizer($entity);
-        $eventRegister->context->setProperty('inherit', $inherit);
-
-        // @TODO maybe additionally allow for settings default normalizers in configuration? There may be cases when it
-        //      depends on the entity but this seems non-intuitive to only allow adding them by event
-        $normalizers = $this->eventDispatcher->dispatch($eventRegister)->getSortedNormalizers();
-
-        $eventSerialize = new Transport\SerializeEntity($entity, $definition, $normalizers, $inherit);
-        $eventSerialize->context->setContext($eventRegister->context->getContext());
+        $eventSerialize = new Transport\SerializeEntity($entity, $definition, $inherit);
+        $eventSerialize->context->setContext($eventGetCache->context->getContext());
 
         $serialized = $this->eventDispatcher->dispatch($eventSerialize)->serialized;
         if (!$serialized) {
             return null;
         }
 
-        // @TODO implement Transport\CacheSerializedEntity
-        $this->eventDispatcher->dispatch(new Transport\CacheSerializedEntity($entity, $serialized, $inherit));
+        if ($cache = json_encode($serialized)) {
+            $eventGetCache = new Transport\CacheEntity(
+                $eventGetCache->key,
+                $cache,
+                60 * 60 * 24,
+                EntityCacheCaseEnum::SERIALIZATION->value,
+            );
+        }
+        $eventSerialize->context->setContext($eventSerialize->context->getContext());
+        $this->eventDispatcher->dispatch($eventGetCache);
 
         $eventStrip = new Transport\StripSerializedEntity($entity, $serialized, $dataSet);
         $eventStrip->context->setContext($eventSerialize->context->getContext());
@@ -89,11 +111,24 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
 
     public function getEntityDefinition(object $entity): ?array
     {
+        /** @var Transport\GetEntityCache<SerializedEntity> $eventGetCache */
+        $eventGetCache = new Transport\GetEntityCache(
+            $this->entityCacheService->getEntityDefinitionCacheKey($entity::class),
+            EntityCacheCaseEnum::DEFINITION->value,
+            EntityCacheCastEnum::JSON_ARRAY->value,
+        );
+        if ($eventGetCache->isHit) {
+            return $eventGetCache->get();
+        }
+
         $definition = $this->eventDispatcher->dispatch(new Transport\GetEntityDefinition($entity))->definition;
-        // @TODO implement
-        // @TODO additional caching shouldn't happened when cache was retrieved
-        if ($definition) {
-            $this->eventDispatcher->dispatch(new Transport\CacheEntityDefinition($entity, $definition));
+        if (!is_null($definition) && $cache = json_encode($definition)) {
+            $this->eventDispatcher->dispatch(new Transport\CacheEntity(
+                $eventGetCache->key,
+                $cache,
+                60 * 60 * 24,
+                EntityCacheCaseEnum::DEFINITION->value,
+            ));
         }
 
         return $definition;
@@ -119,7 +154,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
             throw new EntityCreationFailedException('Entity creation was not handled');
         }
 
-        return $this->eventDispatcher->dispatch(new Transport\PostCreateEntity($entity))->entity;
+        return $entity;
     }
 
     public function update(string $class, int $id, array $payload, bool $flush = true): object
@@ -135,9 +170,9 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
             throw new EntityValidationException('Entity update has failed');
         }
 
-        return $this->eventDispatcher->dispatch(new Transport\PostUpdateEntity(
-            $this->eventDispatcher->dispatch(new Transport\UpdateEntity($entity, $validation->payload, $flush))->entity,
-        ))->entity;
+        return $this->eventDispatcher->dispatch(
+            new Transport\UpdateEntity($entity, $validation->payload, $flush)
+        )->entity;
     }
 
     public function delete(string $class, int $id, bool $flush = true): bool
@@ -148,9 +183,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
             throw new EntityNotFoundException('Entity was not found');
         }
 
-        $this->eventDispatcher->dispatch(new Transport\PostRemoveEntity(
-            $this->eventDispatcher->dispatch(new Transport\RemoveEntity($entity, $flush))->entity,
-        ));
+        $this->eventDispatcher->dispatch(new Transport\RemoveEntity($entity, $flush));
 
         return true;
     }

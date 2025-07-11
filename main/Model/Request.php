@@ -17,17 +17,22 @@ class Request implements RequestInterface
      * @param array<string, mixed>                       $query
      * @param array<string, mixed>                       $cookies
      * @param array<string, \SplFileInfo>                $files
+     * @param array<string, mixed>                       $attributes
+     * @param array<mixed>                               $bodyParameters
      */
     public function __construct(
         private bool $isSecure,
         private string $host,
         private string $path,
         private string $method,
+        private object $original,
         private string $body = '',
         private array $headers = [],
         private array $query = [],
         private array $cookies = [],
         private array $files = [],
+        private array $attributes = [],
+        private array $bodyParameters = [],
     ) {
         $flatHeaders = [];
         foreach ($headers as $key => $header) {
@@ -155,7 +160,7 @@ class Request implements RequestInterface
 
     public function removeQueryParameter(string $key): static
     {
-        unset($this->headers[$key]);
+        unset($this->query[$key]);
 
         return $this;
     }
@@ -184,7 +189,7 @@ class Request implements RequestInterface
 
     public function removeCookie(string $key): static
     {
-        unset($this->headers[$key]);
+        unset($this->cookies[$key]);
 
         return $this;
     }
@@ -216,5 +221,72 @@ class Request implements RequestInterface
         unset($this->files[$key]);
 
         return $this;
+    }
+
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
+    public function getAttribute(string $key, mixed $default = null): mixed
+    {
+        return $this->attributes[$key] ?? $default;
+    }
+
+    public function setAttribute(string $key, mixed $value): static
+    {
+        $this->attributes[$key] = $value;
+
+        return $this;
+    }
+
+    public function hasAttribute(string $key): bool
+    {
+        return array_key_exists($key, $this->attributes);
+    }
+
+    public function removeAttribute(string $key): static
+    {
+        unset($this->attributes[$key]);
+
+        return $this;
+    }
+
+    public function getOriginal(): object
+    {
+        return $this->original;
+    }
+
+    public function getBodyParameters(): array
+    {
+        return $this->bodyParameters;
+    }
+
+    public function getBodyParameter(string $key, mixed $default = null): mixed
+    {
+        return $this->bodyParameters[$key] ?? $default;
+    }
+
+    public function setBodyParameter(string $key, mixed $value): static
+    {
+        $this->bodyParameters[$key] = $value;
+
+        return $this;
+    }
+
+    public function hasBodyParameter(string $key): bool
+    {
+        return array_key_exists($key, $this->bodyParameters);
+    }
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return $this->getQueryParameter($key)
+            ?? $this->getBodyParameter($key)
+            ?? $this->getCookie($key)
+            ?? $this->getAttribute($key)
+            ?? $this->getHeader($key)
+            ?? $default
+        ;
     }
 }

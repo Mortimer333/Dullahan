@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\User\Adapter\Symfony\Domain;
+namespace Dullahan\Main\Service;
 
 use Dullahan\Main\Contract\RequestInterface;
 use Dullahan\Main\Model\Request;
@@ -27,11 +27,14 @@ class RequestFactory
             $request->getHost(),
             $request->getPathInfo(),
             $request->getMethod(),
+            $request,
             $request->getContent(),
             $request->headers->all(),
             $request->query->all(),
             $request->cookies->all(),
             $files,
+            $request->attributes->all(),
+            $request->request->all(),
         );
     }
 }

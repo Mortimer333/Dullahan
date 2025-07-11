@@ -34,6 +34,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
+ * @deprecated
  */
 class EntityUtilService implements EntityServiceInterface
 {

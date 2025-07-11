@@ -9,6 +9,9 @@ use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
 use Dullahan\Entity\Port\Domain\InheritanceAwareInterface;
 
+/**
+ * @deprecated
+ */
 trait EntityUtilRemoveTrait
 {
     public function removeConjoinedAsset(AssetAwareInterface $entity, string $field, AssetPointer $pointer): void

@@ -82,4 +82,42 @@ interface RequestInterface
     public function hasFile(string $key): bool;
 
     public function removeFile(string $key): static;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getAttributes(): array;
+
+    public function getAttribute(string $key, mixed $default = null): mixed;
+
+    public function setAttribute(string $key, mixed $value): static;
+
+    public function hasAttribute(string $key): bool;
+
+    public function removeAttribute(string $key): static;
+
+    public function getOriginal(): object;
+
+    /**
+     * @return array<mixed>
+     */
+    public function getBodyParameters(): array;
+
+    public function getBodyParameter(string $key, mixed $default = null): mixed;
+
+    public function setBodyParameter(string $key, mixed $value): static;
+
+    public function hasBodyParameter(string $key): bool;
+
+    /**
+     * Universal method to try each table to find an exact match.
+     *
+     * The checking should implement similar order to this list:
+     * 1. Query parameters
+     * 2. Body parameters
+     * 3. Cookies
+     * 4. Internal attributes
+     * 5. Headers
+     */
+    public function get(string $key, mixed $default = null): mixed;
 }

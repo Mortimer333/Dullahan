@@ -15,7 +15,7 @@
 
 ```php
 #[SWG\Response(
-    description: 'Admin registrated',
+    description: 'Admin registered',
     content: new Model(type: RegistrationResponseDTO::class),
     response: 200
 )]

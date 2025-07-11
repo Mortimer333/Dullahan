@@ -11,6 +11,9 @@ use Dullahan\Entity\Domain\Mapper\EntityParentMapper;
 use Dullahan\Entity\Domain\Service\EntityCacheService;
 use Dullahan\Entity\Port\Domain\InheritanceAwareInterface;
 
+/**
+ * @deprecated
+ */
 trait EntityUtilSerializeTrait
 {
     /**

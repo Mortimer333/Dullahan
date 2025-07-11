@@ -6,10 +6,13 @@ namespace Dullahan\Entity\Presentation\Event\Transport;
 
 use Dullahan\Main\Model\EventAbstract;
 
-class PostRemoveEntity extends EventAbstract
+class CacheEntity extends EventAbstract
 {
     public function __construct(
-        public object $entity,
+        public string $key,
+        public string $toCache,
+        public int|\DateInterval|null $expiry,
+        public readonly string $case,
     ) {
         parent::__construct();
     }

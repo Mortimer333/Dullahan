@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Entity\Presentation\Event\Transport;
 
-use Dullahan\Entity\Port\Domain\NormalizerInterface;
 use Dullahan\Main\Model\EventAbstract;
 
 /**
@@ -17,13 +16,11 @@ class SerializeEntity extends EventAbstract
     public ?array $serialized = null;
 
     /**
-     * @param EntityDefinition           $definition
-     * @param array<NormalizerInterface> $normalizers
+     * @param EntityDefinition $definition
      */
     public function __construct(
         public readonly object $entity,
         public array $definition,
-        public readonly array $normalizers,
         public bool $inherit = true,
     ) {
         parent::__construct();

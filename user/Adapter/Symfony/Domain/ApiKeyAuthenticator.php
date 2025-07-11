@@ -2,6 +2,7 @@
 
 namespace Dullahan\User\Adapter\Symfony\Domain;
 
+use Dullahan\Main\Service\RequestFactory;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\User\Port\Application\AccessControlInterface;

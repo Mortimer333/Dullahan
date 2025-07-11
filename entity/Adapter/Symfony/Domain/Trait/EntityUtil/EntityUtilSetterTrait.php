@@ -12,6 +12,9 @@ use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
 use Dullahan\Main\Service\Helper\CastHelper;
 use ICanBoogie\Inflector;
 
+/**
+ * @deprecated
+ */
 trait EntityUtilSetterTrait
 {
     private Inflector $inflector;
