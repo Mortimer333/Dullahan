@@ -6,17 +6,11 @@ namespace Dullahan\Entity\Presentation\Event\Transport;
 
 use Dullahan\Main\Model\EventAbstract;
 
-/**
- * @template T of object
- */
 class GetEntityTrueClass extends EventAbstract
 {
-    /** @var class-string<T>|null */
+    /** @var class-string|null */
     public ?string $className = null;
 
-    /**
-     * @param T $entity
-     */
     public function __construct(
         public object $entity,
     ) {

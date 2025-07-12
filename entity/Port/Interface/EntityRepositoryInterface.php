@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Dullahan\Entity\Port\Interface;
 
-use UnexpectedValueException;
-
 /**
  * Copied from Doctrine\Persistence\ObjectRepository.
  *
- * @template-covariant T of object
+ * @template T of object
  */
 interface EntityRepositoryInterface
 {
@@ -75,4 +73,14 @@ interface EntityRepositoryInterface
      * @phpstan-return class-string<T>
      */
     public function getClassName();
+
+    /**
+     * @param T $entity
+     */
+    public function save(object $entity, bool $flush = true): void;
+
+    /**
+     * @param T $entity
+     */
+    public function remove(object $entity, bool $flush = true): void;
 }

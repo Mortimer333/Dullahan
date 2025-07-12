@@ -8,28 +8,32 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Entity\Adapter\Symfony\Domain\Reader\EntityReader;
 use Dullahan\Entity\Adapter\Symfony\Presentation\Http\Constraint\DataSetCriteriaConstraint;
 use Dullahan\Entity\Adapter\Symfony\Presentation\Http\Constraint\PaginationConstraint;
+use Dullahan\Entity\Domain\Exception\EntityNotAuthorizedException;
+use Dullahan\Entity\Domain\Exception\EntityValidationException;
+use Dullahan\Entity\Domain\Exception\InvalidEntityException;
+use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
 use Dullahan\Entity\Port\Domain\ConstraintInheritanceAwareInterface;
 use Dullahan\Entity\Port\Domain\EntityValidationInterface;
+use Dullahan\Entity\Port\Domain\IdentityAwareInterface;
 use Dullahan\Entity\Port\Domain\InheritanceAwareInterface;
 use Dullahan\Entity\Port\Domain\ManageableInterface;
 use Dullahan\Entity\Port\Domain\OwnerlessManageableInterface;
 use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Service\Util\HttpUtilService;
-use Dullahan\Main\Trait\Validate\SymfonyValidationHelperTrait;
+use Dullahan\Main\Symfony\SymfonyConstraintValidationService;
 use Dullahan\User\Port\Application\UserServiceInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class EntityValidationService implements EntityValidationInterface
+class EntityConstraintValidationService extends SymfonyConstraintValidationService implements EntityValidationInterface
 {
-    use SymfonyValidationHelperTrait;
-
     public function __construct(
         protected HttpUtilService $httpUtilService,
         protected ValidatorInterface $validator,
         protected EntityManagerInterface $em,
         protected UserServiceInterface $userService,
         protected ErrorCollectorInterface $errorCollector,
+        protected EntityRetrievalManagerInterface $entityRetrievalManager,
     ) {
     }
 
@@ -42,7 +46,7 @@ class EntityValidationService implements EntityValidationInterface
     {
         $this->validate($criteria, DataSetCriteriaConstraint::get());
         if ($this->errorCollector->hasErrors()) {
-            throw new \Exception('Entity selection has failed', 400);
+            throw new EntityValidationException('Entity selection has failed');
         }
     }
 
@@ -50,19 +54,20 @@ class EntityValidationService implements EntityValidationInterface
     {
         $this->validate($pagination, PaginationConstraint::get());
         if ($this->errorCollector->hasErrors()) {
-            throw new \Exception('Entity pagination has failed', 400);
+            throw new EntityValidationException('Entity pagination has failed');
         }
     }
 
     /**
+     * @param class-string             $entity
      * @param array<int|string, mixed> $payload
      */
-    public function handlePreCreateValidation(object $entity, array $payload): void
+    public function isCreatePayloadValid(string $entity, array $payload): bool
     {
         $reader = new EntityReader($entity);
-        if ($entity instanceof InheritanceAwareInterface && isset($payload['parent'])) {
+        if ($this->implements($entity, InheritanceAwareInterface::class) && isset($payload['parent'])) {
             if (isset($payload['children'])) {
-                throw new \Exception('You cannot assign children with this interface', 400);
+                throw new \InvalidArgumentException('You cannot assign children with this interface', 400);
             }
 
             $this->validateChildCreation($reader, $entity, $payload);
@@ -70,18 +75,16 @@ class EntityValidationService implements EntityValidationInterface
             $this->runValidationConstraint($payload, $reader->getCreationConstraint(), $entity);
         }
 
-        if ($this->errorCollector->hasErrors()) {
-            throw new \Exception('Entity creation has failed', 400);
-        }
+        return !$this->errorCollector->hasErrors();
     }
 
     /**
      * @param array<int|string, mixed> $payload
      */
-    public function handlePreUpdateValidation(object $entity, array $payload, bool $validateOwner = true): void
+    public function isUpdatePayloadValid(object $entity, array $payload, bool $validateOwner = true): bool
     {
         if (!$entity instanceof ManageableInterface && !$entity instanceof OwnerlessManageableInterface) {
-            throw new \Exception('Chosen entity cannot be updated', 400);
+            throw new InvalidEntityException('Chosen entity cannot be updated');
         }
 
         if (
@@ -89,39 +92,37 @@ class EntityValidationService implements EntityValidationInterface
             && $entity instanceof ManageableInterface
             && !$entity->isOwner($this->userService->getLoggedInUser())
         ) {
-            throw new \Exception("You cannot update chosen entity as it doesn't belong to you", 403);
+            throw new EntityNotAuthorizedException("You cannot update chosen entity as it doesn't belong to you");
         }
 
         $reader = new EntityReader($entity);
         if ($entity instanceof InheritanceAwareInterface && isset($payload['parent'])) {
             if (isset($payload['children'])) {
-                throw new \Exception('You cannot assign children with this interface', 400);
+                throw new \InvalidArgumentException('You cannot assign children with this interface', 400);
             }
 
             $this->validateChildUpdate($reader, $entity, $payload);
         } else {
-            $this->runValidationConstraint($payload, $reader->getUpdateConstraint(), $entity);
+            $this->runValidationConstraint($payload, $reader->getUpdateConstraint(), $entity::class);
         }
 
-        if ($this->errorCollector->hasErrors()) {
-            throw new \Exception('Entity update has failed', 400);
-        }
+        return !$this->errorCollector->hasErrors();
     }
 
     /**
      * @param array<int|string, mixed> $payload
      */
-    protected function runValidationConstraint(array &$payload, Assert\Collection $constraint, object $entity): void
+    protected function runValidationConstraint(array &$payload, Assert\Collection $constraint, string $entity): void
     {
-        if ($entity instanceof InheritanceAwareInterface && array_key_exists('parent', $payload)) {
-            $parent['parent'] = $payload['parent'];
+        if ($this->implements($entity, InheritanceAwareInterface::class) && array_key_exists('parent', $payload)) {
+            $parent = $payload['parent'];
             unset($payload['parent']);
         }
 
         $this->validate($payload, $constraint);
 
         if (isset($parent)) {
-            $payload['parent'] = $parent['parent'];
+            $payload['parent'] = $parent;
         }
     }
 
@@ -130,28 +131,29 @@ class EntityValidationService implements EntityValidationInterface
      */
     protected function validateChildUpdate(
         EntityReader $reader,
-        InheritanceAwareInterface $entity,
+        IdentityAwareInterface $entity,
         array $payload
     ): void {
-        $this->validateConstraintImplementsInheritInterface($reader, $entity);
-        $this->runValidationConstraint($payload, $reader->getChildUpdateConstraint(), $entity);
-        $parent = $this->validateParent($entity, $payload);
+        $this->validateConstraintImplementsInheritInterface($reader, $entity::class);
+        $this->runValidationConstraint($payload, $reader->getChildUpdateConstraint(), $entity::class);
+        $parent = $this->validateParent($entity::class, $payload);
 
         $path = $parent->getRelationPath();
         if (!is_null($path)) {
             $path = explode(',', $path);
             if (in_array($entity->getId(), $path)) {
-                throw new \Exception('Entity cannot have its own child for parent', 400);
+                throw new \InvalidArgumentException('Entity cannot have its own child for parent', 400);
             }
         }
     }
 
     /**
+     * @param class-string             $entity
      * @param array<int|string, mixed> $payload
      */
     protected function validateChildCreation(
         EntityReader $reader,
-        InheritanceAwareInterface $entity,
+        string $entity,
         array $payload
     ): void {
         $this->validateConstraintImplementsInheritInterface($reader, $entity);
@@ -161,30 +163,44 @@ class EntityValidationService implements EntityValidationInterface
 
     protected function validateConstraintImplementsInheritInterface(
         EntityReader $reader,
-        InheritanceAwareInterface $entity,
+        string $entity,
     ): void {
         if (!isset(class_implements($reader->getConstraint())[ConstraintInheritanceAwareInterface::class])) {
-            throw new \Exception(
+            throw new InvalidEntityException(
                 sprintf(
                     "Constraint of %s doesn't implement %s. Entity validation impossible",
-                    $entity::class,
+                    $entity,
                     ConstraintInheritanceAwareInterface::class,
                 ),
-                500
             );
         }
     }
 
     /**
+     * @param class-string             $entity
      * @param array<int|string, mixed> $payload
      */
-    protected function validateParent(InheritanceAwareInterface $entity, array $payload): InheritanceAwareInterface
+    protected function validateParent(string $entity, array $payload): InheritanceAwareInterface
     {
-        $parent = $this->em->getRepository($entity::class)->find($payload['parent'] ?? 0);
+        $repository = $this->entityRetrievalManager->getRepository($entity);
+        if (!$repository) {
+            throw new InvalidEntityException('Chosen entity is missing a repository');
+        }
+
+        $parent = $repository->find($payload['parent'] ?? 0);
         if (!$parent) {
-            throw new \Exception("Chosen parent for entity wasn't found", 404);
+            throw new \InvalidArgumentException("Chosen parent for entity wasn't found", 404);
+        }
+
+        if (!$parent instanceof InheritanceAwareInterface) {
+            throw new \InvalidArgumentException('Chosen entity for parent is not suitable', 422);
         }
 
         return $parent;
+    }
+
+    protected function implements(string|object $entity, string $interface): bool
+    {
+        return isset(class_implements($entity)[$interface]);
     }
 }

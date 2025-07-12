@@ -194,7 +194,9 @@ class EntityUtilService implements EntityServiceInterface
          * @var (ManageableInterface&T)|(OwnerlessManageableInterface&T)|(TransferableOwnerManageableInterface&T) $entity
          */
         $entity = $this->generate($class);
-        $this->validationService->handlePreCreateValidation($entity, $payload);
+        if (!$this->validationService->isCreatePayloadValid($class, $payload)) {
+            throw new \Exception('Entity creation has failed', 400);
+        }
         $pre = new PreCreate($entity, $payload);
         $this->eventDispatcher->dispatch($pre);
         $payload = $pre->getPayload();
@@ -232,7 +234,9 @@ class EntityUtilService implements EntityServiceInterface
     public function update(string $class, int $id, array $payload, bool $persist = true): object
     {
         $entity = $this->get($class, $id);
-        $this->validationService->handlePreUpdateValidation($entity, $payload, $this->validateOwner);
+        if (!$this->validationService->isUpdatePayloadValid($entity, $payload, $this->validateOwner)) {
+            throw new \Exception('Entity update has failed', 400);
+        }
         /** @var ManageableInterface|OwnerlessManageableInterface|TransferableOwnerManageableInterface $entity */
         $pre = new PreUpdate($entity, $payload);
         $this->eventDispatcher->dispatch($pre);

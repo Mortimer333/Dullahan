@@ -17,11 +17,13 @@ use Dullahan\Entity\Port\Application\EntityPersistManagerInterface;
 use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
 use Dullahan\Entity\Port\Application\EntitySerializerInterface;
 use Dullahan\Entity\Port\Domain\EntityCacheServiceInterface;
+use Dullahan\Entity\Port\Domain\IdentityAwareInterface;
 use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
 use Dullahan\Entity\Presentation\Event\Transport;
 use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Port\Application\UserServiceInterface;
+use ICanBoogie\Inflector;
 
 /**
  * @phpstan-import-type SerializedEntity from \Dullahan\Entity\Port\Application\EntitySerializerInterface
@@ -30,14 +32,17 @@ class EntityManagerFacade
 implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, EntityDefinitionManagerInterface,
     EntityCacheManagerInterface, EntitySerializerInterface
 {
+    protected Inflector $inflector;
+
     public function __construct(
         protected EventDispatcherInterface $eventDispatcher,
         protected UserServiceInterface $userManagerService,
         protected EntityCacheServiceInterface $entityCacheService,
     ) {
+        $this->inflector = Inflector::get('en');
     }
 
-    public function get(string $class, int $id): ?object
+    public function get(string $class, int $id): ?IdentityAwareInterface
     {
         $this->dispatchAccessVerification($class, AccessTypeEnum::GET->value);
         $repository = $this->eventDispatcher->dispatch(new Transport\GetEntityRepository($class))->repository;
@@ -139,7 +144,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
         return $this->eventDispatcher->dispatch(new Transport\GetEntityTrueClass($entity))->className;
     }
 
-    public function create(string $class, array $payload, bool $flush = true): object
+    public function create(string $class, array $payload, bool $flush = true): IdentityAwareInterface
     {
         $this->dispatchAccessVerification($class, AccessTypeEnum::CREATE->value);
         $validation = $this->eventDispatcher->dispatch(new Transport\ValidateCreateEntity($class, $payload));
@@ -157,7 +162,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
         return $entity;
     }
 
-    public function update(string $class, int $id, array $payload, bool $flush = true): object
+    public function update(string $class, int $id, array $payload, bool $flush = true): IdentityAwareInterface
     {
         $this->dispatchAccessVerification($class, AccessTypeEnum::UPDATE->value);
         $entity = $this->get($class, $id);
@@ -201,6 +206,30 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
     public function removeRelatedCache(object $entity, array $definition): void
     {
         $this->eventDispatcher->dispatch(new Transport\CacheRemoveRelated($entity, $definition));
+    }
+
+    /**
+     * @param array<mixed>|string $definition
+     */
+    public function pluralize(array|string $definition, string $name): string
+    {
+        if (!is_array($definition) || !isset($definition['plural'])) {
+            return $this->inflector->pluralize($name);
+        }
+
+        return $definition['plural'];
+    }
+
+    /**
+     * @param array<mixed>|string $definition
+     */
+    public function singularize(array|string $definition, string $name): string
+    {
+        if (!is_array($definition) || !isset($definition['singular'])) {
+            return $this->inflector->singularize($name);
+        }
+
+        return $definition['singular'];
     }
 
     /**

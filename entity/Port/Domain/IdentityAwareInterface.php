@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Entity\Port\Domain;
 
-interface OwnerlessManageableInterface extends IdentityAwareInterface
+interface IdentityAwareInterface
 {
+    public function getId(): mixed;
 }

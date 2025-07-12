@@ -2,22 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\Entity\Adapter\Symfony\Presentation\Event\Process;
+namespace Dullahan\Entity\Adapter\Symfony\Presentation\Event;
 
 use Dullahan\Entity\Domain\DefaultAction\Process\BulkListEntitiesSagaFunctor;
+use Dullahan\Entity\Domain\DefaultAction\Process\CreateEntitySagaFunctor;
 use Dullahan\Entity\Domain\DefaultAction\Process\ListEntitiesSagaFunctor;
 use Dullahan\Entity\Domain\DefaultAction\Process\ViewEntitySagaFunctor;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\BulkListEntitiesSaga;
+use Dullahan\Entity\Presentation\Event\Transport\Saga\CreateEntitySaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\ListEntitiesSaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\ViewEntitySaga;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-class EntityRetrievalProcessListener
+class EntitySagaListener
 {
     public function __construct(
         protected ViewEntitySagaFunctor $viewEntityProcessFunctor,
         protected ListEntitiesSagaFunctor $listEntitiesProcessFunctor,
         protected BulkListEntitiesSagaFunctor $bulkListEntitiesProcessFunctor,
+        protected CreateEntitySagaFunctor $createEntitySagaFunctor,
     ) {
     }
 
@@ -49,5 +52,15 @@ class EntityRetrievalProcessListener
         }
 
         $event->setResponse(($this->bulkListEntitiesProcessFunctor)($event));
+    }
+
+    #[AsEventListener(event: CreateEntitySaga::class)]
+    public function onCreateEntitySaga(CreateEntitySaga $event): void
+    {
+        if ($event->wasDefaultPrevented()) {
+            return;
+        }
+
+        $event->setResponse(($this->createEntitySagaFunctor)($event));
     }
 }

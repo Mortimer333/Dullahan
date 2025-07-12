@@ -24,7 +24,7 @@ class UserDataRepository extends ServiceEntityRepository implements EntityReposi
         parent::__construct($registry, UserData::class);
     }
 
-    public function save(UserData $entity, bool $flush = false): void
+    public function save(object $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -33,7 +33,7 @@ class UserDataRepository extends ServiceEntityRepository implements EntityReposi
         }
     }
 
-    public function remove(UserData $entity, bool $flush = false): void
+    public function remove(object $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Main\ArgumentResolver;
 
-use Dullahan\Main\Service\ValidationService;
+use Dullahan\Main\Contract\ValidationServiceInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestPayloadValueResolver;
@@ -23,7 +23,7 @@ readonly class HttpErrorManagerAwareResolver implements ValueResolverInterface, 
 {
     public function __construct(
         private RequestPayloadValueResolver $resolver,
-        protected ValidationService $validationService,
+        protected ValidationServiceInterface $validationService,
     ) {
     }
 

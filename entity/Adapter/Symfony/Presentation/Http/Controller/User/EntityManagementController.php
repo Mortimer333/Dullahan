@@ -6,7 +6,13 @@ namespace Dullahan\Entity\Adapter\Symfony\Presentation\Http\Controller\User;
 
 use Dullahan\Entity\Port\Domain\EntityServiceInterface;
 use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
+use Dullahan\Entity\Presentation\Event\Transport\Saga\CreateEntitySaga;
+use Dullahan\Entity\Presentation\Event\Transport\Saga\ViewEntitySaga;
 use Dullahan\Entity\Presentation\Http\Model\Body\CreateUpdateBody;
+use Dullahan\Main\Contract\EventDispatcherInterface;
+use Dullahan\Main\Exception\SagaNotHandledException;
+use Dullahan\Main\Model\Response\Response;
+use Dullahan\Main\Service\RequestFactory;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;
@@ -23,6 +29,8 @@ class EntityManagementController extends AbstractController
         protected HttpUtilService $httpUtilService,
         protected EntityServiceInterface $entityUtilService,
         protected MappingsManagerInterface $projectManagerService,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected RequestFactory $requestFactory,
     ) {
     }
 
@@ -36,13 +44,42 @@ class EntityManagementController extends AbstractController
     public function create(Request $request, string $mapping, string $path): JsonResponse
     {
         $body = $this->httpUtilService->getBody($request);
-        $dataSet = $body['dataSet'] ?? null;
-        $class = $this->projectManagerService->mappingToClassName($mapping, $path);
-        $entity = $this->entityUtilService->create($class, $body['entity'] ?? []);
+        $dullahanRequest = $this->requestFactory->symfonyToDullahanRequest($request);
+        /** @var Response|null $response */
+        $response = $this->eventDispatcher->dispatch(new CreateEntitySaga(
+            $mapping,
+            $path,
+            $body['entity'] ?? [],
+            $dullahanRequest,
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('Create entity was not handled');
+        }
 
-        return $this->httpUtilService->jsonResponse('Entity successfully created', data: [
-            'entity' => $this->entityUtilService->serialize($entity, $dataSet),
-        ]);
+        if (!$response->success) {
+            throw new \Exception($response->message);
+        }
+
+        $id = $response->data['id'] ?? null;
+        if (!$id) {
+            throw new \Exception('Entity creation failed, missing ID', 500);
+        }
+
+        $response = $this->eventDispatcher->dispatch(new ViewEntitySaga(
+            $mapping,
+            $path,
+            $id,
+            $dullahanRequest,
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('View process was not handled');
+        }
+
+        return new JsonResponse(
+            $response->toArray(),
+            $response->status,
+            $response->headers,
+        );
     }
 
     #[Route(

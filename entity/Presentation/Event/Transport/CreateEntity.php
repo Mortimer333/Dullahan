@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace Dullahan\Entity\Presentation\Event\Transport;
 
+use Dullahan\Entity\Port\Domain\IdentityAwareInterface;
 use Dullahan\Main\Model\EventAbstract;
 
-/**
- * @template T of object
- */
 class CreateEntity extends EventAbstract
 {
-    /** @var T|null */
-    public ?object $entity = null;
+    public ?IdentityAwareInterface $entity = null;
 
     /**
-     * @param class-string<T>          $class
+     * @param class-string             $class
      * @param array<int|string, mixed> $payload
      */
     public function __construct(

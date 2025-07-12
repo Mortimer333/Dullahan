@@ -7,17 +7,15 @@ namespace Dullahan\User\Adapter\Symfony\Domain;
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Service\Util\HttpUtilService;
-use Dullahan\Main\Trait\Validate\SymfonyValidationHelperTrait;
+use Dullahan\Main\Symfony\SymfonyConstraintValidationService;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\RegistrationConstraint;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Domain\Entity\UserData;
 use Dullahan\User\Port\Domain\RegistrationValidationServiceInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class RegistrationValidationService implements RegistrationValidationServiceInterface
+class RegistrationValidationService extends SymfonyConstraintValidationService implements RegistrationValidationServiceInterface
 {
-    use SymfonyValidationHelperTrait;
-
     public function __construct(
         protected HttpUtilService $httpUtilService,
         protected ValidatorInterface $validator,

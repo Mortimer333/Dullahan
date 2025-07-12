@@ -6,13 +6,10 @@ namespace Dullahan\Entity\Presentation\Event\Transport;
 
 use Dullahan\Main\Model\EventAbstract;
 
-/**
- * @template T of object
- */
 class ValidateCreateEntity extends EventAbstract
 {
     /**
-     * @param class-string<T>          $class
+     * @param class-string             $class
      * @param array<int|string, mixed> $payload
      */
     public function __construct(

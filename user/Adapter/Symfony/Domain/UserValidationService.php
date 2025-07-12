@@ -6,7 +6,7 @@ namespace Dullahan\User\Adapter\Symfony\Domain;
 
 use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Service\Util\HttpUtilService;
-use Dullahan\Main\Trait\Validate\SymfonyValidationHelperTrait;
+use Dullahan\Main\Symfony\SymfonyConstraintValidationService;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\ForgottenPasswordConstraint;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\ResetPasswordConstraint;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\UserUpdateConstraint;
@@ -18,10 +18,8 @@ use Dullahan\User\Port\Domain\UserValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class UserValidationService implements UserValidationServiceInterface
+class UserValidationService extends SymfonyConstraintValidationService implements UserValidationServiceInterface
 {
-    use SymfonyValidationHelperTrait;
-
     public function __construct(
         protected UserVerifyAndSetServiceInterface $userVerifyAndSetService,
         protected ValidatorInterface $validator,

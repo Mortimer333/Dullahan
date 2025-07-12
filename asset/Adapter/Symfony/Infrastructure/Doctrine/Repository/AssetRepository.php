@@ -31,7 +31,7 @@ class AssetRepository extends ServiceEntityRepository implements EntityRepositor
         parent::__construct($registry, Asset::class);
     }
 
-    public function save(Asset $entity, bool $flush = false): void
+    public function save(object $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -40,7 +40,7 @@ class AssetRepository extends ServiceEntityRepository implements EntityRepositor
         }
     }
 
-    public function remove(Asset $entity, bool $flush = false): void
+    public function remove(object $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 

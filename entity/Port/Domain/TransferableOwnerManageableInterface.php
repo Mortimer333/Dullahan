@@ -6,9 +6,7 @@ namespace Dullahan\Entity\Port\Domain;
 
 use Dullahan\User\Domain\Entity\User;
 
-interface TransferableOwnerManageableInterface
+interface TransferableOwnerManageableInterface extends IdentityAwareInterface
 {
-    public function getId(): ?int;
-
     public function isOwner(User $user): bool;
 }

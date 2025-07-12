@@ -45,4 +45,14 @@ interface EntityDefinitionManagerInterface
      * @return class-string
      */
     public function getEntityTrueClass(object $entity): ?string;
+
+    /**
+     * @param array<mixed>|string $definition
+     */
+    public function pluralize(array|string $definition, string $name): string;
+
+    /**
+     * @param array<mixed>|string $definition
+     */
+    public function singularize(array|string $definition, string $name): string;
 }

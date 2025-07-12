@@ -10,7 +10,7 @@ use Dullahan\Entity\Domain\Service\EntityCacheService;
 use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\FileUtilService;
-use Dullahan\Main\Service\ValidationService;
+use Dullahan\Main\Symfony\SymfonyConstraintValidationService;
 use Dullahan\User\Domain\Entity\UserData;
 use Dullahan\User\Port\Application\UserServiceInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -30,7 +30,7 @@ class FileSystemBasedAssetManager // implements AssetManagerInterface
         protected EntityManagerInterface $em,
         protected UserServiceInterface $userService,
         protected EntityCacheService $cacheService,
-        protected ValidationService $validationService,
+        protected SymfonyConstraintValidationService $validationService,
         protected MappingsManagerInterface $projectManagerService,
     ) {
     }

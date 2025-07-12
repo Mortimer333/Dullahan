@@ -30,7 +30,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public const DEACTIVATED = 'deactivated';
     public const ENTITY_CLASS = User::class;
 
-    public function save(User $entity, bool $flush = false): void
+    public function save(object $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -39,7 +39,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
-    public function remove(User $entity, bool $flush = false): void
+    public function remove(object $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
