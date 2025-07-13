@@ -43,7 +43,7 @@ class CacheRemoveRelatedFunctor
         }
     }
 
-    public function removeEntityCache(object $entity): void
+    protected function removeEntityCache(object $entity): void
     {
         $this->entityCacheService->deleteEntityCache($entity, true);
         $this->entityCacheService->deleteEntityCache($entity, false);

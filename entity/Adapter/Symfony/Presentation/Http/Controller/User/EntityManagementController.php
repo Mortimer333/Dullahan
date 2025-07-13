@@ -7,6 +7,7 @@ namespace Dullahan\Entity\Adapter\Symfony\Presentation\Http\Controller\User;
 use Dullahan\Entity\Port\Domain\EntityServiceInterface;
 use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\CreateEntitySaga;
+use Dullahan\Entity\Presentation\Event\Transport\Saga\UpdateEntitySaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\ViewEntitySaga;
 use Dullahan\Entity\Presentation\Http\Model\Body\CreateUpdateBody;
 use Dullahan\Main\Contract\EventDispatcherInterface;
@@ -43,17 +44,17 @@ class EntityManagementController extends AbstractController
     #[SWG\RequestBody(attachables: [new Model(type: CreateUpdateBody::class)])]
     public function create(Request $request, string $mapping, string $path): JsonResponse
     {
-        $body = $this->httpUtilService->getBody($request);
         $dullahanRequest = $this->requestFactory->symfonyToDullahanRequest($request);
+
         /** @var Response|null $response */
         $response = $this->eventDispatcher->dispatch(new CreateEntitySaga(
             $mapping,
             $path,
-            $body['entity'] ?? [],
+            $dullahanRequest->getBodyParameter('entity', []),
             $dullahanRequest,
         ))->getResponse();
         if (!$response) {
-            throw new SagaNotHandledException('Create entity was not handled');
+            throw new SagaNotHandledException('Create entity saga was not handled');
         }
 
         if (!$response->success) {
@@ -72,8 +73,10 @@ class EntityManagementController extends AbstractController
             $dullahanRequest,
         ))->getResponse();
         if (!$response) {
-            throw new SagaNotHandledException('View process was not handled');
+            throw new SagaNotHandledException('View saga was not handled');
         }
+
+        $response->message = 'Entity successfully created';
 
         return new JsonResponse(
             $response->toArray(),
@@ -91,14 +94,37 @@ class EntityManagementController extends AbstractController
     #[SWG\RequestBody(attachables: [new Model(type: CreateUpdateBody::class)])]
     public function update(Request $request, string $mapping, string $path, int $id): JsonResponse
     {
-        $body = $this->httpUtilService->getBody($request);
-        $dataSet = $body['dataSet'] ?? null;
-        $class = $this->projectManagerService->mappingToClassName($mapping, $path);
-        $entity = $this->entityUtilService->update($class, $id, $body['entity'] ?? []);
+        $dullahanRequest = $this->requestFactory->symfonyToDullahanRequest($request);
 
-        return $this->httpUtilService->jsonResponse('Entity successfully updated', data: [
-            'entity' => $this->entityUtilService->serialize($entity, $dataSet),
-        ]);
+        /** @var Response|null $response */
+        $response = $this->eventDispatcher->dispatch(new UpdateEntitySaga(
+            $mapping,
+            $path,
+            $id,
+            $dullahanRequest->getBodyParameter('entity', []),
+            $dullahanRequest,
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('Update entity saga was not handled');
+        }
+
+        $response = $this->eventDispatcher->dispatch(new ViewEntitySaga(
+            $mapping,
+            $path,
+            $id,
+            $dullahanRequest,
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('View saga was not handled');
+        }
+
+        $response->message = 'Entity successfully updated';
+
+        return new JsonResponse(
+            $response->toArray(),
+            $response->status,
+            $response->headers,
+        );
     }
 
     #[Route(

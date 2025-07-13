@@ -152,6 +152,8 @@ class HttpUtilService
     }
 
     /**
+     * @deprecated Should be replaced by method inside Dullahan\Request:: class
+     *
      * @return array<mixed>
      */
     public function getBody(Request $request): array

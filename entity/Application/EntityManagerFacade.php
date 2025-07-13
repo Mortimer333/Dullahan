@@ -158,6 +158,9 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
         if (!$entity) {
             throw new EntityCreationFailedException('Entity creation was not handled');
         }
+        // We are requesting ownership check after entity was created to make sure that it is correctly assigned
+        // and not sneakily assigned to another/wrong/unauthorized user
+        $this->dispatchOwnerVerification($entity);
 
         return $entity;
     }
@@ -170,10 +173,15 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
             throw new EntityNotFoundException('Entity was not found');
         }
 
+        // [Double owner verifications]
+        //  Firstly we make sure that entity can be changed by this user
+        //  Secondly we verify if the ownership wasn't wrongly changed after the update
+        $this->dispatchOwnerVerification($entity);
         $validation = $this->eventDispatcher->dispatch(new Transport\ValidateUpdateEntity($entity, $payload));
         if (!$validation->isValid) {
             throw new EntityValidationException('Entity update has failed');
         }
+        $this->dispatchOwnerVerification($entity);
 
         return $this->eventDispatcher->dispatch(
             new Transport\UpdateEntity($entity, $validation->payload, $flush)
@@ -188,6 +196,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
             throw new EntityNotFoundException('Entity was not found');
         }
 
+        $this->dispatchOwnerVerification($entity);
         $this->eventDispatcher->dispatch(new Transport\RemoveEntity($entity, $flush));
 
         return true;

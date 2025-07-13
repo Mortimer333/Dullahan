@@ -31,7 +31,6 @@ class EntityHydrationService implements EntityHydrationInterface
         protected UserServiceInterface $userService,
         protected EntityPersistManagerInterface $entityPersistManager,
         protected EntityDefinitionManagerInterface $entityDefinitionManager,
-        protected EntityUtilService $entityUtilService, // @TODO replace when update EDD approach is implemented
     ) {
     }
 
@@ -215,7 +214,7 @@ class EntityHydrationService implements EntityHydrationInterface
         if (!$collection instanceof Collection) {
             throw new \Exception(
                 sprintf("Classes %s method %s doesn't return collection", $entity::class, $getter),
-                500
+                500,
             );
         }
 
@@ -253,13 +252,10 @@ class EntityHydrationService implements EntityHydrationInterface
         $ids = [];
         $entities = [];
         foreach ($newCollection as $item) {
-            if (is_int($item)) {
-                $ids[] = $item;
-                continue;
-            }
-
             if (is_array($item)) {
                 $entities[] = $this->handleNestedEntity($class, $item);
+            } else {
+                $ids[] = $item;
             }
         }
 
@@ -275,7 +271,7 @@ class EntityHydrationService implements EntityHydrationInterface
         $id = $payload['id'] ?? null;
         unset($payload['id']);
         if ($id) {
-            return $this->entityUtilService->update($class, (int) $id, $payload);
+            return $this->entityPersistManager->update($class, (int) $id, $payload);
         }
 
         return $this->entityPersistManager->create($class, $payload, false);
