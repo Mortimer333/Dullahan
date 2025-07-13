@@ -188,7 +188,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
         )->entity;
     }
 
-    public function delete(string $class, int $id, bool $flush = true): bool
+    public function remove(string $class, int $id, bool $flush = true): bool
     {
         $this->dispatchAccessVerification($class, AccessTypeEnum::DELETE->value);
         $entity = $this->get($class, $id);
@@ -202,11 +202,17 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
         return true;
     }
 
+    /**
+     * @TODO
+     */
     public function removeCacheById(string $class, int $id): void
     {
         $this->eventDispatcher->dispatch(new Transport\CacheRemoveEntityId($class, $id));
     }
 
+    /**
+     * @TODO
+     */
     public function removeCache(object $entity): void
     {
         $this->eventDispatcher->dispatch(new Transport\CacheRemoveEntity($entity));

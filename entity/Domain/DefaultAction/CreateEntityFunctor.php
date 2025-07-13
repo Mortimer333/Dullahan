@@ -6,15 +6,14 @@ namespace Dullahan\Entity\Domain\DefaultAction;
 
 use Dullahan\Entity\Adapter\Symfony\Domain\EmptyIndicatorService;
 use Dullahan\Entity\Domain\Exception\InvalidEntityException;
+use Dullahan\Entity\Port\Application\EntityCacheManagerInterface;
 use Dullahan\Entity\Port\Application\EntityDefinitionManagerInterface;
 use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
 use Dullahan\Entity\Port\Domain\EntityHydrationInterface;
 use Dullahan\Entity\Port\Domain\IdentityAwareInterface;
 use Dullahan\Entity\Port\Domain\InheritanceAwareInterface;
 use Dullahan\Entity\Port\Domain\ManageableInterface;
-use Dullahan\Entity\Presentation\Event\Transport\CacheRemoveRelated;
 use Dullahan\Entity\Presentation\Event\Transport\CreateEntity;
-use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\User\Port\Application\UserServiceInterface;
 
 class CreateEntityFunctor
@@ -25,7 +24,7 @@ class CreateEntityFunctor
         protected UserServiceInterface $userService,
         protected EntityRetrievalManagerInterface $entityRetrievalManager,
         protected EmptyIndicatorService $emptyIndicatorService, // @TODO Interface
-        protected EventDispatcherInterface $eventDispatcher,
+        protected EntityCacheManagerInterface $entityCacheManager,
     ) {
     }
 
@@ -67,7 +66,7 @@ class CreateEntityFunctor
         }
         $this->emptyIndicatorService->setEmptyIndicators($entity, $event->payload);
 
-        $this->eventDispatcher->dispatch(new CacheRemoveRelated($entity, $definition));
+        $this->entityCacheManager->removeRelatedCache($entity, $definition);
 
         return $entity;
     }

@@ -7,6 +7,7 @@ namespace Dullahan\Entity\Adapter\Symfony\Presentation\Http\Controller\User;
 use Dullahan\Entity\Port\Domain\EntityServiceInterface;
 use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\CreateEntitySaga;
+use Dullahan\Entity\Presentation\Event\Transport\Saga\RemoveEntitySaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\UpdateEntitySaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\ViewEntitySaga;
 use Dullahan\Entity\Presentation\Http\Model\Body\CreateUpdateBody;
@@ -133,11 +134,26 @@ class EntityManagementController extends AbstractController
         methods: 'DELETE',
         requirements: ['path' => '.+'],
     )]
-    public function remove(string $mapping, string $path, int $id): JsonResponse
+    public function remove(Request $request, string $mapping, string $path, int $id): JsonResponse
     {
-        $class = $this->projectManagerService->mappingToClassName($mapping, $path);
-        $this->entityUtilService->remove($class, $id);
+        $dullahanRequest = $this->requestFactory->symfonyToDullahanRequest($request);
 
-        return $this->httpUtilService->jsonResponse('Entity successfully deleted');
+        $response = $this->eventDispatcher->dispatch(new RemoveEntitySaga(
+            $mapping,
+            $path,
+            $id,
+            $dullahanRequest,
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('Remove entity saga was not handled');
+        }
+
+        $response->message = 'Entity successfully deleted';
+
+        return new JsonResponse(
+            $response->toArray(),
+            $response->status,
+            $response->headers,
+        );
     }
 }

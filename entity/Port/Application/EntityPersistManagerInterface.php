@@ -32,5 +32,5 @@ interface EntityPersistManagerInterface
      *
      * @throws EntityNotFoundException
      */
-    public function delete(string $class, int $id, bool $flush = true): bool;
+    public function remove(string $class, int $id, bool $flush = true): bool;
 }

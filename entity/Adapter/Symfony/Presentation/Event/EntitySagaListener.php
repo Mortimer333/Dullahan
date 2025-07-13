@@ -7,11 +7,13 @@ namespace Dullahan\Entity\Adapter\Symfony\Presentation\Event;
 use Dullahan\Entity\Domain\DefaultAction\Process\BulkListEntitiesSagaFunctor;
 use Dullahan\Entity\Domain\DefaultAction\Process\CreateEntitySagaFunctor;
 use Dullahan\Entity\Domain\DefaultAction\Process\ListEntitiesSagaFunctor;
+use Dullahan\Entity\Domain\DefaultAction\Process\RemoveEntitySagaFunctor;
 use Dullahan\Entity\Domain\DefaultAction\Process\UpdateEntitySagaFunctor;
 use Dullahan\Entity\Domain\DefaultAction\Process\ViewEntitySagaFunctor;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\BulkListEntitiesSaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\CreateEntitySaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\ListEntitiesSaga;
+use Dullahan\Entity\Presentation\Event\Transport\Saga\RemoveEntitySaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\UpdateEntitySaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\ViewEntitySaga;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -24,6 +26,7 @@ class EntitySagaListener
         protected BulkListEntitiesSagaFunctor $bulkListEntitiesProcessFunctor,
         protected CreateEntitySagaFunctor $createEntitySagaFunctor,
         protected UpdateEntitySagaFunctor $updateEntitySagaFunctor,
+        protected RemoveEntitySagaFunctor $removeEntitySagaFunctor,
     ) {
     }
 
@@ -75,5 +78,15 @@ class EntitySagaListener
         }
 
         $event->setResponse(($this->updateEntitySagaFunctor)($event));
+    }
+
+    #[AsEventListener(event: RemoveEntitySaga::class)]
+    public function onRemoveEntitySaga(RemoveEntitySaga $event): void
+    {
+        if ($event->wasDefaultPrevented()) {
+            return;
+        }
+
+        $event->setResponse(($this->removeEntitySagaFunctor)($event));
     }
 }
