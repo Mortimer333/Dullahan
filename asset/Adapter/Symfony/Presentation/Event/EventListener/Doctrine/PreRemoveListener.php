@@ -9,16 +9,10 @@ use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Events;
 use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Entity\Adapter\Symfony\Domain\EntityUtilService;
 
 #[AsDoctrineListener(event: Events::preRemove, priority: 10)]
 class PreRemoveListener
 {
-    public function __construct(
-        protected EntityUtilService $entityUtilService,
-    ) {
-    }
-
     public function preRemove(PreRemoveEventArgs $event): void
     {
         $this->removeOrphanedPointers($event);

@@ -44,7 +44,7 @@ class EntityInheritanceListener
         ($this->handleInheritanceAwareEntityFunctor)($event);
     }
 
-    #[AsEventListener(event: GetEntity::class)]
+    #[AsEventListener(event: GetEntity::class, priority: -10)]
     public function loadEntityToMapper(GetEntity $event): void
     {
         $entity = $event->entity;
@@ -53,5 +53,19 @@ class EntityInheritanceListener
         }
 
         EntityInheritanceMapper::addInheritedParent($entity);
+    }
+
+    #[AsEventListener(event: PersistCreatedEntity::class, priority: -10)]
+    #[AsEventListener(event: PersistUpdatedEntity::class, priority: -10)]
+    public function updateCurrentInheritedParents(PersistCreatedEntity|PersistUpdatedEntity $event): void
+    {
+        $entity = $event->entity;
+        if (!$entity instanceof InheritanceAwareInterface) {
+            return;
+        }
+
+        $inherited = EntityInheritanceMapper::getCurrentInheritedParents();
+        $inherited[$entity::class][(int) $entity->getId()] = $entity->getParent()?->getId();
+        EntityInheritanceMapper::setCurrentInheritedParents($inherited);
     }
 }

@@ -10,7 +10,6 @@ use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Entity\Adapter\Symfony\Domain\EntityUtilService;
 use Dullahan\Entity\Domain\Service\EntityCacheService;
 use Dullahan\Entity\Presentation\Event\Transport\PostCreate;
 use Dullahan\Entity\Presentation\Event\Transport\PostUpdate;
@@ -26,7 +25,6 @@ final class EntityListener
 
     public function __construct(
         protected EntityManagerInterface $em,
-        protected EntityUtilService $entityUtilService,
         protected FileSystemBasedAssetManager $assetService,
         protected EntityCacheService $cacheService,
         protected ThumbnailServiceInterface $thumbnailService,

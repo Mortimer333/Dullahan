@@ -11,6 +11,9 @@ use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
 use Dullahan\Entity\Adapter\Symfony\Domain\EntityUtilService;
 
+/**
+ * @deprecated
+ */
 #[AsDoctrineListener(event: Events::onFlush, priority: 256)]
 class OnFlushListener
 {

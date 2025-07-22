@@ -10,16 +10,10 @@ use Doctrine\ORM\Events;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Entity\Adapter\Symfony\Domain\EntityUtilService;
 
 #[AsDoctrineListener(event: Events::postLoad)]
 class PostLoadListener
 {
-    public function __construct(
-        protected EntityUtilService $entityUtilService,
-    ) {
-    }
-
     public function postLoad(PostLoadEventArgs $event): void
     {
         $this->postAssetPointerLoad($event);
