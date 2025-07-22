@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Dullahan\Entity\Adapter\Symfony\Presentation\Event;
 
 use Dullahan\Entity\Domain\DefaultAction\HandleInheritanceAwareEntityFunctor;
+use Dullahan\Entity\Domain\Mapper\EntityInheritanceMapper;
 use Dullahan\Entity\Port\Domain\InheritanceAwareInterface;
 use Dullahan\Entity\Presentation\Event\Transport\FillInheritanceAwareEntity;
+use Dullahan\Entity\Presentation\Event\Transport\GetEntity;
 use Dullahan\Entity\Presentation\Event\Transport\PersistCreatedEntity;
 use Dullahan\Entity\Presentation\Event\Transport\PersistUpdatedEntity;
 use Dullahan\Main\Contract\EventDispatcherInterface;
@@ -40,5 +42,16 @@ class EntityInheritanceListener
         }
 
         ($this->handleInheritanceAwareEntityFunctor)($event);
+    }
+
+    #[AsEventListener(event: GetEntity::class)]
+    public function loadEntityToMapper(GetEntity $event): void
+    {
+        $entity = $event->entity;
+        if (!$entity instanceof InheritanceAwareInterface) {
+            return;
+        }
+
+        EntityInheritanceMapper::addInheritedParent($entity);
     }
 }

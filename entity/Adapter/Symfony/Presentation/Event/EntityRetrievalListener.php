@@ -17,7 +17,6 @@ class EntityRetrievalListener
 {
     /**
      * @param RetrieveEntityRepositoryFunctor<T> $retrieveEntityRepository
-     * @param RetrieveEntityFunctor<T>           $retrieveEntity
      */
     public function __construct(
         protected RetrieveEntityRepositoryFunctor $retrieveEntityRepository,
@@ -25,9 +24,6 @@ class EntityRetrievalListener
     ) {
     }
 
-    /**
-     * @param GetEntity<T> $event
-     */
     #[AsEventListener(event: GetEntity::class)]
     public function onGetEntity(GetEntity $event): void
     {

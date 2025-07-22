@@ -6,6 +6,11 @@ namespace Dullahan\Entity\Domain\Mapper;
 
 use Dullahan\Entity\Port\Domain\InheritanceAwareInterface;
 
+/**
+ * The point of this class is to prevent unnecessary path updates in the database.
+ * So all this loaded entity mapping results only in simple if using `didParentChange`
+ * to determinate if children of this entity should be updated in recursive manner.
+ */
 abstract class EntityInheritanceMapper
 {
     /**

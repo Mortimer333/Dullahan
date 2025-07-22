@@ -8,16 +8,13 @@ use Dullahan\Entity\Port\Domain\IdentityAwareInterface;
 use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
 use Dullahan\Main\Model\EventAbstract;
 
-/**
- * @template T of object
- */
 class GetEntity extends EventAbstract
 {
     public ?IdentityAwareInterface $entity = null;
 
     /**
-     * @param class-string<T>              $class
-     * @param EntityRepositoryInterface<T> $repository
+     * @param EntityRepositoryInterface<object> $repository
+     * @param class-string                      $class
      */
     public function __construct(
         public readonly string $class,
