@@ -10,5 +10,7 @@ interface IndicatorAwareInterface
 
     public function getParent(): ?object;
 
+    public function setIndicator(int $indicator): self;
+
     public function getIndicator(): ?int;
 }

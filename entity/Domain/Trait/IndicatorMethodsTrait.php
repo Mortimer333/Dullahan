@@ -8,10 +8,24 @@ use Dullahan\Entity\Port\Domain\IndicatorAwareInterface;
 
 trait IndicatorMethodsTrait
 {
+    protected function getLastIndicator(string $class, string $parentColumn, int $parentId): int
+    {
+        return (int) ($this->getEntityManager()
+            ->createQuery('
+                SELECT i.indicator FROM ' . $class . ' i
+                WHERE i.' . $parentColumn . ' = :parent
+                ORDER BY i.indicator DESC
+            ')
+            ->setMaxResults(1)
+            ->setParameter('parent', $parentId)
+            ->getScalarResult()[0]['indicator'] ?? 0)
+        ;
+    }
+
     /**
      * @return array<int>
      */
-    public function makeSpace(IndicatorAwareInterface $entity, int $indicator): array
+    protected function makeSpace(IndicatorAwareInterface $entity, int $indicator): array
     {
         if (!$entity->getParent()) {
             return [];
@@ -47,7 +61,7 @@ trait IndicatorMethodsTrait
     /**
      * @return array<int>
      */
-    public function popSpace(IndicatorAwareInterface $entity, int $indicator, ?object $parent = null): array
+    protected function popSpace(IndicatorAwareInterface $entity, int $indicator, ?object $parent = null): array
     {
         if (is_null($parent)) {
             $parent = $entity->getParent();
@@ -85,7 +99,7 @@ trait IndicatorMethodsTrait
     /**
      * @return array<int>
      */
-    public function moveIndicator(
+    protected function moveIndicator(
         IndicatorAwareInterface $entity,
         int $indicator,
         ?object $parent = null,

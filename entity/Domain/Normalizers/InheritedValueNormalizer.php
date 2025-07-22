@@ -32,7 +32,7 @@ class InheritedValueNormalizer implements NormalizerInterface
         object $entity,
         Context $context,
     ): mixed {
-        return $this->getInheritedValue($entity, $fieldName, $definition);
+        return $this->getInheritedValue($entity, $fieldName, $definition, $value);
     }
 
     public function canNormalize(
@@ -56,7 +56,7 @@ class InheritedValueNormalizer implements NormalizerInterface
     /**
      * @param EntityFieldDefinition $definition
      */
-    public function getInheritedValue(object $entity, string $fieldName, array $definition): mixed
+    public function getInheritedValue(object $entity, string $fieldName, array $definition, mixed $oldValue): mixed
     {
         if (!$entity instanceof InheritanceAwareInterface) {
             return $this->tryReadField($entity, $fieldName);
@@ -70,7 +70,7 @@ class InheritedValueNormalizer implements NormalizerInterface
             }
         }
 
-        return null;
+        return $oldValue;
     }
 
     /**

@@ -60,15 +60,6 @@ class RelationNormalizer implements NormalizerInterface
         array $type,
         string $field,
     ): array {
-        // @TODO should be properly handled by InheritValueNormalizer
-        //        if ($entity instanceof InheritanceAwareInterface) {
-        //            $empty = $this->emptyIndicatorService->getEmptyIndicator($entity, $field);
-        //            if ($empty) {
-        //                return [];
-        //            }
-        //            $value = $this->getInheritedValue($entity, $field, $value);
-        //        }
-
         if (is_null($value) || 0 === count($value)) {
             return [];
         }

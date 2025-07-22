@@ -81,32 +81,34 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
         $eventGetCache->context->setProperty('inherit', $inherit);
         $eventGetCache = $this->eventDispatcher->dispatch($eventGetCache);
         if ($eventGetCache->isHit) {
-            return $eventGetCache->cached;
+            $serialized = $eventGetCache->cached;
+
+            $eventSerialize = $eventGetCache;
+        } else {
+            $definition = $this->getEntityDefinition($entity);
+            if (!$definition) {
+                return null;
+            }
+
+            $eventSerialize = new Transport\SerializeEntity($entity, $definition, $inherit);
+            $eventSerialize->context->setContext($eventGetCache->context->getContext());
+
+            $serialized = $this->eventDispatcher->dispatch($eventSerialize)->serialized;
+            if ($cache = json_encode($serialized)) {
+                $eventCache = new Transport\CacheEntity(
+                    $eventGetCache->key,
+                    $cache,
+                    60 * 60 * 24,
+                    EntityCacheCaseEnum::SERIALIZATION->value,
+                );
+                $eventCache->context->setContext($eventSerialize->context->getContext());
+                $this->eventDispatcher->dispatch($eventCache);
+                $eventSerialize = $eventCache;
+            }
         }
-
-        $definition = $this->getEntityDefinition($entity);
-        if (!$definition) {
-            return null;
-        }
-
-        $eventSerialize = new Transport\SerializeEntity($entity, $definition, $inherit);
-        $eventSerialize->context->setContext($eventGetCache->context->getContext());
-
-        $serialized = $this->eventDispatcher->dispatch($eventSerialize)->serialized;
         if (!$serialized) {
             return null;
         }
-
-        if ($cache = json_encode($serialized)) {
-            $eventGetCache = new Transport\CacheEntity(
-                $eventGetCache->key,
-                $cache,
-                60 * 60 * 24,
-                EntityCacheCaseEnum::SERIALIZATION->value,
-            );
-        }
-        $eventSerialize->context->setContext($eventSerialize->context->getContext());
-        $this->eventDispatcher->dispatch($eventGetCache);
 
         $eventStrip = new Transport\StripSerializedEntity($entity, $serialized, $dataSet);
         $eventStrip->context->setContext($eventSerialize->context->getContext());
@@ -152,9 +154,10 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
             throw new EntityValidationException('Entity creation has failed');
         }
 
-        $entity = $this->eventDispatcher->dispatch(
-            new Transport\CreateEntity($class, $validation->payload, $flush),
-        )->entity;
+        $createEntityResult = $this->eventDispatcher->dispatch(
+            new Transport\CreateEntity($class, $validation->payload),
+        );
+        $entity = $createEntityResult->entity;
         if (!$entity) {
             throw new EntityCreationFailedException('Entity creation was not handled');
         }
@@ -162,7 +165,14 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
         // and not sneakily assigned to another/wrong/unauthorized user
         $this->dispatchOwnerVerification($entity);
 
-        return $entity;
+        $persistEntityResult = $this->eventDispatcher->dispatch(
+            new Transport\PersistCreatedEntity($entity, $createEntityResult->payload, $flush),
+        );
+        if (!$persistEntityResult->entity->getId()) {
+            throw new EntityCreationFailedException('Created entity was not persisted');
+        }
+
+        return $persistEntityResult->entity;
     }
 
     public function update(string $class, int $id, array $payload, bool $flush = true): IdentityAwareInterface
@@ -183,8 +193,12 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
         }
         $this->dispatchOwnerVerification($entity);
 
+        $updateEntityResult = $this->eventDispatcher->dispatch(
+            new Transport\UpdateEntity($entity, $validation->payload),
+        );
+
         return $this->eventDispatcher->dispatch(
-            new Transport\UpdateEntity($entity, $validation->payload, $flush)
+            new Transport\PersistUpdatedEntity($updateEntityResult->entity, $updateEntityResult->payload, $flush)
         )->entity;
     }
 
