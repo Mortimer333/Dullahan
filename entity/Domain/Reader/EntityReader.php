@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\Entity\Adapter\Symfony\Domain\Reader;
+namespace Dullahan\Entity\Domain\Reader;
 
 use Dullahan\Entity\Domain\Attribute\Entity;
 use Dullahan\Entity\Port\Domain\ConstraintInheritanceAwareInterface;
