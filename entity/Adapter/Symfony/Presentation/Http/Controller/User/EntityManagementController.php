@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Entity\Adapter\Symfony\Presentation\Http\Controller\User;
 
-use Dullahan\Entity\Port\Domain\EntityServiceInterface;
 use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\CreateEntitySaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\RemoveEntitySaga;
@@ -29,7 +28,6 @@ class EntityManagementController extends AbstractController
 {
     public function __construct(
         protected HttpUtilService $httpUtilService,
-        protected EntityServiceInterface $entityUtilService,
         protected MappingsManagerInterface $projectManagerService,
         protected EventDispatcherInterface $eventDispatcher,
         protected RequestFactory $requestFactory,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Entity\Domain\DefaultAction\Process;
 
 use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
-use Dullahan\Entity\Port\Domain\EntityServiceInterface;
+use Dullahan\Entity\Port\Application\EntitySerializerInterface;
 use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\ListEntitiesSaga;
 use Dullahan\Main\Contract\RequestInterface;
@@ -15,7 +15,7 @@ use Dullahan\Main\Service\Util\HttpUtilService;
 class ListEntitiesSagaFunctor
 {
     public function __construct(
-        protected EntityServiceInterface $entityUtilService,
+        protected EntitySerializerInterface $entitySerializer,
         protected EntityRetrievalManagerInterface $entityRetrievalManager,
         protected MappingsManagerInterface $projectManagerService,
     ) {
@@ -36,7 +36,7 @@ class ListEntitiesSagaFunctor
         $entities = $repo->list($pagination);
         $serialized = [];
         foreach ($entities as $entity) {
-            $serialized[] = $this->entityUtilService->serialize(
+            $serialized[] = $this->entitySerializer->serialize(
                 $entity,
                 $this->retrieveDataSet($request),
                 (bool) $request->get('inherit', true),

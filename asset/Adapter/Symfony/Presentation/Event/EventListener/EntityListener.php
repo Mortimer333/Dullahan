@@ -11,10 +11,10 @@ use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
 use Dullahan\Entity\Domain\Service\EntityCacheService;
-use Dullahan\Entity\Presentation\Event\Transport\PostCreate;
-use Dullahan\Entity\Presentation\Event\Transport\PostUpdate;
-use Dullahan\Entity\Presentation\Event\Transport\PreCreate;
-use Dullahan\Entity\Presentation\Event\Transport\PreUpdate;
+use Dullahan\Entity\Presentation\Event\Transport\CreateEntity;
+use Dullahan\Entity\Presentation\Event\Transport\PersistCreatedEntity;
+use Dullahan\Entity\Presentation\Event\Transport\UpdateEntity;
+use Dullahan\Main\Model\EventAbstract;
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailServiceInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
@@ -31,16 +31,15 @@ final class EntityListener
     ) {
     }
 
-    #[AsEventListener(event: PreCreate::class, priority: -256)]
-    public function preAssetAssign(PreCreate $event): void
+    #[AsEventListener(event: CreateEntity::class, priority: EventAbstract::PRIORITY_FIRST)]
+    public function preAssetAssign(CreateEntity $event): void
     {
-        $entity = $event->getEntity();
-        if (!$entity instanceof AssetAwareInterface) {
+        if (!(class_implements($event->class)[AssetAwareInterface::class] ?? false)) {
             return;
         }
 
-        $payload = $event->getPayload();
-        $pointers = $this->getAssetPointerFieldsFromPayload($entity, $payload);
+        $payload = $event->payload;
+        $pointers = $this->getAssetPointerFieldsFromPayload($event->class, $payload);
         if (empty($pointers)) {
             return;
         }
@@ -58,13 +57,13 @@ final class EntityListener
             unset($payload[$fieldName]);
         }
         $this->toSetAssetLater[] = $fields;
-        $event->setPayload($payload);
+        $event->payload = $payload;
     }
 
-    #[AsEventListener(event: PostCreate::class, priority: -256)] // Should be called last
-    public function postAssetAssign(PostCreate $event): void
+    #[AsEventListener(event: PersistCreatedEntity::class, priority: EventAbstract::PRIORITY_LAST)]
+    public function postAssetAssign(PersistCreatedEntity $event): void
     {
-        $entity = $event->getEntity();
+        $entity = $event->entity;
         if (!$entity instanceof AssetAwareInterface) {
             return;
         }
@@ -89,16 +88,16 @@ final class EntityListener
         $this->thumbnailService->flush();
     }
 
-    #[AsEventListener(event: PreUpdate::class, priority: -256)] // Should be called last
-    public function preAssetReassign(PreUpdate $event): void
+    #[AsEventListener(event: UpdateEntity::class, priority: EventAbstract::PRIORITY_FIRST)]
+    public function preAssetReassign(UpdateEntity $event): void
     {
-        $entity = $event->getEntity();
+        $entity = $event->entity;
         if (!$entity instanceof AssetAwareInterface) {
             return;
         }
 
-        $payload = $event->getPayload();
-        $pointers = $this->getAssetPointerFieldsFromPayload($entity, $payload);
+        $payload = $event->payload;
+        $pointers = $this->getAssetPointerFieldsFromPayload($entity::class, $payload);
         if (empty($pointers)) {
             return;
         }
@@ -126,13 +125,13 @@ final class EntityListener
             $entity->setAsset($fieldName, $asset);
         }
         $this->toSetAssetLater[] = $fields;
-        $event->setPayload($payload);
+        $event->payload = $payload;
     }
 
-    #[AsEventListener(event: PostUpdate::class, priority: -256)] // Should be called last
-    public function postAssetReassign(PostUpdate $event): void
+    #[AsEventListener(event: PersistCreatedEntity::class, priority: EventAbstract::PRIORITY_LAST)]
+    public function postAssetReassign(PersistCreatedEntity $event): void
     {
-        $entity = $event->getEntity();
+        $entity = $event->entity;
         if (!$entity instanceof AssetAwareInterface) {
             return;
         }
@@ -150,13 +149,14 @@ final class EntityListener
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param class-string             $class
+     * @param array<int|string, mixed> $payload
      *
      * @return array<string>
      */
-    protected function getAssetPointerFieldsFromPayload(AssetAwareInterface $entity, array $payload): array
+    protected function getAssetPointerFieldsFromPayload(string $class, array $payload): array
     {
-        $meta = (array) $this->em->getClassMetadata($entity::class);
+        $meta = (array) $this->em->getClassMetadata($class);
         $pointers = [];
         foreach ($meta['associationMappings'] as $mapping) {
             if (AssetPointer::class !== $mapping['targetEntity'] || !isset($payload[$mapping['fieldName']])) {

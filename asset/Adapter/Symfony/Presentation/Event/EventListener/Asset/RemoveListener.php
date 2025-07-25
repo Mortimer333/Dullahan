@@ -18,7 +18,7 @@ final readonly class RemoveListener
     }
 
     #[AsEventListener(event: RemoveAssetEvent::class)]
-    public function onCreateAsset(RemoveAssetEvent $event): void
+    public function onRemoveAsset(RemoveAssetEvent $event): void
     {
         $this->assetFileManager->remove($event->getAsset()->structure);
         $this->assetPersistenceManager->remove($event->getAsset()->entity);

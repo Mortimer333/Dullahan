@@ -101,6 +101,8 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
     public function remove(AssetEntityInterface $asset): void
     {
         $this->em->remove($asset);
+        // @TODO this is actually wrong - if we remove them via sql then all event structure will fail.
+        //      What about thumbnails, what about asset pointers?
         $qb = $this->em->createQueryBuilder();
         $likePath = rtrim($asset->getFullPath(), '/') . '/%';
         $query = $qb->delete(Asset::class, 'a')

@@ -35,7 +35,6 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
 
     /** @var \WeakMap<Structure, true> */
     protected \WeakMap $toRemove;
-    protected SessionInterface $session;
 
     /** @var array<array<string>> */
     protected array $toClone = [];
@@ -43,7 +42,6 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
     public function __construct(
         protected DocumentManagerInterface $documentManager,
     ) {
-        $this->session = $this->documentManager->getPhpcrSession();
         $this->toRemove = new \WeakMap();
     }
 
@@ -94,7 +92,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
 
     public function exists(string $path): bool
     {
-        return $this->session->nodeExists(rtrim($path, '/'));
+        return $this->getSession()->nodeExists(rtrim($path, '/'));
     }
 
     public function remove(Structure $asset): bool
@@ -125,7 +123,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
             throw new AssetExistsException($path);
         }
 
-        $this->session->move($asset->path, $path);
+        $this->getSession()->move($asset->path, $path);
 
         $name = explode(DIRECTORY_SEPARATOR, $path);
         $name = $name[count($name) - 1];
@@ -209,7 +207,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
 
     public function flush(): void
     {
-        $workspace = $this->session->getWorkspace();
+        $workspace = $this->getSession()->getWorkspace();
         foreach ($this->toClone as [$from, $to]) {
             $workspace->copy($from, $to);
         }
@@ -223,13 +221,13 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
             }
         }
 
-        $this->session->save();
+        $this->getSession()->save();
     }
 
     public function clear(): void
     {
         // Clear is not present in the interface but is implemented on class, and we need it
-        $this->session->clear(); // @phpstan-ignore-line
+        $this->getSession()->clear(); // @phpstan-ignore-line
     }
 
     protected function setFolderProperties(NodeInterface $node, NewStructureInterface $folder): void
@@ -296,7 +294,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
     protected function newNode(string $path, string $name, string $type): NodeInterface
     {
         try {
-            $parent = $this->session->getNode('/' === $path ? $path : rtrim($path, '/'));
+            $parent = $this->getSession()->getNode('/' === $path ? $path : rtrim($path, '/'));
         } catch (PathNotFoundException) {
             throw new AssetNotFoundException($path);
         }
@@ -311,7 +309,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
     protected function getNode(string $path): NodeInterface
     {
         try {
-            return $this->session->getNode($path);
+            return $this->getSession()->getNode($path);
         } catch (PathNotFoundException) {
             throw new AssetNotFoundException($path);
         }
@@ -326,5 +324,10 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
         }
 
         return $parent->addNode(basename($path), self::TYPE_CONTENT_FILE);
+    }
+
+    protected function getSession(): SessionInterface
+    {
+        return $this->documentManager->getPhpcrSession();
     }
 }

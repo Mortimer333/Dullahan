@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Entity\Domain\DefaultAction\Process;
 
-use Dullahan\Entity\Port\Domain\EntityServiceInterface;
 use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\BulkListEntitiesSaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\ListEntitiesSaga;
@@ -15,7 +14,6 @@ class BulkListEntitiesSagaFunctor
 {
     public function __construct(
         protected MappingsManagerInterface $projectManagerService,
-        protected EntityServiceInterface $entityUtilService,
         protected ListEntitiesSagaFunctor $listFunctor,
     ) {
     }
