@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\Entity\Domain\DefaultAction\Process;
+namespace Dullahan\Entity\Domain\DefaultAction\Saga;
 
 use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
 use Dullahan\Entity\Port\Application\EntitySerializerInterface;

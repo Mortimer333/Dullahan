@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\Entity\Domain\DefaultAction\Process;
+namespace Dullahan\Entity\Domain\DefaultAction\Saga;
 
 use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\BulkListEntitiesSaga;

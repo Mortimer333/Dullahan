@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Dullahan\Entity\Adapter\Symfony\Presentation\Event;
 
-use Dullahan\Entity\Domain\DefaultAction\Process\BulkListEntitiesSagaFunctor;
-use Dullahan\Entity\Domain\DefaultAction\Process\CreateEntitySagaFunctor;
-use Dullahan\Entity\Domain\DefaultAction\Process\ListEntitiesSagaFunctor;
-use Dullahan\Entity\Domain\DefaultAction\Process\RemoveEntitySagaFunctor;
-use Dullahan\Entity\Domain\DefaultAction\Process\UpdateEntitySagaFunctor;
-use Dullahan\Entity\Domain\DefaultAction\Process\ViewEntitySagaFunctor;
+use Dullahan\Entity\Domain\DefaultAction\Saga\BulkListEntitiesSagaFunctor;
+use Dullahan\Entity\Domain\DefaultAction\Saga\CreateEntitySagaFunctor;
+use Dullahan\Entity\Domain\DefaultAction\Saga\ListEntitiesSagaFunctor;
+use Dullahan\Entity\Domain\DefaultAction\Saga\RemoveEntitySagaFunctor;
+use Dullahan\Entity\Domain\DefaultAction\Saga\UpdateEntitySagaFunctor;
+use Dullahan\Entity\Domain\DefaultAction\Saga\ViewEntitySagaFunctor;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\BulkListEntitiesSaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\CreateEntitySaga;
 use Dullahan\Entity\Presentation\Event\Transport\Saga\ListEntitiesSaga;
