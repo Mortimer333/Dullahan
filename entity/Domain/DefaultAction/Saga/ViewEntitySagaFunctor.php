@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Entity\Domain\DefaultAction\Saga;
 
 use Dullahan\Entity\Domain\Exception\EntityNotFoundException;
+use Dullahan\Entity\Domain\Service\RequestParametersHandler;
 use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
 use Dullahan\Entity\Port\Application\EntitySerializerInterface;
 use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
@@ -17,6 +18,7 @@ class ViewEntitySagaFunctor
         protected EntityRetrievalManagerInterface $entityRetrievalManager,
         protected MappingsManagerInterface $mappingsManagerService,
         protected EntitySerializerInterface $entitySerializer,
+        protected RequestParametersHandler $requestParametersHandler,
     ) {
     }
 
@@ -34,8 +36,8 @@ class ViewEntitySagaFunctor
             'Entity retrieved successfully',
             data: ['entity' => $this->entitySerializer->serialize(
                 $entity,
-                json_decode($request->getQueryParameter('dataSet') ?? '', true) ?: null,
-                (bool) $request->getQueryParameter('inherit', true),
+                $this->requestParametersHandler->retrieveDataSet($request),
+                $this->requestParametersHandler->retrieveInherit($request),
             )],
         );
     }

@@ -34,7 +34,24 @@ class RequestFactory
             $request->cookies->all(),
             $files,
             $request->attributes->all(),
-            $request->request->all(),
+            $this->getSymfonyBody($request),
         );
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function getSymfonyBody(SymfonyRequest $request): array
+    {
+        if (!empty($request->request->all())) {
+            return $request->request->all();
+        }
+
+        $json = json_decode($request->getContent(), true);
+        if (is_array($json)) {
+            return $json;
+        }
+
+        return [];
     }
 }
