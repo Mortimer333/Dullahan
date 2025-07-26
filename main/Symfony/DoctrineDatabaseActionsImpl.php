@@ -6,7 +6,7 @@ namespace Dullahan\Main\Symfony;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\Main\Contract\DatabaseActionsInterface;
 use Dullahan\Main\Contract\DatabaseConnectionInterface;
 

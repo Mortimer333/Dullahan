@@ -13,7 +13,7 @@ use Dullahan\Entity\Port\Application\EntityPersistManagerInterface;
 use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
 use Dullahan\Entity\Port\Domain\EntityHydrationInterface;
 use Dullahan\Entity\Port\Domain\ManageableInterface;
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\Main\Service\EditorJsService;
 use Dullahan\Main\Service\Helper\CastHelper;
 use Dullahan\User\Port\Application\UserServiceInterface;

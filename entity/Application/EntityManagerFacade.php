@@ -18,7 +18,7 @@ use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
 use Dullahan\Entity\Port\Application\EntitySerializerInterface;
 use Dullahan\Entity\Port\Domain\EntityCacheServiceInterface;
 use Dullahan\Entity\Port\Domain\IdentityAwareInterface;
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\Entity\Presentation\Event\Transport;
 use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\User\Domain\Entity\User;

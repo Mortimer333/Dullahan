@@ -4,7 +4,7 @@ namespace Dullahan\User\Adapter\Symfony\Infrastructure\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Dullahan\Entity\Adapter\Symfony\Domain\Trait\PaginationTrait;
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\User\Domain\Entity\User;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;

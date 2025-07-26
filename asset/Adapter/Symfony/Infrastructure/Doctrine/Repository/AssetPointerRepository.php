@@ -5,7 +5,7 @@ namespace Dullahan\Asset\Adapter\Symfony\Infrastructure\Doctrine\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 
 /**
  * @extends ServiceEntityRepository<AssetPointer>

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\Entity\Port\Interface;
+namespace Dullahan\Entity\Port\Infrastructure;
 
 /**
  * Copied from Doctrine\Persistence\ObjectRepository.

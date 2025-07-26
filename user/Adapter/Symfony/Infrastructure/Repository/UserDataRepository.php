@@ -4,7 +4,7 @@ namespace Dullahan\User\Adapter\Symfony\Infrastructure\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\User\Domain\Entity\UserData;
 
 /**

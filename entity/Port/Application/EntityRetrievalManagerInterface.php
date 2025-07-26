@@ -6,7 +6,7 @@ namespace Dullahan\Entity\Port\Application;
 
 use Dullahan\Entity\Domain\Exception\EntityNotAuthorizedException;
 use Dullahan\Entity\Port\Domain\IdentityAwareInterface;
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 
 interface EntityRetrievalManagerInterface
 {

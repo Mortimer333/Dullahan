@@ -7,7 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Entity\Adapter\Symfony\Domain\Trait\PaginationTrait;
 use Dullahan\Entity\Port\Domain\EntityValidationInterface;
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\User\Domain\Entity\UserData;
 
 /**

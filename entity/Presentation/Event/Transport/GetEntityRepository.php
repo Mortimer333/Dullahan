@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Entity\Presentation\Event\Transport;
 
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\Main\Model\EventAbstract;
 
 /**

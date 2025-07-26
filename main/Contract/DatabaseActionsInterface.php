@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Main\Contract;
 
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 
 interface DatabaseActionsInterface
 {

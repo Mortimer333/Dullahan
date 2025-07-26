@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Entity\Presentation\Event\Transport;
 
 use Dullahan\Entity\Port\Domain\IdentityAwareInterface;
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\Main\Model\EventAbstract;
 
 class GetEntity extends EventAbstract

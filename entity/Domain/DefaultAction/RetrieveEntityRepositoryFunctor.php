@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Entity\Domain\DefaultAction;
 
-use Dullahan\Entity\Port\Interface\EntityRepositoryInterface;
+use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\Entity\Presentation\Event\Transport\GetEntityRepository;
 use Dullahan\Main\Contract\DatabaseActionsInterface;
 
