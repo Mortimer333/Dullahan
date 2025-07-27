@@ -10,9 +10,6 @@ namespace Dullahan\Entity\Port\Application;
 interface EntitySerializerInterface
 {
     /**
-     * @template T of object
-     *
-     * @param T                         $entity
      * @param array<string, mixed>|null $dataSet
      *
      * @return SerializedEntity|null

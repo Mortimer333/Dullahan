@@ -12,6 +12,7 @@ class CacheEntity extends EventAbstract
         public string $key,
         public string $toCache,
         public int|\DateInterval|null $expiry,
+        public readonly object $entity,
         public readonly string $case,
     ) {
         parent::__construct();

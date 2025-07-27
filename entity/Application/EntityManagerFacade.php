@@ -99,6 +99,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
                     $eventGetCache->key,
                     $cache,
                     60 * 60 * 24,
+                    $entity,
                     EntityCacheCaseEnum::SERIALIZATION->value,
                 );
                 $eventCache->context->setContext($eventSerialize->context->getContext());
@@ -134,6 +135,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
                 $eventGetCache->key,
                 $cache,
                 60 * 60 * 24,
+                $entity,
                 EntityCacheCaseEnum::DEFINITION->value,
             ));
         }
