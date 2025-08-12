@@ -208,6 +208,7 @@ implements ThumbnailPersisterInterface, ThumbnailRetrieveInterface
     public function removeThumbnailsFromPointer(AssetPointerInterface $pointer): void
     {
         foreach ($this->getThumbnailsPointers($pointer) as $thumbnailPointer) {
+            $this->getEntityManager()->remove($thumbnailPointer);
             $thumbnail = $thumbnailPointer->getThumbnail();
             if (!$thumbnail) {
                 continue;

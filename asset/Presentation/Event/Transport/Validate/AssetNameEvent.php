@@ -6,7 +6,7 @@ namespace Dullahan\Asset\Presentation\Event\Transport\Validate;
 
 use Dullahan\Main\Model\Context;
 
-final class AsseNameEvent
+final class AssetNameEvent
 {
     public function __construct(
         protected string $name,

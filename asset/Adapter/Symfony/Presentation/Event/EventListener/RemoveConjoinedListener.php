@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\Asset\Adapter\Symfony\Presentation\Event\EventListener\Doctrine;
+namespace Dullahan\Asset\Adapter\Symfony\Presentation\Event\EventListener;
 
 use Dullahan\Asset\Adapter\Symfony\Infrastructure\Doctrine\Repository\AssetPointerRepository;
 use Dullahan\Asset\Domain\Attribute\Asset;

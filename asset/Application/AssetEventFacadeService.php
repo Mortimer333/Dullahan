@@ -33,7 +33,7 @@ use Dullahan\Asset\Presentation\Event\Transport\Replace\PreReplaceAssetEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Replace\ReplaceAssetEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Retrieve\RetrieveByIdEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Retrieve\RetrieveByPathEvent;
-use Dullahan\Asset\Presentation\Event\Transport\Validate\AsseNameEvent;
+use Dullahan\Asset\Presentation\Event\Transport\Validate\AssetNameEvent;
 use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Model\Context;
 
@@ -56,7 +56,7 @@ class AssetEventFacadeService implements AssetServiceInterface
     public function validName(string $name, ?Context $context = null): bool
     {
         $context ??= new Context();
-        $event = new AsseNameEvent($name, $context);
+        $event = new AssetNameEvent($name, $context);
         $this->eventDispatcher->dispatch($event);
 
         return $event->isValid();

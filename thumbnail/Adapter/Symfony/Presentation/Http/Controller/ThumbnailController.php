@@ -12,7 +12,7 @@ use OpenApi\Attributes as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[SWG\Tag('Project Asset Management')]
+#[SWG\Tag('Project Asset Management - Thumbnail')]
 #[Route('/asset/thumbnail')]
 class ThumbnailController extends AbstractController
 {

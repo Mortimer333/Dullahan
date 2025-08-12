@@ -34,7 +34,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
     public const TYPE_CONTENT_FOLDER = 'dl:folder';
 
     /** @var \WeakMap<Structure, true> */
-    protected \WeakMap $toRemove;
+    private \WeakMap $toRemove;
 
     /** @var array<array<string>> */
     protected array $toClone = [];
@@ -216,6 +216,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
         foreach ($this->toRemove->getIterator() as $asset => $value) {
             try {
                 $this->getNode($asset->path)->remove();
+                $this->toRemove->offsetUnset($asset);
             } catch (AssetNotFoundException) {
                 // Do nothing - file might not exist but entity in database does (desynchronization via user actions)
             }
