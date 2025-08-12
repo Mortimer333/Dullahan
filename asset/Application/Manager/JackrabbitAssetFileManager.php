@@ -34,7 +34,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
     public const TYPE_CONTENT_FOLDER = 'dl:folder';
 
     /** @var \WeakMap<Structure, true> */
-    private \WeakMap $toRemove;
+    protected \WeakMap $toRemove;
 
     /** @var array<array<string>> */
     protected array $toClone = [];
