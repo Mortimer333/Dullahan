@@ -11,6 +11,7 @@ use Dullahan\Entity\Domain\Service\EntityCacheService;
 use Dullahan\Entity\Port\Application\EntityDefinitionManagerInterface;
 use Dullahan\Entity\Port\Application\EntityRetrievalManagerInterface;
 use Dullahan\Entity\Port\Application\EntitySerializerInterface;
+use Dullahan\Entity\Port\Domain\EntityCacheServiceInterface;
 use Dullahan\Entity\Port\Domain\EntityValidationInterface;
 use Dullahan\Main\Model\Context;
 
@@ -33,6 +34,7 @@ class PrepareEntityRequestedDataFunctor
         protected EntityValidationInterface $entityValidation,
         protected EntitySerializerInterface $entitySerializer,
         protected InheritedValueNormalizer $inheritedValueNormalizer,
+        protected EntityCacheServiceInterface $entityCacheService,
     ) {
     }
 
@@ -199,7 +201,7 @@ class PrepareEntityRequestedDataFunctor
         }
 
         // @TODO cache key to class should be handled by EntityCacheService
-        [,, $class, $id] = explode(':', $cacheKey);
+        [,, $class, $id] = explode($this->entityCacheService->getCacheSeparator(), $cacheKey);
 
         /** @var class-string $class */
         $class = str_replace('-', '\\', $class);

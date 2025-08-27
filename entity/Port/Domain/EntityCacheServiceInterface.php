@@ -8,6 +8,8 @@ use Psr\Cache\InvalidArgumentException;
 
 interface EntityCacheServiceInterface
 {
+    public function getCacheSeparator(): string;
+
     public function deleteEntityCache(object $entity, bool $inherit = false): void;
 
     /**

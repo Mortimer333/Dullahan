@@ -16,11 +16,17 @@ use Psr\Cache\CacheItemPoolInterface;
 class EntityCacheService implements EntityCacheServiceInterface
 {
     public const NO_CACHE = 'cache:empty';
+    public const CACHE_SEPARATOR = '_';
 
     public function __construct(
         protected CacheItemPoolInterface $cache,
         protected DatabaseActionsInterface $databaseConnection,
     ) {
+    }
+
+    public function getCacheSeparator(): string
+    {
+        return self::CACHE_SEPARATOR;
     }
 
     public function deleteEntityCache(object $entity, bool $inherit = false): void
@@ -60,18 +66,22 @@ class EntityCacheService implements EntityCacheServiceInterface
 
     public function getSerializedCacheKey(int $id, string $class, bool $inherit): string
     {
-        return $_ENV['APP_ENV'] . ':class:' . $this->getCacheClass($class) . ':' . $id . ':'
-            . ($inherit ? '1' : '0');
+        return $this->joinVars(
+            'class',
+            $this->getCacheClass($class),
+            $id,
+            $inherit ? '1' : '0',
+        );
     }
 
     public function getEntityFieldCacheKey(string $class): string
     {
-        return $_ENV['APP_ENV'] . ':class:' . $this->getCacheClass($class) . ':field';
+        return $this->joinVars('class', $this->getCacheClass($class), 'field');
     }
 
     public function getEntityDefinitionCacheKey(string $class): string
     {
-        return $_ENV['APP_ENV'] . ':class:' . $this->getCacheClass($class) . ':definition';
+        return $this->joinVars('class', $this->getCacheClass($class), 'definition');
     }
 
     public function getCacheClass(string $class): string
@@ -82,5 +92,10 @@ class EntityCacheService implements EntityCacheServiceInterface
     public function getCache(): CacheItemPoolInterface
     {
         return $this->cache;
+    }
+
+    protected function joinVars(string|int|float ...$vars): string
+    {
+        return implode($this->getCacheSeparator(), [$_ENV['APP_ENV'], ...$vars]);
     }
 }
