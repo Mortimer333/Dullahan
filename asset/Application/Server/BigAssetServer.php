@@ -24,6 +24,7 @@ class BigAssetServer implements AssetServerInterface
             throw new \Exception('File not present', 422);
         }
 
+        ob_start();
         set_time_limit(0);
         while (!feof($file)) {
             echo fread($file, 1024 * 8); // @phpstan-ignore-line Banned code
