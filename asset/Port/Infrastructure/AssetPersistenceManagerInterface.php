@@ -18,7 +18,7 @@ use Dullahan\User\Domain\Entity\User;
  * @phpstan-type Filter array<array{
  *      0: string,
  *      1: '!='|'='|'IS'|'IS NOT'|'<'|'>'|'<>'|'>='|'<='|'LIKE',
- *      2: 'string',
+ *      2: string,
  * }|'AND'|'OR'|'('|')'>
  * @phpstan-type Join array<array{
  *      0: string,

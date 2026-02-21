@@ -32,12 +32,12 @@ use Dullahan\Thumbnail\Port\Presentation\ThumbnailServiceInterface;
 final readonly class ThumbnailService implements ThumbnailServiceInterface
 {
     public function __construct(
-        protected AssetFileManagerInterface $assetFileManager,
-        protected AssetServiceInterface $assetService,
-        protected ThumbnailMapperInterface $thumbnailMapper,
-        protected ThumbnailGeneratorInterface $thumbnailGenerator,
-        protected ThumbnailRetrieveInterface $thumbnailRetrieve,
-        protected ThumbnailPersisterInterface $thumbnailPersist,
+        private AssetFileManagerInterface $assetFileManager,
+        private AssetServiceInterface $assetService,
+        private ThumbnailMapperInterface $thumbnailMapper,
+        private ThumbnailGeneratorInterface $thumbnailGenerator,
+        private ThumbnailRetrieveInterface $thumbnailRetrieve,
+        private ThumbnailPersisterInterface $thumbnailPersist,
     ) {
     }
 
@@ -148,7 +148,7 @@ final readonly class ThumbnailService implements ThumbnailServiceInterface
         return new Thumbnail($structure, $entity, new Context());
     }
 
-    protected function getThumbnailRoot(): Asset
+    private function getThumbnailRoot(): Asset
     {
         $path = '/.thumbnail/';
         if ($this->assetService->exists($path)) {

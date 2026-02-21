@@ -92,7 +92,12 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
 
     public function exists(string $path): bool
     {
-        return $this->getSession()->nodeExists(rtrim($path, '/'));
+        $path = rtrim($path, '/');
+        if (empty($path)) {
+            $path = '/';
+        }
+
+        return $this->getSession()->nodeExists($path);
     }
 
     public function remove(Structure $asset): bool

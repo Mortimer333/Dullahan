@@ -26,6 +26,7 @@ use Jose\Component\Signature\JWSVerifier;
 use Jose\Component\Signature\Serializer\CompactSerializer;
 use Jose\Component\Signature\Serializer\JWSSerializerManager;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Clock\ClockInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -38,6 +39,7 @@ class JWSService extends JWTServiceAbstract implements JWTManagerInterface
         protected BinUtilService $baseUtilService,
         protected HttpUtilService $httpUtilService,
         protected EventDispatcherInterface $eventDispatcher,
+        protected ClockInterface $clock,
     ) {
         $this->validateAlgorithmEnvsExist(); // @TODO maybe move this to compiler pass?
     }
@@ -108,8 +110,8 @@ class JWSService extends JWTServiceAbstract implements JWTManagerInterface
             [
                 new AlgorithmChecker([$signatureAlgorithm], $protectedHeaderOnly),
                 new AudienceChecker($this->getAudience(), $protectedHeaderOnly),
-                new ExpirationTimeChecker($this->httpUtilService->getTokenExpTimeSeconds(), $protectedHeaderOnly),
-                new IssuedAtChecker(0, $protectedHeaderOnly),
+                new ExpirationTimeChecker($this->httpUtilService->getTokenExpTimeSeconds(), $protectedHeaderOnly, $this->clock),
+                new IssuedAtChecker(0, $protectedHeaderOnly, $this->clock),
                 new IssuerChecker([$this->getIssuer()], $protectedHeaderOnly),
             ],
             [

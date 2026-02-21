@@ -16,7 +16,7 @@ trait PaginationTrait
 {
     public function __construct(
         protected EntityValidationInterface $validationService,
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
     ) {
         parent::__construct($registry, self::ENTITY_CLASS);
     }
@@ -89,7 +89,7 @@ trait PaginationTrait
         array $pagination,
         ?callable $callback = null,
         bool $addLimits = true,
-        bool $addGroupBy = true
+        bool $addGroupBy = true,
     ): QueryBuilder {
         $this->validationService->validatePagination($pagination);
 

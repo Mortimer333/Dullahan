@@ -35,6 +35,7 @@ class AssetSerializer implements AssetSerializerInterface
             $thumbnails[] = $this->serializeThumbnail($thumbnail);
         }
 
+        /** @var \Dullahan\Asset\Domain\Entity\Asset $entity */
         $entity = $asset->entity;
         $structure = $asset->structure;
 
@@ -43,8 +44,8 @@ class AssetSerializer implements AssetSerializerInterface
             'name' => $structure->name,
             'extension' => (string) $structure->extension,
             'src' => $this->assetUrlResolver->getUrl($asset),
-            'weight' => (int) $structure->weight,
-            'mime_type' => (string) $structure->mimeType,
+            'weight' => (int) ($structure->weight ?: $entity->getWeight()),
+            'mime_type' => (string) ($structure->mimeType ?: $entity->getMimeType()),
             'weight_readable' => FileUtilService::humanFilesize((int) $structure->weight),
             'thumbnails' => $thumbnails,
             'pointers_amount' => count($entity->getPointers()),

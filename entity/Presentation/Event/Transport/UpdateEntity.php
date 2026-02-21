@@ -15,7 +15,7 @@ class UpdateEntity extends EventAbstract
     public function __construct(
         public IdentityAwareInterface $entity,
         public array $payload,
-        public bool $flush = true
+        public bool $flush = true,
     ) {
         parent::__construct();
     }

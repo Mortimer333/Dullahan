@@ -20,8 +20,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[SWG\Tag('Project Asset Management')]
-#[Route('/asset', name: 'api_asset_managment_')]
-class AssetManagmentController extends AbstractController
+#[Route('/asset', name: 'api_asset_user_management_')]
+class AssetManagementController extends AbstractController
 {
     public function __construct(
         protected HttpUtilService $httpUtilService,
@@ -84,7 +84,7 @@ class AssetManagmentController extends AbstractController
         }
 
         $file = $request->files->get('image');
-        if (!($file instanceof UploadedFile)) {
+        if (!$file instanceof UploadedFile) {
             return $this->httpUtilService->jsonResponse(
                 'Sent image was not found',
                 Response::HTTP_NOT_FOUND,
@@ -128,7 +128,7 @@ class AssetManagmentController extends AbstractController
     public function updateImage(Request $request, int $id): JsonResponse
     {
         $file = $request->files->get('image');
-        if (!($file instanceof UploadedFile)) {
+        if (!$file instanceof UploadedFile) {
             throw new \Exception('Sent image not found', 404);
         }
 

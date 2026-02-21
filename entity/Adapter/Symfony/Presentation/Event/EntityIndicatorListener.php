@@ -52,7 +52,7 @@ class EntityIndicatorListener
     public function preIndicatorAwareCreation(CreateEntity $event): void
     {
         $entity = $event->entity;
-        if (!($entity instanceof IndicatorAwareInterface)) {
+        if (!$entity instanceof IndicatorAwareInterface) {
             return;
         }
 
@@ -277,7 +277,7 @@ class EntityIndicatorListener
         IndicatorAwareInterface $entity,
         int $indicator,
         ?object $parent = null,
-        ?int $oldIndicator = null
+        ?int $oldIndicator = null,
     ): array {
         if (is_null($parent)) {
             $parent = $entity->getParent();

@@ -11,12 +11,12 @@ use Dullahan\Main\Model\Context;
 
 final class CreateAssetEvent
 {
-    protected ?Structure $structure = null;
-    protected ?AssetEntityInterface $entity = null;
+    private ?Structure $structure = null;
+    private ?AssetEntityInterface $entity = null;
 
     public function __construct(
-        protected NewStructureInterface $newStructure,
-        protected Context $context,
+        private NewStructureInterface $newStructure,
+        private Context $context,
     ) {
     }
 

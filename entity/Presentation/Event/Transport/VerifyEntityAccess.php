@@ -18,9 +18,9 @@ class VerifyEntityAccess extends EventAbstract
      * @param class-string<T> $className
      */
     public function __construct(
-        readonly public string $className,
-        readonly public ?User $user,
-        readonly public string $type,
+        public readonly string $className,
+        public readonly ?User $user,
+        public readonly string $type,
     ) {
         parent::__construct();
     }

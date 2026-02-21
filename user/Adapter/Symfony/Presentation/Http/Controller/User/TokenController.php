@@ -35,7 +35,7 @@ class TokenController extends AbstractController
     public function refresh(
         JWTManagerInterface $jwtService,
         Security $security,
-        AccessControlInterface $accessControl
+        AccessControlInterface $accessControl,
     ): JsonResponse {
         /** @var User $user */
         $user = $security->getUser();

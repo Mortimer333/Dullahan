@@ -18,8 +18,8 @@ class VerifyEntityOwnership extends EventAbstract
      * @param T $entity
      */
     public function __construct(
-        readonly public object $entity,
-        readonly public ?User $user,
+        public readonly object $entity,
+        public readonly ?User $user,
     ) {
         parent::__construct();
     }

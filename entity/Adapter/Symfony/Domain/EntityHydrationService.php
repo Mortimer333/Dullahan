@@ -147,7 +147,7 @@ class EntityHydrationService implements EntityHydrationInterface
         int|array|null $item,
         object $entity,
         string $name,
-        array|string $definition
+        array|string $definition,
     ): void {
         if (!class_exists($class)) {
             throw new \Exception(sprintf("Class %s doesn't exist", $class), 500);

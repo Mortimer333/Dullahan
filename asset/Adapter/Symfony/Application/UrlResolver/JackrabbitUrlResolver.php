@@ -28,7 +28,7 @@ class JackrabbitUrlResolver implements AssetUrlResolverInterface
             return $this->router->generate(self::IMAGE_PATH_NAME, [
                 'id' => $asset->entity->getId(),
             ], UrlGeneratorInterface::ABSOLUTE_URL) . '?v=' . ($asset->entity->getModified()?->format('U') ?? '0');
-        } catch (RouteNotFoundException|MissingMandatoryParametersException|InvalidParameterException) {
+        } catch (RouteNotFoundException|MissingMandatoryParametersException|InvalidParameterException $e) {
             throw new AssetPathCannotBeRetrievedException($asset->entity->getFullPath());
         }
     }

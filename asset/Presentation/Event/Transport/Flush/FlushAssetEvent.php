@@ -9,7 +9,7 @@ use Dullahan\Main\Model\Context;
 final class FlushAssetEvent
 {
     public function __construct(
-        protected Context $context,
+        private Context $context,
     ) {
     }
 

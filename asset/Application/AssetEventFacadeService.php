@@ -40,7 +40,7 @@ use Dullahan\Main\Model\Context;
 class AssetEventFacadeService implements AssetServiceInterface
 {
     public function __construct(
-        readonly protected EventDispatcherInterface $eventDispatcher,
+        protected readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -49,6 +49,10 @@ class AssetEventFacadeService implements AssetServiceInterface
         $context ??= new Context();
         $event = new AssetExistEvent($path, $context);
         $this->eventDispatcher->dispatch($event);
+
+        if (is_null($event->exists())) {
+            throw new \InvalidArgumentException('Asset exist event not handled!', 500);
+        }
 
         return $event->exists();
     }

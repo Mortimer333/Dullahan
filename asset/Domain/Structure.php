@@ -10,12 +10,12 @@ final class Structure
     private $resource;
 
     public function __construct(
-        readonly public string $path,
-        readonly public string $name,
-        readonly public StructureTypeEnum $type,
-        readonly public ?string $extension = null,
-        readonly public ?string $mimeType = null,
-        readonly public ?int $weight = null,
+        public readonly string $path,
+        public readonly string $name,
+        public readonly StructureTypeEnum $type,
+        public readonly ?string $extension = null,
+        public readonly ?string $mimeType = null,
+        public readonly ?int $weight = null,
     ) {
     }
 

@@ -10,9 +10,9 @@ use Dullahan\Main\Model\Context;
 final class PreCloneAssetEvent
 {
     public function __construct(
-        protected Asset $asset,
-        protected string $path,
-        protected Context $context,
+        private Asset $asset,
+        private string $path,
+        private Context $context,
     ) {
     }
 

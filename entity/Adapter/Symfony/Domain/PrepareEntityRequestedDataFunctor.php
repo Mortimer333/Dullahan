@@ -201,7 +201,7 @@ class PrepareEntityRequestedDataFunctor
         }
 
         // @TODO cache key to class should be handled by EntityCacheService
-        [,, $class, $id] = explode($this->entityCacheService->getCacheSeparator(), $cacheKey);
+        [,, $class, $id] = explode($this->entityCacheService->getCacheSeparator(), $cacheKey); // @phpstan-ignore-line
 
         /** @var class-string $class */
         $class = str_replace('-', '\\', $class);

@@ -10,8 +10,8 @@ use Dullahan\Main\Model\Context;
 final class ListAssetEvent
 {
     /** @var array<Asset> */
-    protected array $assets = [];
-    protected int $total = 0;
+    private array $assets = [];
+    private int $total = 0;
 
     public function __construct(
         private Context $context,

@@ -9,9 +9,9 @@ use Dullahan\Main\Model\Context;
 final class AssetNameEvent
 {
     public function __construct(
-        protected string $name,
-        protected Context $context,
-        protected bool $valid = false,
+        private string $name,
+        private Context $context,
+        private bool $valid = false,
     ) {
     }
 

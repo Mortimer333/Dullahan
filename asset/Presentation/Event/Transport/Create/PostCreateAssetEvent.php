@@ -11,9 +11,9 @@ use Dullahan\Main\Model\Context;
 final class PostCreateAssetEvent
 {
     public function __construct(
-        protected Structure $structure,
-        protected AssetEntityInterface $entity,
-        protected Context $context,
+        private Structure $structure,
+        private AssetEntityInterface $entity,
+        private Context $context,
     ) {
     }
 

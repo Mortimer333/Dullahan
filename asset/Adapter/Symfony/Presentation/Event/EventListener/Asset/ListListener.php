@@ -23,8 +23,8 @@ final readonly class ListListener
     public const OFFSET = 'offset';
 
     public function __construct(
-        protected AssetPersistenceManagerInterface $assetPersistenceManager,
-        protected AssetFileManagerInterface $assetFileManager,
+        private AssetPersistenceManagerInterface $assetPersistenceManager,
+        private AssetFileManagerInterface $assetFileManager,
     ) {
     }
 

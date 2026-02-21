@@ -12,7 +12,7 @@ use Dullahan\Main\Contract\ErrorCollectorInterface;
 final class ErrorCollector implements ErrorCollectorInterface
 {
     /** @var Error $errors */
-    protected array $errors = [];
+    private array $errors = [];
 
     public function addError(string $error, ?array $path = null): void
     {
@@ -49,7 +49,7 @@ final class ErrorCollector implements ErrorCollectorInterface
      * @param array<string> $path
      * @param Error         $errors
      */
-    protected function createErrorPath(string $error, array $path, array &$errors, int $caret = 0): void
+    private function createErrorPath(string $error, array $path, array &$errors, int $caret = 0): void
     {
         if (!isset($path[$caret])) {
             $errors[] = $error;

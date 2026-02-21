@@ -58,7 +58,7 @@ class BinUtilService
                 fwrite($file, json_encode($this->errorCollector->getErrors(), JSON_PRETTY_PRINT) . PHP_EOL);
             }
             fwrite($file, $e->getMessage() . ' => ' . $e->getFile() . ' => ' . $e->getLine() . PHP_EOL);
-            fwrite($file, json_encode($e->getTrace(), JSON_PRETTY_PRINT) ?: '');
+            fwrite($file, json_encode(array_slice($e->getTrace(), 0, 30), JSON_PRETTY_PRINT) ?: 'Trace exception...');
             fclose($file);
         }
     }

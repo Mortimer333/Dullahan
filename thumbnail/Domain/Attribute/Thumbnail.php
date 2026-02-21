@@ -12,11 +12,11 @@ final class Thumbnail
      *                                                                      M - Middle, S - Start, E - End
      */
     public function __construct(
-        protected string $code,
-        protected ?int $width = null,
-        protected ?int $height = null,
-        protected ?bool $autoResize = null,
-        protected array $crop = [],
+        private string $code,
+        private ?int $width = null,
+        private ?int $height = null,
+        private ?bool $autoResize = null,
+        private array $crop = [],
     ) {
         if (!is_int($this->height) && !is_int($this->width)) {
             throw new \Exception('Thumbnail Attribute is missing width or height', 500);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\Thumbnail\Adapter\Symfony\Presentation\Http\Controller;
 
+use Dullahan\Asset\Domain\Structure;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServerInterface;
 use Dullahan\Thumbnail\Adapter\Symfony\Presentation\UrlResolver\JackrabbitThumbnailUrlResolver;
@@ -30,6 +31,17 @@ class ThumbnailController extends AbstractController
     )]
     public function getThumbnail(int $id): void
     {
-        $this->assetServer->serve($this->thumbnailService->get($id)->structure);
+        $thumbnail = $this->thumbnailService->get($id);
+        /** @var \Dullahan\Thumbnail\Domain\Entity\Thumbnail $entity */
+        $entity = $thumbnail->entity;
+        $structure = new Structure(
+            $thumbnail->structure->path,
+            $thumbnail->structure->name,
+            $thumbnail->structure->type,
+            $thumbnail->structure->extension,
+            $thumbnail->structure->mimeType ?: ($entity->getAsset()?->getMimeType() ?? ''),
+            (int) ($thumbnail->structure->weight ?: $entity->getWeight()),
+        );
+        $this->assetServer->serve($structure);
     }
 }

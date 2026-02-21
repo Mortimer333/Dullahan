@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Dullahan\Asset\Adapter\Symfony\Presentation\Http\Controller;
 
 use Dullahan\Asset\Adapter\Symfony\Application\UrlResolver\JackrabbitUrlResolver;
+use Dullahan\Asset\Domain\Entity\Asset;
+use Dullahan\Asset\Domain\Structure;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetMiddlewareInterface;
 use Dullahan\Asset\Port\Presentation\AssetServerInterface;
@@ -23,7 +25,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[SWG\Tag('Project Asset Management')]
 #[Route('/asset')]
-class AssetManagmentController extends AbstractController
+class AssetManagementController extends AbstractController
 {
     public function __construct(
         protected HttpUtilService $httpUtilService,
@@ -37,7 +39,19 @@ class AssetManagmentController extends AbstractController
     #[Route('/{id<\d+>}/jackrabbit', name: JackrabbitUrlResolver::IMAGE_PATH_NAME, methods: 'GET')]
     public function serveJackrabbit(int $id): Response
     {
-        $this->assetServer->serve($this->assetService->get($id)->structure);
+        $asset = $this->assetService->get($id);
+        /** @var Asset $entity */
+        $entity = $asset->entity;
+        $structure = new Structure(
+            $asset->structure->path,
+            $asset->structure->name,
+            $asset->structure->type,
+            $asset->structure->extension,
+            $asset->structure->mimeType ?: ($entity->getMimeType() ?? ''),
+            (int) ($asset->structure->weight ?: $entity->getWeight()),
+        );
+
+        $this->assetServer->serve($structure);
 
         return new Response('');
     }

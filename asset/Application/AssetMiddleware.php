@@ -9,6 +9,7 @@ use Dullahan\Asset\Adapter\Symfony\Presentation\Event\EventListener\Asset\ListLi
 use Dullahan\Asset\Domain\Directory;
 use Dullahan\Asset\Domain\Exception\AssetExistsException;
 use Dullahan\Asset\Domain\Exception\AssetInvalidNameException;
+use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
 use Dullahan\Asset\Domain\File;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetMiddlewareInterface;
@@ -42,6 +43,14 @@ class AssetMiddleware implements AssetMiddlewareInterface
 
     public function move(string $from, string $to): array
     {
+        if (!$this->assetService->exists($from, $this->generateControllerContext())) {
+            throw new AssetNotFoundException($from);
+        }
+
+        if ($this->assetService->exists($to, $this->generateControllerContext())) {
+            throw new AssetExistsException($to);
+        }
+
         $asset = $this->assetService->getByPath($from);
         $asset = $this->assetService->move($asset, $to, $this->generateControllerContext());
         $this->assetService->flush($this->generateControllerContext());
@@ -90,6 +99,10 @@ class AssetMiddleware implements AssetMiddlewareInterface
     ): array {
         if (!$this->assetService->validName($name, $this->generateControllerContext())) {
             throw new AssetInvalidNameException($name);
+        }
+
+        if ($this->assetService->exists($path, $this->generateControllerContext())) {
+            throw new AssetExistsException($path);
         }
 
         $file = $this->assetService->create(

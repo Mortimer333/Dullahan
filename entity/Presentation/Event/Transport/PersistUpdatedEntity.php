@@ -15,7 +15,7 @@ class PersistUpdatedEntity extends EventAbstract
     public function __construct(
         public readonly IdentityAwareInterface $entity,
         public readonly array $payload,
-        public bool $flush = true
+        public bool $flush = true,
     ) {
         parent::__construct();
     }

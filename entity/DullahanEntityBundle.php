@@ -14,7 +14,7 @@ class DullahanEntityBundle extends AbstractBundle
 {
     public function configure(DefinitionConfigurator $definition): void
     {
-        $definition->rootNode() // @phpstan-ignore method.notFound
+        $definition->rootNode()
             ->children()
                 ->arrayNode('mappings')
                     ->useAttributeAsKey('name')

@@ -9,17 +9,16 @@ use Dullahan\Asset\Port\Presentation\AssetServerInterface;
 
 class BigAssetServer implements AssetServerInterface
 {
-    public function serve(Structure $asset): void
+    public function serve(Structure $structure): void
     {
-        header('Content-Description: File Transfer');
-        header('Content-Type: ' . $asset->mimeType);
-        header('Cache-Control: public, max-age=31536000, immutable');
-        header('Content-Length: ' . $asset->weight);
-
-        $file = $asset->getResource();
+        $file = $structure->getResource();
         if (!$file) {
             throw new \Exception('File not present', 422);
         }
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . $structure->mimeType);
+        header('Cache-Control: public, max-age=31536000, immutable');
+        header('Content-Length: ' . $structure->weight);
 
         ob_start();
         set_time_limit(0);

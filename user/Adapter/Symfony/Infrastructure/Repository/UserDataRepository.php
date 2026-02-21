@@ -66,4 +66,8 @@ class UserDataRepository extends ServiceEntityRepository implements EntityReposi
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function getClassName()
+    {
+        return UserData::class;
+    }
 }

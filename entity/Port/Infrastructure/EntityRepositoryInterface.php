@@ -53,7 +53,7 @@ interface EntityRepositoryInterface
         array $criteria,
         ?array $orderBy = null,
         ?int $limit = null,
-        ?int $offset = null
+        ?int $offset = null,
     );
 
     /**

@@ -16,7 +16,7 @@ class MappingsManagerService implements MappingsManagerInterface
      * @param Mappings $mappings
      */
     public function __construct(
-        protected array $mappings
+        protected array $mappings,
     ) {
     }
 

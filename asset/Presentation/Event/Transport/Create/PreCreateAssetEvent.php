@@ -10,8 +10,8 @@ use Dullahan\Main\Model\Context;
 final class PreCreateAssetEvent
 {
     public function __construct(
-        protected NewStructureInterface $file,
-        protected Context $context,
+        private NewStructureInterface $file,
+        private Context $context,
     ) {
     }
 

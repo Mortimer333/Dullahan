@@ -100,7 +100,7 @@ class FileSystemBasedAssetManager // implements AssetManagerInterface
         string $project,
         string $path,
         UploadedFile $file,
-        ?string $name = null
+        ?string $name = null,
     ): Asset {
         $path = rtrim($path, '/') . '/';
         $this->validationService->validateUploadedFile($file);
@@ -126,7 +126,7 @@ class FileSystemBasedAssetManager // implements AssetManagerInterface
         string $path,
         UploadedFile $file,
         string $projectPath,
-        ?string $name = null
+        ?string $name = null,
     ): Asset {
         $mime = $file->getMimeType() ?: '';
         $extension = FileUtilService::ALLOWED_MIME_TYPE[$mime];

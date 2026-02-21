@@ -26,7 +26,7 @@ class AssetRepository extends ServiceEntityRepository implements EntityRepositor
 
     public function __construct(
         protected EntityValidationInterface $validationService,
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
     ) {
         parent::__construct($registry, Asset::class);
     }
@@ -74,5 +74,10 @@ class AssetRepository extends ServiceEntityRepository implements EntityRepositor
             ->getQuery()
             ->getOneOrNullResult()
         ;
+    }
+
+    public function getClassName()
+    {
+        return Asset::class;
     }
 }

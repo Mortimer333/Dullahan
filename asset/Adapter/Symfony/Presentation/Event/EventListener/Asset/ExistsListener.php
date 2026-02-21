@@ -18,8 +18,12 @@ final readonly class ExistsListener
     }
 
     #[AsEventListener(event: AssetExistEvent::class)]
-    public function postCreateAsset(AssetExistEvent $event): void
+    public function assetExists(AssetExistEvent $event): void
     {
+        if ($event->wasDefaultPrevented()) {
+            return;
+        }
+
         $event->setExists(
             $this->assetFileManager->exists($event->getPath())
             && $this->assetPersistenceManager->exists($event->getPath())

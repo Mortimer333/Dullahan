@@ -16,7 +16,7 @@ use Dullahan\Main\Contract\DatabaseConnectionInterface;
 final class DoctrineDatabaseActionsImpl implements DatabaseActionsInterface, DatabaseConnectionInterface
 {
     public function __construct(
-        protected EntityManagerInterface $em,
+        private EntityManagerInterface $em,
     ) {
     }
 

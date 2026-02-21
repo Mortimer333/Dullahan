@@ -132,7 +132,7 @@ class EntityConstraintValidationService extends SymfonyConstraintValidationServi
     protected function validateChildUpdate(
         EntityReader $reader,
         IdentityAwareInterface $entity,
-        array $payload
+        array $payload,
     ): void {
         $this->validateConstraintImplementsInheritInterface($reader, $entity::class);
         $this->runValidationConstraint($payload, $reader->getChildUpdateConstraint(), $entity::class);
@@ -154,7 +154,7 @@ class EntityConstraintValidationService extends SymfonyConstraintValidationServi
     protected function validateChildCreation(
         EntityReader $reader,
         string $entity,
-        array $payload
+        array $payload,
     ): void {
         $this->validateConstraintImplementsInheritInterface($reader, $entity);
         $this->runValidationConstraint($payload, $reader->getChildCreationConstraint(), $entity);

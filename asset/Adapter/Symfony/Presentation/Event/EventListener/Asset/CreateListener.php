@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Adapter\Symfony\Presentation\Event\EventListener\Asset;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Asset\Port\Infrastructure\AssetFileManagerInterface;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Presentation\Event\Transport\Create\CreateAssetEvent;
@@ -20,7 +19,6 @@ final readonly class CreateListener
         private AssetFileManagerInterface $assetFileManager,
         private AssetPersistenceManagerInterface $assetPersistenceManager,
         private UserService $userService,
-        protected EntityManagerInterface $entityManager,
     ) {
     }
 

@@ -21,7 +21,7 @@ class AuthorizationCheckerService implements AuthorizationCheckerInterface
     {
         // @TODO this will probably a config parameter - where to put all the user related (and protected) routes
         if (preg_match('/^\/(_\/user)/', $path)) {
-            if (!($user instanceof User)) {
+            if (!$user instanceof User) {
                 return false;
             }
 

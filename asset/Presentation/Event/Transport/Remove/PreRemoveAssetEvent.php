@@ -10,8 +10,8 @@ use Dullahan\Main\Model\Context;
 final class PreRemoveAssetEvent
 {
     public function __construct(
-        protected Asset $asset,
-        protected Context $context,
+        private Asset $asset,
+        private Context $context,
     ) {
     }
 

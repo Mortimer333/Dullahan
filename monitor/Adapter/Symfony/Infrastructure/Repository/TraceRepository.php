@@ -22,7 +22,7 @@ class TraceRepository extends ServiceEntityRepository
 
     public function __construct(
         protected EntityValidationInterface $validationService,
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
     ) {
         parent::__construct($registry, Trace::class);
     }

@@ -10,7 +10,7 @@ class RemoveEntity extends EventAbstract
 {
     public function __construct(
         public object $entity,
-        public bool $flush = true
+        public bool $flush = true,
     ) {
         parent::__construct();
     }

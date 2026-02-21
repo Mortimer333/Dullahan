@@ -41,4 +41,9 @@ class AssetPointerRepository extends ServiceEntityRepository implements EntityRe
             $this->getEntityManager()->flush();
         }
     }
+
+    public function getClassName()
+    {
+        return AssetPointer::class;
+    }
 }

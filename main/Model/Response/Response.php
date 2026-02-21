@@ -27,12 +27,12 @@ class Response
     /**
      * @return array{
      *     message: string,
-     *     success: boolean,
+     *     success: bool,
      *     status: int,
      *     data: array<mixed>,
-     *     limit: null|int,
-     *     offset: null|int,
-     *     total: null|int,
+     *     limit: int|null,
+     *     offset: int|null,
+     *     total: int|null,
      *     errors: array<mixed>,
      * }
      */

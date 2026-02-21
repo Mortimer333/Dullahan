@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Dullahan\Asset\Adapter\Symfony\Presentation\Event\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Asset\Application\Manager\FileSystemBasedAssetManager;
 use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Entity\Domain\Service\EntityCacheService;
 use Dullahan\Entity\Presentation\Event\Transport\CreateEntity;
 use Dullahan\Entity\Presentation\Event\Transport\PersistCreatedEntity;
 use Dullahan\Entity\Presentation\Event\Transport\UpdateEntity;
@@ -21,13 +19,11 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 final class EntityListener
 {
     /** @var array< array<string, Asset>> */
-    protected array $toSetAssetLater = [];
+    private array $toSetAssetLater = [];
 
     public function __construct(
-        protected EntityManagerInterface $em,
-        protected FileSystemBasedAssetManager $assetService,
-        protected EntityCacheService $cacheService,
-        protected ThumbnailServiceInterface $thumbnailService,
+        private EntityManagerInterface $em,
+        private ThumbnailServiceInterface $thumbnailService,
     ) {
     }
 
@@ -154,7 +150,7 @@ final class EntityListener
      *
      * @return array<string>
      */
-    protected function getAssetPointerFieldsFromPayload(string $class, array $payload): array
+    private function getAssetPointerFieldsFromPayload(string $class, array $payload): array
     {
         $meta = (array) $this->em->getClassMetadata($class);
         $pointers = [];

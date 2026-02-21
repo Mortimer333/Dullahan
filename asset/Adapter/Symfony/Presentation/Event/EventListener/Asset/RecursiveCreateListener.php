@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\Asset\Adapter\Symfony\Presentation\Event\EventListener\Asset;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Asset\Domain\Directory;
 use Dullahan\Asset\Port\Infrastructure\AssetFileManagerInterface;
 use Dullahan\Asset\Presentation\Event\Transport\Create\CreateAssetEvent;
@@ -14,7 +13,6 @@ final readonly class RecursiveCreateListener
 {
     public function __construct(
         private AssetFileManagerInterface $assetFileManager,
-        protected EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -27,7 +25,7 @@ final readonly class RecursiveCreateListener
         $this->recursiveCreateFolders($event->getNewStructure()->getPath());
     }
 
-    protected function recursiveCreateFolders(string $path): void
+    private function recursiveCreateFolders(string $path): void
     {
         if ($this->assetFileManager->exists($path)) {
             return;

@@ -11,9 +11,9 @@ use Dullahan\Main\Model\Context;
 final class ReplaceAssetEvent
 {
     public function __construct(
-        protected Asset $asset,
-        protected NewStructureInterface $file,
-        protected Context $context,
+        private Asset $asset,
+        private NewStructureInterface $file,
+        private Context $context,
     ) {
     }
 

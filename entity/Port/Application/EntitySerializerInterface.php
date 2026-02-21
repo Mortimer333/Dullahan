@@ -17,6 +17,6 @@ interface EntitySerializerInterface
     public function serialize(
         object $entity,
         ?array $dataSet = null,
-        bool $inherit = true
+        bool $inherit = true,
     ): ?array;
 }

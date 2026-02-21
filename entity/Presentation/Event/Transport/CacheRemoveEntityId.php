@@ -13,7 +13,7 @@ class CacheRemoveEntityId extends EventAbstract
      */
     public function __construct(
         public readonly string $class,
-        public readonly int $id
+        public readonly int $id,
     ) {
         parent::__construct();
     }

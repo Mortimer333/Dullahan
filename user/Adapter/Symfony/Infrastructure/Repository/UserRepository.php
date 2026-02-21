@@ -106,4 +106,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getSingleScalarResult()
         ;
     }
+
+    public function getClassName()
+    {
+        return User::class;
+    }
 }
