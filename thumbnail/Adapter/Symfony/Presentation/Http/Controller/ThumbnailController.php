@@ -41,7 +41,9 @@ class ThumbnailController extends AbstractController
             $thumbnail->structure->extension,
             $thumbnail->structure->mimeType ?: ($entity->getAsset()?->getMimeType() ?? ''),
             (int) ($thumbnail->structure->weight ?: $entity->getWeight()),
+            $thumbnail->structure->getResource(),
         );
+
         $this->assetServer->serve($structure);
     }
 }

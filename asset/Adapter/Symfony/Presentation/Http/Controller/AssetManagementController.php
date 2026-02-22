@@ -49,6 +49,7 @@ class AssetManagementController extends AbstractController
             $asset->structure->extension,
             $asset->structure->mimeType ?: ($entity->getMimeType() ?? ''),
             (int) ($asset->structure->weight ?: $entity->getWeight()),
+            $asset->structure->getResource(),
         );
 
         $this->assetServer->serve($structure);

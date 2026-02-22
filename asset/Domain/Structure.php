@@ -16,7 +16,11 @@ final class Structure
         public readonly ?string $extension = null,
         public readonly ?string $mimeType = null,
         public readonly ?int $weight = null,
+        $resource = null,
     ) {
+        if (!is_null($resource)) {
+            $this->setResource($resource);
+        }
     }
 
     /**
