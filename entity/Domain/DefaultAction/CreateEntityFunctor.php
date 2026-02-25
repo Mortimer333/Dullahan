@@ -10,14 +10,14 @@ use Dullahan\Entity\Port\Domain\EntityHydrationInterface;
 use Dullahan\Entity\Port\Domain\IdentityAwareInterface;
 use Dullahan\Entity\Port\Domain\ManageableInterface;
 use Dullahan\Entity\Presentation\Event\Transport\CreateEntity;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 
 class CreateEntityFunctor
 {
     public function __construct(
         protected EntityDefinitionManagerInterface $entityDefinitionManager,
         protected EntityHydrationInterface $entityHydrator,
-        protected UserServiceInterface $userService,
+        protected UserRetrieveServiceInterface $userRetrieveService,
     ) {
     }
 
@@ -44,7 +44,7 @@ class CreateEntityFunctor
         $this->entityHydrator->hydrate($event->class, $entity, $event->payload, $definition);
 
         if ($entity instanceof ManageableInterface) {
-            $entity->setOwner($this->userService->getLoggedInUser());
+            $entity->setOwner($this->userRetrieveService->getLoggedInUser());
         }
 
         return $entity;

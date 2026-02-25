@@ -89,7 +89,10 @@ class UserValidationService extends SymfonyConstraintValidationService implement
 
         /** @var string $newPassword */
         $newPassword = $update['newPassword'] ?? throw new \Exception('Missing new password', 500);
-        $this->validatePasswordStrength($newPassword, length: 12);
+        $errors = $this->validatePasswordStrength($newPassword, length: 12);
+        foreach ($errors as $error) {
+            $this->errorCollector->addError($error, ['newPassword']);
+        }
         if ($this->errorCollector->hasErrors()) { // @phpstan-ignore-line
             throw new \Exception('Changing your password has failed', 400);
         }
@@ -113,27 +116,33 @@ class UserValidationService extends SymfonyConstraintValidationService implement
     }
 
     /**
-     * @param array<string, mixed> $forgotten
+     * @param array{forgotten: array<string, mixed>} $forgotten
      */
-    public function validateResetPassword(#[\SensitiveParameter] array $forgotten): void
+    public function validateResetPassword(#[\SensitiveParameter] array $forgotten): bool
     {
         $this->validate($forgotten, ResetPasswordConstraint::get());
         if ($this->errorCollector->hasErrors()) {
-            throw new \Exception('Resetting your password has failed', 400);
+            return false;
         }
-
         /** @var string $password */
-        $password = $forgotten['password'] ?? throw new \Exception('Missing new password', 500);
-        $this->validatePasswordStrength($password, length: 12);
-        if ($this->errorCollector->hasErrors()) { // @phpstan-ignore-line
-            throw new \Exception('Changing your password has failed', 400);
+        $password = $forgotten['forgotten']['password'] ?? throw new \Exception('Missing new password', 500);
+        $errors = $this->validatePasswordStrength($password, length: 12);
+        foreach ($errors as $error) {
+            $this->errorCollector->addError($error, ['forgotten', 'password']);
+        }
+        if ($this->errorCollector->hasErrors()) {
+            return false;
         }
 
         /** @var string $passwordRepeat */
-        $passwordRepeat = $forgotten['passwordRepeat'] ?? throw new \Exception('Missing repeated new password', 500);
+        $passwordRepeat = $forgotten['forgotten']['passwordRepeat'] ?? throw new \Exception('Missing repeated new password', 500);
         if ($passwordRepeat != $password) {
-            throw new \Exception("Repeated password doesn't match new password", 400);
+            $this->errorCollector->addError("Repeated password doesn't match new password", ['forgotten', 'passwordRepeat']);
+
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -146,33 +155,28 @@ class UserValidationService extends SymfonyConstraintValidationService implement
         bool $number = true,
         bool $special = true,
         int $length = 8,
-    ): bool {
-        $valid = true;
+    ): array {
+        $errors = [];
         if (mb_strlen($password) < $length) {
-            $valid = false;
-            $this->errorCollector->addError("Password is too short, it is required to have $length characters");
+            array_push($errors, "Password is too short, it is required to have $length characters");
         }
 
         if ($upper && !preg_match('@[A-Z]@', $password)) {
-            $valid = false;
-            $this->errorCollector->addError('Password is required to have uppercase characters');
+            array_push($errors, 'Password is required to have uppercase characters');
         }
 
         if ($lower && !preg_match('@[a-z]@', $password)) {
-            $valid = false;
-            $this->errorCollector->addError('Password is required to have lowercase characters');
+            array_push($errors, 'Password is required to have lowercase characters');
         }
 
         if ($number && !preg_match('@[0-9]@', $password)) {
-            $valid = false;
-            $this->errorCollector->addError('Password is required to have numeric characters');
+            array_push($errors, 'Password is required to have numeric characters');
         }
 
         if ($special && !preg_match('@[^\w]@', $password)) {
-            $valid = false;
-            $this->errorCollector->addError('Password is required to have special characters');
+            array_push($errors, 'Password is required to have special characters');
         }
 
-        return $valid;
+        return $errors;
     }
 }

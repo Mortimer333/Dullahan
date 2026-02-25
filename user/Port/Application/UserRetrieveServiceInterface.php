@@ -9,7 +9,23 @@ use Dullahan\User\Domain\Entity\UserData;
 use Dullahan\User\Domain\Exception\UserNotFoundException;
 use Dullahan\User\Domain\Exception\UserNotLoggedInException;
 
-interface UserServiceInterface
+/**
+ * @phpstan-type SerializedUser array{
+ *      id: int|null,
+ *      email: string|null,
+ *      data: array<string, mixed>,
+ *      storage?: array{
+ *           readable: array{
+ *               limit: string,
+ *               limit: string,
+ *           },
+ *           limit: int,
+ *           taken: int,
+ *      }
+ *   }
+ * @phpstan-type SerializedUserData array{id: int|null, name: string|null}
+ */
+interface UserRetrieveServiceInterface
 {
     /**
      * @throws UserNotFoundException
@@ -24,28 +40,12 @@ interface UserServiceInterface
     public function isLoggedIn(): bool;
 
     /**
-     * @return array{
-     *     id: int|null,
-     *     email: string|null,
-     *     data: array<string, mixed>,
-     *     storage?: array{
-     *          readable: array{
-     *              limit: string,
-     *              limit: string,
-     *          },
-     *          limit: int,
-     *          taken: int,
-     *     }
-     *  }
+     * @return SerializedUser
      */
     public function serialize(User $user): array;
 
     /**
-     * @return array{id: int|null, name: string|null}
+     * @return SerializedUserData
      */
     public function serializeData(UserData $data): array;
-
-    public function activate(int $id, #[\SensitiveParameter] string $token): void;
-
-    public function deactivate(int $id): void;
 }

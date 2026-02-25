@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\User\Port\Application;
+namespace Dullahan\User\Port\Domain;
 
 use Dullahan\Main\Contract\RequestInterface;
 use Dullahan\User\Domain\Exception\AccessDeniedHttpException;

@@ -7,8 +7,8 @@ namespace Dullahan\Main\Service;
 use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Contract\MailServiceInterface;
 use Dullahan\User\Domain\Entity\User;
-use Dullahan\User\Port\Application\UserManagerServiceInterface;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserPersistServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -24,8 +24,8 @@ class MailService implements MailServiceInterface
     public function __construct(
         protected HttpClientInterface $httpClient,
         protected LoggerInterface $logger,
-        protected UserServiceInterface $userService,
-        protected UserManagerServiceInterface $userManageService,
+        protected UserRetrieveServiceInterface $userService,
+        protected UserPersistServiceInterface $userManageService,
         protected ErrorCollectorInterface $errorCollector,
     ) {
     }

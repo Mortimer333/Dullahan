@@ -8,50 +8,40 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Domain\Entity\UserData;
-use Dullahan\User\Port\Application\UserManagerServiceInterface;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Domain\ValueObject\UserBaseline;
+use Dullahan\User\Port\Application\UserPersistServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserManageService implements UserManagerServiceInterface
+class UserPersistService implements UserPersistServiceInterface
 {
     public function __construct(
         protected UserPasswordHasherInterface $passwordHasher,
         protected EntityManagerInterface $em,
-        protected UserServiceInterface $userService,
+        protected UserRetrieveServiceInterface $userRetrieveService,
         protected BinUtilService $binUtilService,
     ) {
     }
 
-    /**
-     * @param array<string, string> $registration
-     */
-    public function create(#[\SensitiveParameter] array $registration): User
+    public function create(UserBaseline $userDTO): User
     {
         $user = new User();
         $hashedPassword = $this->passwordHasher->hashPassword(
             $user,
-            $registration['password']
+            $userDTO->password,
         );
 
         $userData = new UserData();
-        $userData->setName($registration['username'])
+        $userData->setName($userDTO->username)
             ->setPublicId('')
         ;
 
-        $user->setEmail($registration['email'])
+        $user->setEmail($userDTO->email)
             ->setPassword($hashedPassword)
             ->setData($userData)
         ;
 
         $this->setActivationToken($user);
-
-        $this->em->persist($user);
-        $this->em->flush();
-
-        $userData->setPublicId($this->binUtilService->generateUniqueToken((string) $user->getId()));
-
-        $this->em->persist($userData);
-        $this->em->flush();
 
         return $user;
     }
@@ -59,7 +49,7 @@ class UserManageService implements UserManagerServiceInterface
     public function remove(int $id, bool $deleteAll = false): void
     {
         /** @var User $user */
-        $user = $this->userService->get($id);
+        $user = $this->userRetrieveService->get($id);
         /** @var UserData $data */
         $data = $user->getData();
         if ($deleteAll) {
@@ -67,7 +57,7 @@ class UserManageService implements UserManagerServiceInterface
         } else {
             $data->setUser(null)
                 ->setOldName($data->getName())      // saving old name to display it together with deletion date
-                ->setName(null)                     // setting name to null to make it available for other users to use
+                ->setName(null)                     // setting name to null to make it available for other users
                 ->setDeleted(time())
             ;
             $this->em->persist($data);
@@ -137,5 +127,37 @@ class UserManageService implements UserManagerServiceInterface
         $user->setActivationToken($this->binUtilService->generateToken(32));
         // TODO make expiry time a parameter in config
         $user->setActivationTokenExp(time() + (60 * 60 * 24)); // Token expires after 24 hours
+    }
+
+    public function activate(int $id, #[\SensitiveParameter] string $token): void
+    {
+        $user = $this->userRetrieveService->get($id);
+        if ($user->isActivated()) {
+            throw new \Exception('User is already activated', 400);
+        }
+
+        if (!empty($user->getActivationToken()) && $user->getActivationToken() !== $token) {
+            throw new \Exception("Account wasn't activated", 403);
+        }
+
+        $user->setWhenActivated(time());
+        $user->setActivationToken(null);
+        $user->setActivated(true);
+
+        $this->em->persist($user);
+        $this->em->flush();
+    }
+
+    public function deactivate(int $id): void
+    {
+        $user = $this->userRetrieveService->get($id);
+        if (!$user->isActivated()) {
+            throw new \Exception('User is already deactivated', 400);
+        }
+
+        $user->setActivationToken(null);
+        $user->setActivated(false);
+        $this->em->persist($user);
+        $this->em->flush();
     }
 }

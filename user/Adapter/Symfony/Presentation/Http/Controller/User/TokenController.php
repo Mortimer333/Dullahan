@@ -7,7 +7,7 @@ namespace Dullahan\User\Adapter\Symfony\Presentation\Http\Controller\User;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Domain\Exception\AccessDeniedHttpException;
-use Dullahan\User\Port\Application\AccessControlInterface;
+use Dullahan\User\Port\Domain\AccessControlInterface;
 use Dullahan\User\Port\Domain\JWTManagerInterface;
 use Dullahan\User\Presentation\Http\Response\Token\RefreshTokenResponseDTO;
 use Nelmio\ApiDocBundle\Annotation\Model;

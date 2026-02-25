@@ -5,20 +5,22 @@ declare(strict_types=1);
 namespace Dullahan\User\Presentation\Event\Transport;
 
 use Dullahan\Main\Contract\RequestInterface;
+use Dullahan\Main\Model\Context;
 use Dullahan\Main\Model\EventAbstract;
 
-final class RegistrationValidation extends EventAbstract
+final class PasswordResetValidation extends EventAbstract
 {
     private bool $isValid = false;
 
     /**
-     * @param array<mixed> $registration
+     * @param array<mixed> $payload
      */
     public function __construct(
         private RequestInterface $request,
-        private array $registration,
+        private array $payload,
+        Context $context = new Context(),
     ) {
-        parent::__construct();
+        parent::__construct($context);
     }
 
     public function getRequest(): RequestInterface
@@ -29,17 +31,17 @@ final class RegistrationValidation extends EventAbstract
     /**
      * @return array<mixed> $registration
      */
-    public function getRegistration(): array
+    public function getPayload(): array
     {
-        return $this->registration;
+        return $this->payload;
     }
 
     /**
-     * @param array<mixed> $registration
+     * @param array<mixed> $payload
      */
-    public function setRegistration(array $registration): void
+    public function setPayload(array $payload): void
     {
-        $this->registration = $registration;
+        $this->payload = $payload;
     }
 
     public function isValid(): bool

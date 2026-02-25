@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\User\Presentation\Event\Transport;
 
 use Dullahan\Main\Contract\RequestInterface;
+use Dullahan\Main\Model\Context;
 use Dullahan\Main\Model\EventAbstract;
 
 class GetCSRF extends EventAbstract
@@ -13,8 +14,9 @@ class GetCSRF extends EventAbstract
 
     public function __construct(
         protected RequestInterface $request,
+        Context $context = new Context(),
     ) {
-        parent::__construct();
+        parent::__construct($context);
     }
 
     public function getRequest(): RequestInterface

@@ -11,10 +11,10 @@ use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Domain\Entity\UserData;
 use Dullahan\User\Domain\Exception\UserNotFoundException;
 use Dullahan\User\Domain\Exception\UserNotLoggedInException;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class UserService implements UserServiceInterface
+class UserRetrieveService implements UserRetrieveServiceInterface
 {
     public function __construct(
         protected EntityManagerInterface $em,
@@ -79,37 +79,5 @@ class UserService implements UserServiceInterface
             'id' => $data->getId(),
             'name' => $data->getName(),
         ];
-    }
-
-    public function activate(int $id, #[\SensitiveParameter] string $token): void
-    {
-        $user = $this->get($id);
-        if ($user->isActivated()) {
-            throw new \Exception('User is already activated', 400);
-        }
-
-        if (!empty($user->getActivationToken()) && $user->getActivationToken() !== $token) {
-            throw new \Exception("Account wasn't activated", 403);
-        }
-
-        $user->setWhenActivated(time());
-        $user->setActivationToken(null);
-        $user->setActivated(true);
-
-        $this->em->persist($user);
-        $this->em->flush();
-    }
-
-    public function deactivate(int $id): void
-    {
-        $user = $this->get($id);
-        if (!$user->isActivated()) {
-            throw new \Exception('User is already deactivated', 400);
-        }
-
-        $user->setActivationToken(null);
-        $user->setActivated(false);
-        $this->em->persist($user);
-        $this->em->flush();
     }
 }

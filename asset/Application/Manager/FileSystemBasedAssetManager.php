@@ -12,7 +12,7 @@ use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\FileUtilService;
 use Dullahan\Main\Symfony\SymfonyConstraintValidationService;
 use Dullahan\User\Domain\Entity\UserData;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 // @TODO create a wrapper interface
@@ -28,7 +28,7 @@ class FileSystemBasedAssetManager // implements AssetManagerInterface
 
     public function __construct(
         protected EntityManagerInterface $em,
-        protected UserServiceInterface $userService,
+        protected UserRetrieveServiceInterface $userService,
         protected EntityCacheService $cacheService,
         protected SymfonyConstraintValidationService $validationService,
         protected MappingsManagerInterface $projectManagerService,

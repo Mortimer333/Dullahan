@@ -5,7 +5,7 @@ namespace Dullahan\User\Adapter\Symfony\Domain;
 use Dullahan\Main\Service\RequestFactory;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\HttpUtilService;
-use Dullahan\User\Port\Application\AccessControlInterface;
+use Dullahan\User\Port\Domain\AccessControlInterface;
 use Dullahan\User\Port\Domain\JWTManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

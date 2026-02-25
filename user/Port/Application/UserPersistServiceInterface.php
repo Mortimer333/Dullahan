@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace Dullahan\User\Port\Application;
 
 use Dullahan\User\Domain\Entity\User;
+use Dullahan\User\Domain\ValueObject\UserBaseline;
 
-interface UserManagerServiceInterface
+interface UserPersistServiceInterface
 {
-    /**
-     * @param array<string, mixed> $registration
-     */
-    public function create(#[\SensitiveParameter] array $registration): User;
+    public function create(UserBaseline $user): User;
 
     public function remove(int $id, bool $deleteAll = false): void;
 
@@ -27,4 +25,8 @@ interface UserManagerServiceInterface
     public function resetPassword(User $user, #[\SensitiveParameter] string $password): void;
 
     public function setActivationToken(User $user): void;
+
+    public function activate(int $id, #[\SensitiveParameter] string $token): void;
+
+    public function deactivate(int $id): void;
 }

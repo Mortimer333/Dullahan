@@ -22,7 +22,7 @@ use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\Entity\Presentation\Event\Transport;
 use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\User\Domain\Entity\User;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use ICanBoogie\Inflector;
 
 /**
@@ -36,7 +36,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
 
     public function __construct(
         protected EventDispatcherInterface $eventDispatcher,
-        protected UserServiceInterface $userManagerService,
+        protected UserRetrieveServiceInterface $userRetrieveService,
         protected EntityCacheServiceInterface $entityCacheService,
     ) {
         $this->inflector = Inflector::get('en');
@@ -297,8 +297,8 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
 
     protected function tryToGetUser(): ?User
     {
-        if ($this->userManagerService->isLoggedIn()) {
-            return $this->userManagerService->getLoggedInUser();
+        if ($this->userRetrieveService->isLoggedIn()) {
+            return $this->userRetrieveService->getLoggedInUser();
         }
 
         return null;

@@ -33,8 +33,11 @@ interface UserValidationServiceInterface
     /**
      * @param array<string, mixed> $forgotten
      */
-    public function validateResetPassword(#[\SensitiveParameter] array $forgotten): void;
+    public function validateResetPassword(#[\SensitiveParameter] array $forgotten): bool;
 
+    /**
+     * @return array<string> An array of errors
+     */
     public function validatePasswordStrength(
         string $password,
         bool $upper = true,
@@ -42,5 +45,5 @@ interface UserValidationServiceInterface
         bool $number = true,
         bool $special = true,
         int $length = 8,
-    ): bool;
+    ): array;
 }

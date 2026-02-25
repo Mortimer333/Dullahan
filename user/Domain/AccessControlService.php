@@ -7,7 +7,7 @@ namespace Dullahan\User\Domain;
 use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Contract\RequestInterface;
 use Dullahan\User\Domain\Exception\AccessDeniedHttpException;
-use Dullahan\User\Port\Application\AccessControlInterface;
+use Dullahan\User\Port\Domain\AccessControlInterface;
 use Dullahan\User\Port\Domain\AuthorizationCheckerInterface;
 use Dullahan\User\Presentation\Event\Transport\GetCSRF;
 

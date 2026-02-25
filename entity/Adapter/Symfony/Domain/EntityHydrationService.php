@@ -16,7 +16,7 @@ use Dullahan\Entity\Port\Domain\ManageableInterface;
 use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
 use Dullahan\Main\Service\EditorJsService;
 use Dullahan\Main\Service\Helper\CastHelper;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 
 /**
  * @TODO This class should work similarly to serializer - importing hydration classes and using them based on the
@@ -28,7 +28,7 @@ class EntityHydrationService implements EntityHydrationInterface
         protected EntityManagerInterface $em,
         protected EditorJsService $editorJsService,
         protected EntityRetrievalManagerInterface $entityRetrievalManager,
-        protected UserServiceInterface $userService,
+        protected UserRetrieveServiceInterface $userService,
         protected EntityPersistManagerInterface $entityPersistManager,
         protected EntityDefinitionManagerInterface $entityDefinitionManager,
     ) {

@@ -12,10 +12,12 @@ class RegistrationConstraint
     public static function get(): Assert\Collection
     {
         return new Assert\Collection([
-            'email' => self::getMail(),
-            'username' => self::getUsername(),
-            'password' => self::getPassword(),
-            'passwordRepeat' => self::getPasswordRepeat(),
+            'register' => new Assert\Collection([
+                'email' => self::getMail(),
+                'username' => self::getUsername(),
+                'password' => self::getPassword(),
+                'passwordRepeat' => self::getPasswordRepeat(),
+            ]),
         ]);
     }
 

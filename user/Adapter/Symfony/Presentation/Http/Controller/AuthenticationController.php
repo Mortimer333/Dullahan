@@ -5,25 +5,22 @@ declare(strict_types=1);
 namespace Dullahan\User\Adapter\Symfony\Presentation\Http\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Contract\EventDispatcherInterface;
+use Dullahan\Main\Contract\MailServiceInterface;
+use Dullahan\Main\Exception\SagaNotHandledException;
 use Dullahan\Main\Service\RequestFactory;
-use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\User\Domain\Entity\User;
 use Dullahan\User\Domain\Exception\AccessDeniedHttpException;
-use Dullahan\User\Port\Application\AccessControlInterface;
-use Dullahan\User\Port\Application\MailServiceInterface;
-use Dullahan\User\Port\Application\UserManagerServiceInterface;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserPersistServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
+use Dullahan\User\Port\Domain\AccessControlInterface;
 use Dullahan\User\Port\Domain\JWTManagerInterface;
-use Dullahan\User\Port\Domain\RegistrationValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
+use Dullahan\User\Presentation\Event\Transport\PasswordResetValidation;
 use Dullahan\User\Presentation\Event\Transport\PostLogin;
-use Dullahan\User\Presentation\Event\Transport\PostRegistration;
-use Dullahan\User\Presentation\Event\Transport\PreRegistration;
-use Dullahan\User\Presentation\Event\Transport\RegistrationValidation;
+use Dullahan\User\Presentation\Event\Transport\Saga\RegistrationSaga;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordVerifyBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\LoginDto;
@@ -55,18 +52,15 @@ use Symfony\Component\Routing\Attribute\Route;
 class AuthenticationController extends AbstractController
 {
     public function __construct(
-        protected HttpUtilService $httpUtilService,
-        protected BinUtilService $baseUtilService,
-        protected EntityManagerInterface $em,
-        protected UserServiceInterface $userService,
-        protected UserManagerServiceInterface $userManageService,
-        protected UserValidationServiceInterface $userValidateService,
-        protected RegistrationValidationServiceInterface $registrationValidationService,
-        protected MailServiceInterface $mailService,
-        protected EventDispatcherInterface $eventDispatcher,
-        protected UserVerifyAndSetServiceInterface $userVerifyAndSetService,
-        protected RequestFactory $requestFactory,
-        protected ErrorCollectorInterface $errorCollector,
+        private HttpUtilService $httpUtilService,
+        private EntityManagerInterface $em,
+        private UserRetrieveServiceInterface $userRetrieveService,
+        private UserPersistServiceInterface $userPersistService,
+        private UserValidationServiceInterface $userValidateService,
+        private MailServiceInterface $mailService,
+        private EventDispatcherInterface $eventDispatcher,
+        private UserVerifyAndSetServiceInterface $userVerifyAndSetService,
+        private RequestFactory $requestFactory,
     ) {
     }
 
@@ -84,20 +78,18 @@ class AuthenticationController extends AbstractController
     )]
     public function register(Request $request): JsonResponse
     {
-        $dullahanRequest = $this->requestFactory->symfonyToDullahanRequest($request);
-        $this->eventDispatcher->dispatch(new PreRegistration($dullahanRequest));
-        $registration = $this->httpUtilService->getBody($request)['register'] ?? [];
-        $registrationValidationEvent = $this->eventDispatcher->dispatch(
-            new RegistrationValidation($dullahanRequest, $registration),
-        );
-        if (!$registrationValidationEvent->isValid()) {
-            throw new \InvalidArgumentException('Registration attempt failed', 400);
+        $response = $this->eventDispatcher->dispatch(new RegistrationSaga(
+            $this->requestFactory->symfonyToDullahanRequest($request),
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('Registration was not handled');
         }
 
-        $user = $this->userManageService->create($registrationValidationEvent->getRegistration());
-        $this->eventDispatcher->dispatch(new PostRegistration($dullahanRequest, $user));
-
-        return $this->httpUtilService->jsonResponse('User registered');
+        return new JsonResponse(
+            $response->toArray(),
+            $response->status,
+            $response->headers,
+        );
     }
 
     #[Route('/login', name: 'login', methods: 'POST')]
@@ -145,7 +137,7 @@ class AuthenticationController extends AbstractController
                     $payload['session'] ?? throw new AccessDeniedHttpException('Missing session in token payload'),
                 ),
                 'user' => [
-                    'details' => $this->userService->serialize($user),
+                    'details' => $this->userRetrieveService->serialize($user),
                     'roles' => $user->getRoles(),
                 ],
             ],
@@ -160,14 +152,14 @@ class AuthenticationController extends AbstractController
     )]
     public function activate(int $userId, string $token): JsonResponse
     {
-        $user = $this->userService->get($userId);
+        $user = $this->userRetrieveService->get($userId);
 
         if ($user->getActivationTokenExp() < time()) {
             $this->mailService->sendActivationEmailAndVerify($user);
             throw new \Exception('Token expired, new one was sent to your email', 400);
         }
 
-        $this->userService->activate($userId, $token);
+        $this->userPersistService->activate($userId, $token);
 
         return $this->httpUtilService->jsonResponse('User activated');
     }
@@ -230,8 +222,13 @@ class AuthenticationController extends AbstractController
     public function verifyResetPassword(Request $request): JsonResponse
     {
         $parameters = $this->httpUtilService->getBody($request);
-        $forgotten = $parameters['forgotten'] ?? [];
-        $this->userValidateService->validateResetPassword($forgotten);
+        $dullahanRequest = $this->requestFactory->symfonyToDullahanRequest($request);
+        $passwordResetValidationEvent = $this->eventDispatcher->dispatch(
+            new PasswordResetValidation($dullahanRequest, $parameters),
+        );
+        if (!$passwordResetValidationEvent->isValid()) {
+            throw new \InvalidArgumentException('Attempt to reset password failed', 400);
+        }
 
         $token = $parameters['token'] ?? throw new \Exception('Missing verification token', 400);
         if (!is_string($token)) {
@@ -239,9 +236,10 @@ class AuthenticationController extends AbstractController
         }
 
         $user = $this->userVerifyAndSetService->verifyResetPasswordToken($token);
+        $forgotten = $parameters['forgotten'] ?? [];
         /** @var string $password */
         $password = $forgotten['password'] ?? throw new \Exception('Missing password', 500);
-        $this->userManageService->resetPassword($user, $password);
+        $this->userPersistService->resetPassword($user, $password);
 
         return $this->httpUtilService->jsonResponse('User password was reset successfully');
     }

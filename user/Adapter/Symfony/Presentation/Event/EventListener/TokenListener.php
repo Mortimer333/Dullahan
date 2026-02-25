@@ -7,7 +7,7 @@ namespace Dullahan\User\Adapter\Symfony\Presentation\Event\EventListener;
 use Dullahan\User\Presentation\Event\Transport\GetCSRF;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-class TokenListener
+final class TokenListener
 {
     #[AsEventListener(event: GetCSRF::class)]
     public function onGetCSRF(GetCSRF $event): void

@@ -11,8 +11,10 @@ class ResetPasswordConstraint
     public static function get(): Assert\Collection
     {
         return new Assert\Collection([
-            'password' => RegistrationConstraint::getPassword(),
-            'passwordRepeat' => RegistrationConstraint::getPasswordRepeat(),
+            'forgotten' => new Assert\Collection([
+                'password' => RegistrationConstraint::getPassword(),
+                'passwordRepeat' => RegistrationConstraint::getPasswordRepeat(),
+            ]),
         ]);
     }
 }

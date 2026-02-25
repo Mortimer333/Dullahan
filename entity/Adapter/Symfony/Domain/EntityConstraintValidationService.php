@@ -21,7 +21,7 @@ use Dullahan\Entity\Port\Domain\OwnerlessManageableInterface;
 use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\Main\Symfony\SymfonyConstraintValidationService;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -31,7 +31,7 @@ class EntityConstraintValidationService extends SymfonyConstraintValidationServi
         protected HttpUtilService $httpUtilService,
         protected ValidatorInterface $validator,
         protected EntityManagerInterface $em,
-        protected UserServiceInterface $userService,
+        protected UserRetrieveServiceInterface $userService,
         protected ErrorCollectorInterface $errorCollector,
         protected EntityRetrievalManagerInterface $entityRetrievalManager,
     ) {

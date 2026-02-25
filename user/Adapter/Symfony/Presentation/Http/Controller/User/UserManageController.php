@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Dullahan\User\Adapter\Symfony\Presentation\Http\Controller\User;
 
 use Dullahan\Main\Contract\ErrorCollectorInterface;
+use Dullahan\Main\Contract\MailServiceInterface;
 use Dullahan\Main\Service\Util\HttpUtilService;
-use Dullahan\User\Port\Application\MailServiceInterface;
-use Dullahan\User\Port\Application\UserManagerServiceInterface;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserPersistServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Port\Domain\RegistrationValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserValidationServiceInterface;
 use Dullahan\User\Presentation\Http\Model\Body\Manage\RemoveUserDTO;
@@ -34,9 +34,9 @@ class UserManageController extends AbstractController
 {
     public function __construct(
         protected HttpUtilService $httpUtilService,
-        protected UserServiceInterface $userService,
+        protected UserRetrieveServiceInterface $userService,
         protected UserValidationServiceInterface $userValidateService,
-        protected UserManagerServiceInterface $userManageService,
+        protected UserPersistServiceInterface $userManageService,
         protected MailServiceInterface $mailService,
         protected RegistrationValidationServiceInterface $registrationValidationService,
         protected ErrorCollectorInterface $errorCollector,

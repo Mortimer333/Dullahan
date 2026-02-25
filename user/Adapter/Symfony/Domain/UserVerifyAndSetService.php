@@ -6,7 +6,7 @@ namespace Dullahan\User\Adapter\Symfony\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\User\Domain\Entity\User;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -16,7 +16,7 @@ class UserVerifyAndSetService implements UserVerifyAndSetServiceInterface
     public function __construct(
         protected UserPasswordHasherInterface $passwordHasher,
         protected EntityManagerInterface $em,
-        protected UserServiceInterface $userService,
+        protected UserRetrieveServiceInterface $userService,
     ) {
     }
 

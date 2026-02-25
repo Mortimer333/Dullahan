@@ -16,7 +16,7 @@ use Dullahan\Asset\Port\Presentation\AssetMiddlewareInterface;
 use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Model\Context;
-use Dullahan\User\Port\Application\UserServiceInterface;
+use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 
 class AssetMiddleware implements AssetMiddlewareInterface
 {
@@ -24,7 +24,7 @@ class AssetMiddleware implements AssetMiddlewareInterface
 
     public function __construct(
         protected AssetPersistenceManagerInterface $assetManager,
-        protected UserServiceInterface $userService,
+        protected UserRetrieveServiceInterface $userService,
         protected EntityManagerInterface $em,
         protected AssetSerializerInterface $assetSerializer,
         protected AssetServiceInterface $assetService,
