@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Dullahan\Main\Service;
 
 use Dullahan\Main\Contract\ErrorCollectorInterface;
+use Dullahan\Main\Contract\MailServiceInterface;
 use Dullahan\User\Domain\Entity\User;
-use Dullahan\User\Port\Application\MailServiceInterface;
 use Dullahan\User\Port\Application\UserManagerServiceInterface;
 use Dullahan\User\Port\Application\UserServiceInterface;
 use Psr\Log\LoggerInterface;

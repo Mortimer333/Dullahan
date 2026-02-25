@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\User\Port\Application;
+namespace Dullahan\Main\Contract;
 
 use Dullahan\User\Domain\Entity\User;
 use Symfony\Contracts\HttpClient\ResponseInterface;

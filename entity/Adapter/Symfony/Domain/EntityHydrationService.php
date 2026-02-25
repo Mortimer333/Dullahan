@@ -170,6 +170,9 @@ class EntityHydrationService implements EntityHydrationInterface
             $relative = $this->handleNestedEntity($class, $item);
         }
 
+        // @TODO make this check optional - based on the relation.
+        // If the relation is public, anyone can create relation
+        // if private then only the owner
         $this->validateRelationOwnership($relative, $name);
 
         $entity->$setter($relative);
@@ -221,7 +224,7 @@ class EntityHydrationService implements EntityHydrationInterface
         $newCollection ??= [];
         $repo = $this->entityRetrievalManager->getRepository($class);
         if (!$repo) {
-            throw new \Exception('Entity repository not found', 404);
+            throw new \Exception(sprintf('Entity %s repository not found', $class), 404);
         }
         $entities = $this->gatherAllEntities($newCollection, $class, $repo);
         if (count($entities) != count($newCollection)) {

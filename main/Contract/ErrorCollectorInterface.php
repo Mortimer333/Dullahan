@@ -28,6 +28,11 @@ namespace Dullahan\Main\Contract;
 interface ErrorCollectorInterface
 {
     /**
+     * @param array<string> $path
+     */
+    public function setPrefixPath(array $path): void;
+
+    /**
      * @param array<string>|null $path Defines the path to the error, e.g. ["user", "details", "name"] which will result
      *                                 in array: ["user" => ["details" => ["name" => ["Invalid username"]]]
      */

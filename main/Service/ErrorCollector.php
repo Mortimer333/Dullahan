@@ -13,9 +13,15 @@ final class ErrorCollector implements ErrorCollectorInterface
 {
     /** @var Error $errors */
     private array $errors = [];
+    /** @var array<string> $prefix */
+    private array $prefix = [];
 
     public function addError(string $error, ?array $path = null): void
     {
+        if (count($this->prefix) > 0 && count($path ?? []) > 0) {
+            $path = [...$this->prefix, ...$path];
+        }
+
         if (null === $path) {
             $this->errors[] = $error;
 
@@ -66,5 +72,10 @@ final class ErrorCollector implements ErrorCollectorInterface
         }
 
         self::createErrorPath($error, $path, $errors[$path[$caret]], $caret + 1);
+    }
+
+    public function setPrefixPath(array $path): void
+    {
+        $this->prefix = $path;
     }
 }

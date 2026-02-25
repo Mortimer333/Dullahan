@@ -9,6 +9,9 @@ final class Structure
     /** @var ?resource */
     private $resource;
 
+    /**
+     * @param ?resource $resource
+     */
     public function __construct(
         public readonly string $path,
         public readonly string $name,

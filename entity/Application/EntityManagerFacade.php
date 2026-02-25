@@ -170,7 +170,7 @@ implements EntityPersistManagerInterface, EntityRetrievalManagerInterface, Entit
         $persistEntityResult = $this->eventDispatcher->dispatch(
             new Transport\PersistCreatedEntity($entity, $createEntityResult->payload, $flush),
         );
-        if (!$persistEntityResult->entity->getId()) {
+        if ($flush && !$persistEntityResult->entity->getId()) {
             throw new EntityCreationFailedException('Created entity was not persisted');
         }
 

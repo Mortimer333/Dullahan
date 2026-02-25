@@ -14,7 +14,7 @@ abstract class EventAbstract implements PreventableEventInterface
     private bool $defaultPrevented = false;
 
     public function __construct(
-        public Context $context = new Context(),
+        public readonly Context $context = new Context(),
     ) {
     }
 

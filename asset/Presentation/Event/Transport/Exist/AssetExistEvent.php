@@ -11,9 +11,10 @@ final class AssetExistEvent extends EventAbstract
 {
     public function __construct(
         protected string $path,
-        public Context $context,
+        Context $context,
         protected ?bool $exists = null,
     ) {
+        parent::__construct($context);
     }
 
     public function getPath(): string
