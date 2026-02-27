@@ -10,24 +10,12 @@ use Dullahan\User\Domain\Entity\User;
 
 final class ResetPassword extends EventAbstract
 {
-    private bool $isValid = false;
-
     public function __construct(
         private User $user,
         #[\SensitiveParameter] private string $password,
         Context $context = new Context(),
     ) {
         parent::__construct($context);
-    }
-
-    public function isValid(): bool
-    {
-        return $this->isValid;
-    }
-
-    public function setIsValid(bool $isValid): void
-    {
-        $this->isValid = $isValid;
     }
 
     public function getPassword(): string

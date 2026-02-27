@@ -210,7 +210,7 @@ class AuthenticationController extends AbstractController
         );
     }
 
-    #[Route('/verify/{userId<\d+>}/reset/password', name: 'verify_reset_password', methods: 'POST')]
+    #[Route('/{userId<\d+>}/verify/password/reset', name: 'verify_reset_password', methods: 'POST')]
     #[SWG\RequestBody(attachables: [new Model(type: ResetPasswordVerifyBodyDTO::class)])]
     #[SWG\Response(
         description: 'User password was reset',
