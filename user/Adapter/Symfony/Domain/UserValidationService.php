@@ -7,6 +7,7 @@ namespace Dullahan\User\Adapter\Symfony\Domain;
 use Dullahan\Main\Contract\ErrorCollectorInterface;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\Main\Symfony\SymfonyConstraintValidationService;
+use Dullahan\User\Adapter\Symfony\Infrastructure\Repository\UserRepository;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\ForgottenPasswordConstraint;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\ResetPasswordConstraint;
 use Dullahan\User\Adapter\Symfony\Presentation\Http\Constraint\UserUpdateConstraint;
@@ -26,6 +27,7 @@ class UserValidationService extends SymfonyConstraintValidationService implement
         protected HttpUtilService $httpUtilService,
         protected RegistrationValidationServiceInterface $registrationValidationService,
         protected ErrorCollectorInterface $errorCollector,
+        protected UserRepository $userRepository,
     ) {
     }
 
@@ -128,14 +130,6 @@ class UserValidationService extends SymfonyConstraintValidationService implement
         }
         /** @var string $password */
         $password = $forgotten['forgotten']['password'] ?? throw new \Exception('Missing new password', 500);
-        $errors = $this->validatePasswordStrength($password, length: 12);
-        foreach ($errors as $error) {
-            $this->errorCollector->addError($error, ['forgotten', 'password']);
-        }
-        if ($this->errorCollector->hasErrors()) {
-            return false;
-        }
-
         /** @var string $passwordRepeat */
         $passwordRepeat = $forgotten['forgotten']['passwordRepeat'] ?? throw new \Exception('Missing repeated new password', 500);
         if ($passwordRepeat != $password) {
@@ -180,5 +174,22 @@ class UserValidationService extends SymfonyConstraintValidationService implement
         }
 
         return $errors;
+    }
+
+    public function verifyResetPasswordToken(int $userId, #[\SensitiveParameter] string $token): bool
+    {
+        $user = $this->userRepository->findOneBy([
+            'passwordResetVerificationToken' => $token,
+            'id' => $userId,
+        ]);
+        if (!$user) {
+            return false;
+        }
+
+        if ($user->getPasswordResetVerificationTokenExp() < time()) {
+            return false;
+        }
+
+        return true;
     }
 }

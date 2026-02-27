@@ -6,6 +6,7 @@ namespace Dullahan\User\Adapter\Symfony\Presentation\Event\EventListener;
 
 use Dullahan\User\Port\Application\UserPersistServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\ForgottenPassword\EnablePasswordReset;
+use Dullahan\User\Presentation\Event\Transport\ResetPassword\ResetPassword;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 class PasswordListener
@@ -23,5 +24,15 @@ class PasswordListener
         }
 
         $this->userPersistService->enablePasswordReset($event->getUser());
+    }
+
+    #[AsEventListener(event: ResetPassword::class)]
+    public function resetPassword(ResetPassword $event): void
+    {
+        if ($event->wasDefaultPrevented()) {
+            return;
+        }
+
+        $this->userPersistService->resetPassword($event->getUser(), $event->getPassword());
     }
 }

@@ -11,13 +11,16 @@ use Dullahan\User\Domain\Exception\UserNotFoundException;
 use Dullahan\User\Domain\ValueObject\UserBaseline;
 use Dullahan\User\Port\Application\Manager\UserActionManagerInterface;
 use Dullahan\User\Port\Application\Manager\UserPersistManagerInterface;
+use Dullahan\User\Port\Application\Manager\UserStatusManagerInterface;
 use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\Flush;
 use Dullahan\User\Presentation\Event\Transport\ForgottenPassword\EnablePasswordReset;
 use Dullahan\User\Presentation\Event\Transport\Registration\CreateUser;
+use Dullahan\User\Presentation\Event\Transport\ResetPassword\CanUserResetPassword;
+use Dullahan\User\Presentation\Event\Transport\ResetPassword\ResetPassword;
 
 class UserEventFacadeService
-implements UserPersistManagerInterface, UserActionManagerInterface
+implements UserPersistManagerInterface, UserActionManagerInterface, UserStatusManagerInterface
 {
     public function __construct(
         private EventDispatcherInterface $eventDispatcher,
@@ -69,6 +72,20 @@ implements UserPersistManagerInterface, UserActionManagerInterface
         $enableEvent = $this->eventDispatcher->dispatch(new EnablePasswordReset($user));
         $this->eventDispatcher->dispatch(new Flush($enableEvent->getUser(), new Context([
             Flush::FLUSH_PURPOSE => Flush::ENABLE_PASSWORD_RESET,
+        ])));
+    }
+
+    public function canResetPassword(int $id, #[\SensitiveParameter] string $token): bool
+    {
+        return $this->eventDispatcher->dispatch(new CanUserResetPassword($token, $id))->isValid();
+    }
+
+    public function resetPassword(int $id, #[\SensitiveParameter] string $password): void
+    {
+        $user = $this->userRetrieveService->get($id);
+        $this->eventDispatcher->dispatch(new ResetPassword($user, $password));
+        $this->eventDispatcher->dispatch(new Flush($user, new Context([
+            Flush::FLUSH_PURPOSE => Flush::PASSWORD_RESET,
         ])));
     }
 }

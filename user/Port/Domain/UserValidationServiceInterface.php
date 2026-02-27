@@ -46,4 +46,6 @@ interface UserValidationServiceInterface
         bool $special = true,
         int $length = 8,
     ): array;
+
+    public function verifyResetPasswordToken(int $userId, #[\SensitiveParameter] string $token): bool;
 }

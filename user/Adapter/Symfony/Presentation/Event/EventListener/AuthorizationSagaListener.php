@@ -8,10 +8,13 @@ use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Model\Response\Response;
 use Dullahan\User\Port\Application\Manager\UserActionManagerInterface;
 use Dullahan\User\Port\Application\Manager\UserPersistManagerInterface;
+use Dullahan\User\Port\Application\Manager\UserStatusManagerInterface;
 use Dullahan\User\Presentation\Event\Transport\ForgottenPassword\ValidateForgottenPasswordPayload;
 use Dullahan\User\Presentation\Event\Transport\Registration\ValidateRegistrationPayload;
+use Dullahan\User\Presentation\Event\Transport\ResetPassword\ValidateResetPasswordPayload;
 use Dullahan\User\Presentation\Event\Transport\Saga\ForgottenPasswordSaga;
 use Dullahan\User\Presentation\Event\Transport\Saga\RegistrationSaga;
+use Dullahan\User\Presentation\Event\Transport\Saga\ResetPasswordSaga;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 final class AuthorizationSagaListener
@@ -20,6 +23,7 @@ final class AuthorizationSagaListener
         private UserPersistManagerInterface $userPersistManager,
         private EventDispatcherInterface $eventDispatcher,
         private UserActionManagerInterface $userActionManager,
+        private UserStatusManagerInterface $userStatusManager,
     ) {
     }
 
@@ -77,5 +81,35 @@ final class AuthorizationSagaListener
         $this->userActionManager->enablePasswordReset($validationEvent->getForgottenPassword()->email);
 
         $event->setResponse(new Response('Password reset has finished successfully'));
+    }
+
+    #[AsEventListener(event: ResetPasswordSaga::class)]
+    public function resetPassword(ResetPasswordSaga $event): void
+    {
+        if ($event->wasDefaultPrevented()) {
+            return;
+        }
+
+        $userId = $event->userId;
+        $key = 'forgotten';
+        $payload = $event->request->getBodyParameter($key, []);
+        $validationEvent = $this->eventDispatcher->dispatch(
+            new ValidateResetPasswordPayload([$key => $payload]),
+        );
+        if (!$validationEvent->isValid()) {
+            throw new \InvalidArgumentException('Attempt to reset password failed', 400);
+        }
+        if (!$validationEvent->getResetPassword()) {
+            throw new \InvalidArgumentException('Reset password validation attempt not handled properly, missing Reset Password object', 500);
+        }
+
+        $validatedObject = $validationEvent->getResetPassword();
+        if (!$this->userStatusManager->canResetPassword($userId, $validatedObject->token)) {
+            throw new \InvalidArgumentException('Passed token does not match user, can be expired or doesn\'t exist', 422);
+        }
+
+        $this->userActionManager->resetPassword($userId, $validatedObject->password);
+
+        $event->setResponse(new Response('User password was reset successfully'));
     }
 }

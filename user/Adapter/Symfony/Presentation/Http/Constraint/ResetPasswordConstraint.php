@@ -14,6 +14,13 @@ class ResetPasswordConstraint
             'forgotten' => new Assert\Collection([
                 'password' => RegistrationConstraint::getPassword(),
                 'passwordRepeat' => RegistrationConstraint::getPasswordRepeat(),
+                'token' => [
+                    new Assert\NotBlank(['message' => 'Cannot be empty']),
+                    new Assert\Type([
+                        'type' => 'string',
+                        'message' => 'Token must be a string',
+                    ]),
+                ],
             ]),
         ]);
     }

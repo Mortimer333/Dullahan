@@ -2,30 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\User\Presentation\Event\Transport;
+namespace Dullahan\User\Presentation\Event\Transport\ResetPassword;
 
-use Dullahan\Main\Contract\RequestInterface;
 use Dullahan\Main\Model\Context;
 use Dullahan\Main\Model\EventAbstract;
+use Dullahan\User\Domain\ValueObject\ResetPasswordBaseline;
 
-final class PasswordResetValidation extends EventAbstract
+final class ValidateResetPasswordPayload extends EventAbstract
 {
     private bool $isValid = false;
+    private ?ResetPasswordBaseline $resetPassword = null;
 
     /**
      * @param array<mixed> $payload
      */
     public function __construct(
-        private RequestInterface $request,
         private array $payload,
         Context $context = new Context(),
     ) {
         parent::__construct($context);
-    }
-
-    public function getRequest(): RequestInterface
-    {
-        return $this->request;
     }
 
     /**
@@ -52,5 +47,15 @@ final class PasswordResetValidation extends EventAbstract
     public function setIsValid(bool $isValid): void
     {
         $this->isValid = $isValid;
+    }
+
+    public function getResetPassword(): ?ResetPasswordBaseline
+    {
+        return $this->resetPassword;
+    }
+
+    public function setResetPassword(?ResetPasswordBaseline $resetPassword): void
+    {
+        $this->resetPassword = $resetPassword;
     }
 }

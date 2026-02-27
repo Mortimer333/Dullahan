@@ -90,18 +90,4 @@ class UserVerifyAndSetService implements UserVerifyAndSetServiceInterface
         $this->em->persist($user);
         $this->em->flush();
     }
-
-    public function verifyResetPasswordToken(#[\SensitiveParameter] string $token): User
-    {
-        $user = $this->em->getRepository(User::class)->findOneBy(['passwordResetVerificationToken' => $token]);
-        if (!$user) {
-            throw new \Exception('Invalid token', 403);
-        }
-
-        if ($user->getPasswordResetVerificationTokenExp() < time()) {
-            throw new \Exception('Token has expired', 400);
-        }
-
-        return $user;
-    }
 }

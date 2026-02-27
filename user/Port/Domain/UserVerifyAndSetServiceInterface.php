@@ -15,6 +15,4 @@ interface UserVerifyAndSetServiceInterface
     public function verifyNewEmail(int $userId, #[\SensitiveParameter] string $token): void;
 
     public function verifyNewPassword(int $userId, #[\SensitiveParameter] string $token): void;
-
-    public function verifyResetPasswordToken(#[\SensitiveParameter] string $token): User;
 }

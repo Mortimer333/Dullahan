@@ -16,10 +16,10 @@ use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Port\Domain\AccessControlInterface;
 use Dullahan\User\Port\Domain\JWTManagerInterface;
 use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
-use Dullahan\User\Presentation\Event\Transport\PasswordResetValidation;
 use Dullahan\User\Presentation\Event\Transport\PostLogin;
 use Dullahan\User\Presentation\Event\Transport\Saga\ForgottenPasswordSaga;
 use Dullahan\User\Presentation\Event\Transport\Saga\RegistrationSaga;
+use Dullahan\User\Presentation\Event\Transport\Saga\ResetPasswordSaga;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordVerifyBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\LoginDto;
@@ -210,35 +210,27 @@ class AuthenticationController extends AbstractController
         );
     }
 
-    #[Route('/verify/reset/password', name: 'verify_reset_password', methods: 'POST')]
+    #[Route('/verify/{userId<\d+>}/reset/password', name: 'verify_reset_password', methods: 'POST')]
     #[SWG\RequestBody(attachables: [new Model(type: ResetPasswordVerifyBodyDTO::class)])]
     #[SWG\Response(
         description: 'User password was reset',
         content: new Model(type: UserPasswordWasResetDTO::class),
         response: 200
     )]
-    public function verifyResetPassword(Request $request): JsonResponse
+    public function verifyResetPassword(Request $request, int $userId): JsonResponse
     {
-        $parameters = $this->httpUtilService->getBody($request);
-        $dullahanRequest = $this->requestFactory->symfonyToDullahanRequest($request);
-        $passwordResetValidationEvent = $this->eventDispatcher->dispatch(
-            new PasswordResetValidation($dullahanRequest, $parameters),
+        $response = $this->eventDispatcher->dispatch(new ResetPasswordSaga(
+            $this->requestFactory->symfonyToDullahanRequest($request),
+            $userId,
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('Password reset was not handled');
+        }
+
+        return new JsonResponse(
+            $response->toArray(),
+            $response->status,
+            $response->headers,
         );
-        if (!$passwordResetValidationEvent->isValid()) {
-            throw new \InvalidArgumentException('Attempt to reset password failed', 400);
-        }
-
-        $token = $parameters['token'] ?? throw new \Exception('Missing verification token', 400);
-        if (!is_string($token)) {
-            throw new \Exception('Verification token has incorrect type', 400);
-        }
-
-        $user = $this->userVerifyAndSetService->verifyResetPasswordToken($token);
-        $forgotten = $parameters['forgotten'] ?? [];
-        /** @var string $password */
-        $password = $forgotten['password'] ?? throw new \Exception('Missing password', 500);
-        $this->userPersistService->resetPassword($user, $password);
-
-        return $this->httpUtilService->jsonResponse('User password was reset successfully');
     }
 }

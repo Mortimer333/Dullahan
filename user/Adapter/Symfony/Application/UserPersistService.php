@@ -118,8 +118,6 @@ class UserPersistService implements UserPersistServiceInterface
         $user->setPassword($hashedPassword);
         $user->setPasswordResetVerificationTokenExp(null);
         $user->setPasswordResetVerificationToken(null);
-        $this->em->persist($user);
-        $this->em->flush();
     }
 
     public function enablePasswordReset(User $user): void
