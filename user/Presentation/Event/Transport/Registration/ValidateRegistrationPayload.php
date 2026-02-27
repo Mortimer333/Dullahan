@@ -13,7 +13,7 @@ use Dullahan\User\Domain\ValueObject\UserBaseline;
  *     register?: array<mixed>,
  * }
  */
-final class RegistrationValidation extends EventAbstract
+final class ValidateRegistrationPayload extends EventAbstract
 {
     private bool $isValid = false;
     private ?UserBaseline $userRegistration = null;

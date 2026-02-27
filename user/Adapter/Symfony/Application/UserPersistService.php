@@ -41,7 +41,7 @@ class UserPersistService implements UserPersistServiceInterface
             ->setData($userData)
         ;
 
-        $this->setActivationToken($user);
+        $this->enableActivation($user);
 
         return $user;
     }
@@ -78,7 +78,7 @@ class UserPersistService implements UserPersistServiceInterface
 
         $fields = [
             'username' => 'setName',
-            'sendNewsletter' => 'setSendNewsletter',
+            'sendNewsletter' => 'setSendNewsletter', // @TODO what is this doing here???
         ];
 
         foreach ($fields as $key => $setter) {
@@ -122,7 +122,14 @@ class UserPersistService implements UserPersistServiceInterface
         $this->em->flush();
     }
 
-    public function setActivationToken(User $user): void
+    public function enablePasswordReset(User $user): void
+    {
+        $user->setPasswordResetVerificationToken($this->binUtilService->generateToken(32));
+        // TODO make expiry time a parameter in config
+        $user->setPasswordResetVerificationTokenExp(time() + (60 * 60 * 24)); // Token expires after 24 hours
+    }
+
+    public function enableActivation(User $user): void
     {
         $user->setActivationToken($this->binUtilService->generateToken(32));
         // TODO make expiry time a parameter in config

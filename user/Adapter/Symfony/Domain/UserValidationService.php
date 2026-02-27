@@ -93,7 +93,7 @@ class UserValidationService extends SymfonyConstraintValidationService implement
         foreach ($errors as $error) {
             $this->errorCollector->addError($error, ['newPassword']);
         }
-        if ($this->errorCollector->hasErrors()) { // @phpstan-ignore-line
+        if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Changing your password has failed', 400);
         }
 
@@ -107,12 +107,14 @@ class UserValidationService extends SymfonyConstraintValidationService implement
     /**
      * @param array<string, mixed> $forgotten
      */
-    public function validateForgottenPassword(#[\SensitiveParameter] array $forgotten): void
+    public function validateForgottenPassword(#[\SensitiveParameter] array $forgotten): bool
     {
         $this->validate($forgotten, ForgottenPasswordConstraint::get());
         if ($this->errorCollector->hasErrors()) {
-            throw new \Exception('Resetting your password has failed', 400);
+            return false;
         }
+
+        return true;
     }
 
     /**

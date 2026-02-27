@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dullahan\User\Adapter\Symfony\Presentation\Http\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Contract\MailServiceInterface;
 use Dullahan\Main\Exception\SagaNotHandledException;
@@ -16,10 +15,10 @@ use Dullahan\User\Port\Application\UserPersistServiceInterface;
 use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Port\Domain\AccessControlInterface;
 use Dullahan\User\Port\Domain\JWTManagerInterface;
-use Dullahan\User\Port\Domain\UserValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\PasswordResetValidation;
 use Dullahan\User\Presentation\Event\Transport\PostLogin;
+use Dullahan\User\Presentation\Event\Transport\Saga\ForgottenPasswordSaga;
 use Dullahan\User\Presentation\Event\Transport\Saga\RegistrationSaga;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordVerifyBodyDTO;
@@ -53,10 +52,8 @@ class AuthenticationController extends AbstractController
 {
     public function __construct(
         private HttpUtilService $httpUtilService,
-        private EntityManagerInterface $em,
         private UserRetrieveServiceInterface $userRetrieveService,
         private UserPersistServiceInterface $userPersistService,
-        private UserValidationServiceInterface $userValidateService,
         private MailServiceInterface $mailService,
         private EventDispatcherInterface $eventDispatcher,
         private UserVerifyAndSetServiceInterface $userVerifyAndSetService,
@@ -199,17 +196,18 @@ class AuthenticationController extends AbstractController
     )]
     public function forgottenPassword(Request $request): JsonResponse
     {
-        $parameters = $this->httpUtilService->getBody($request);
-        $forgotten = $parameters['forgotten'] ?? [];
-        $this->userValidateService->validateForgottenPassword($forgotten);
-
-        $mail = $forgotten['mail'] ?? throw new \Exception('Missing mail', 500);
-        $user = $this->em->getRepository(User::class)->findOneBy(['email' => $mail]);
-        if ($user) {
-            $this->mailService->handleResetPassword($user);
+        $response = $this->eventDispatcher->dispatch(new ForgottenPasswordSaga(
+            $this->requestFactory->symfonyToDullahanRequest($request),
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('Forgotten password was not handled');
         }
 
-        return $this->httpUtilService->jsonResponse('Password reset has finished successfully');
+        return new JsonResponse(
+            $response->toArray(),
+            $response->status,
+            $response->headers,
+        );
     }
 
     #[Route('/verify/reset/password', name: 'verify_reset_password', methods: 'POST')]

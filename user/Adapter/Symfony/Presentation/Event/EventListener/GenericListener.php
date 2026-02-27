@@ -37,8 +37,13 @@ final class GenericListener
     {
         match ($event->context->getProperty(Flush::FLUSH_PURPOSE)) {
             Flush::REGISTER => $this->flushRegister($event),
-            default => null,
+            default => $this->defaultFlush($event),
         };
+    }
+
+    private function defaultFlush(Flush $event): void
+    {
+        $this->userRepository->save($event->user, true);
     }
 
     private function flushRegister(Flush $event): void

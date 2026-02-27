@@ -28,7 +28,7 @@ interface UserValidationServiceInterface
     /**
      * @param array<string, mixed> $forgotten
      */
-    public function validateForgottenPassword(#[\SensitiveParameter] array $forgotten): void;
+    public function validateForgottenPassword(#[\SensitiveParameter] array $forgotten): bool;
 
     /**
      * @param array<string, mixed> $forgotten

@@ -80,4 +80,16 @@ class UserRetrieveService implements UserRetrieveServiceInterface
             'name' => $data->getName(),
         ];
     }
+
+    public function getByEmail(string $email): User
+    {
+        $user = $this->em->getRepository(User::class)->findOneBy([
+            'email' => $email,
+        ]);
+        if (!$user) {
+            throw new UserNotFoundException('Cannot find selected user');
+        }
+
+        return $user;
+    }
 }

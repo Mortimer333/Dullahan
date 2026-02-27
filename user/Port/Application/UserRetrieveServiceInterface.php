@@ -33,6 +33,11 @@ interface UserRetrieveServiceInterface
     public function get(int $id): User;
 
     /**
+     * @throws UserNotFoundException
+     */
+    public function getByEmail(string $email): User;
+
+    /**
      * @throws UserNotLoggedInException
      */
     public function getLoggedInUser(): User;

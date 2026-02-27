@@ -12,6 +12,7 @@ final class Flush extends EventAbstract
 {
     public const FLUSH_PURPOSE = 'flush_purpose';
     public const REGISTER = 'register';
+    public const ENABLE_PASSWORD_RESET = 'enable_password_reset';
 
     public function __construct(
         public readonly User $user,

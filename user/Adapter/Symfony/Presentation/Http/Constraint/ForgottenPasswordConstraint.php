@@ -11,7 +11,9 @@ class ForgottenPasswordConstraint
     public static function get(): Assert\Collection
     {
         return new Assert\Collection([
-            'mail' => RegistrationConstraint::getMail(),
+            'forgotten' => new Assert\Collection([
+                'mail' => RegistrationConstraint::getMail(),
+            ]),
         ]);
     }
 }

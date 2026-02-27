@@ -9,12 +9,14 @@ use Dullahan\User\Domain\Entity\User;
 interface UserPersistManagerInterface
 {
     /**
-     * @param array<int|string, mixed> $payload
-     *
      * @throws \InvalidArgumentException
      * @throws \Exception
      */
-    public function create(array $payload): User;
+    public function create(
+        string $username,
+        #[\SensitiveParameter] string $email,
+        #[\SensitiveParameter] string $password,
+    ): User;
 
     //    /**
     //     * @param array<int|string, mixed> $payload

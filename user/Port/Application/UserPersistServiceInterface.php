@@ -24,7 +24,9 @@ interface UserPersistServiceInterface
 
     public function resetPassword(User $user, #[\SensitiveParameter] string $password): void;
 
-    public function setActivationToken(User $user): void;
+    public function enablePasswordReset(User $user): void;
+
+    public function enableActivation(User $user): void;
 
     public function activate(int $id, #[\SensitiveParameter] string $token): void;
 
