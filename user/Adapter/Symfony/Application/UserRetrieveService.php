@@ -5,20 +5,23 @@ declare(strict_types=1);
 namespace Dullahan\User\Adapter\Symfony\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Dullahan\Asset\Domain\Entity\Asset;
-use Dullahan\Main\Service\Util\FileUtilService;
+use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\User\Domain\Entity\User;
-use Dullahan\User\Domain\Entity\UserData;
 use Dullahan\User\Domain\Exception\UserNotFoundException;
 use Dullahan\User\Domain\Exception\UserNotLoggedInException;
 use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
+use Dullahan\User\Presentation\Event\Transport\SerializeUser;
 use Symfony\Bundle\SecurityBundle\Security;
 
+/**
+ * @phpstan-import-type SerializedUser from \Dullahan\User\Port\Application\UserRetrieveServiceInterface
+ */
 class UserRetrieveService implements UserRetrieveServiceInterface
 {
     public function __construct(
         protected EntityManagerInterface $em,
         protected Security $security,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -48,37 +51,12 @@ class UserRetrieveService implements UserRetrieveServiceInterface
         return (bool) $this->security->getUser();
     }
 
-    // @TODO add event for serialization and move asset specific information to it
     public function serialize(User $user): array
     {
-        /** @var UserData $data */
-        $data = $user->getData();
-        $currentTakenSpace = $this->em->getRepository(Asset::class)->getTakenSpace($data);
+        /** @var SerializedUser $serialized */
+        $serialized = $this->eventDispatcher->dispatch(new SerializeUser($user))->getSerialized();
 
-        return [
-            'id' => $user->getId(),
-            'email' => $user->getEmail(),
-            'data' => $this->serializeData($data),
-            'storage' => [
-                'readable' => [
-                    'limit' => FileUtilService::humanFilesize((int) $data->getFileLimitBytes()),
-                    'taken' => FileUtilService::humanFilesize($currentTakenSpace),
-                ],
-                'limit' => (int) $data->getFileLimitBytes(),
-                'taken' => $currentTakenSpace,
-            ],
-        ];
-    }
-
-    /**
-     * @return array{id: int|null, name: string|null}
-     */
-    public function serializeData(UserData $data): array
-    {
-        return [
-            'id' => $data->getId(),
-            'name' => $data->getName(),
-        ];
+        return $serialized;
     }
 
     public function getByEmail(string $email): User
