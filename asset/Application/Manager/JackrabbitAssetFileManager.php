@@ -33,8 +33,8 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
     public const TYPE_CONTENT_FILE = 'dl:file';
     public const TYPE_CONTENT_FOLDER = 'dl:folder';
 
-    /** @var \WeakMap<Structure, true> */
-    protected \WeakMap $toRemove;
+    /** @var \SplObjectStorage<Structure, true> */
+    protected \SplObjectStorage $toRemove;
 
     /** @var array<array<string>> */
     protected array $toClone = [];
@@ -42,7 +42,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
     public function __construct(
         protected DocumentManagerInterface $documentManager,
     ) {
-        $this->toRemove = new \WeakMap();
+        $this->toRemove = new \SplObjectStorage();
     }
 
     public function get(string $path): Structure
@@ -218,7 +218,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
         }
         $this->toClone = [];
 
-        foreach ($this->toRemove->getIterator() as $asset => $value) {
+        foreach ($this->toRemove as $asset) {
             try {
                 $this->getNode($asset->path)->remove();
                 $this->toRemove->offsetUnset($asset);
