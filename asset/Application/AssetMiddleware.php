@@ -101,8 +101,9 @@ class AssetMiddleware implements AssetMiddlewareInterface
             throw new AssetInvalidNameException($name);
         }
 
-        if ($this->assetService->exists($path, $this->generateControllerContext())) {
-            throw new AssetExistsException($path);
+        $fullPath = rtrim($path, '/') . '/' . $name;
+        if ($this->assetService->exists($fullPath, $this->generateControllerContext())) {
+            throw new AssetExistsException($fullPath);
         }
 
         $file = $this->assetService->create(
