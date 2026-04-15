@@ -11,7 +11,6 @@ use Dullahan\Asset\Domain\Structure;
 use Dullahan\Asset\Port\Infrastructure\AssetEntityInterface;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Main\Service\RuntimeCachePoolService;
-use Dullahan\User\Domain\Entity\User;
 
 class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterface
 {
@@ -81,10 +80,9 @@ class DoctrineAssetPersistenceManager implements AssetPersistenceManagerInterfac
         return $this->uniGet('fullPath', $path);
     }
 
-    public function create(Structure $structure, User $owner): AssetEntityInterface
+    public function create(Structure $structure): AssetEntityInterface
     {
         $asset = new Asset();
-        $asset->setUser($owner);
         $this->updateEntity($asset, $structure);
         $this->em->persist($asset);
 

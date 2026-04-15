@@ -8,7 +8,6 @@ use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Entity\Adapter\Symfony\Domain\Trait\PaginationTrait;
 use Dullahan\Entity\Port\Domain\EntityValidationInterface;
 use Dullahan\Entity\Port\Infrastructure\EntityRepositoryInterface;
-use Dullahan\User\Domain\Entity\UserData;
 
 /**
  * @extends ServiceEntityRepository<Asset>
@@ -47,19 +46,6 @@ class AssetRepository extends ServiceEntityRepository implements EntityRepositor
         if ($flush) {
             $this->getEntityManager()->flush();
         }
-    }
-
-    public function getTakenSpace(UserData $userData): int
-    {
-        $res = $this->createQueryBuilder('a')
-            ->select('sum(a.weight) as space')
-            ->where('a.userData = :userData')
-            ->setParameter('userData', $userData)
-            ->getQuery()
-            ->getSingleScalarResult()
-        ;
-
-        return (int) $res;
     }
 
     public function findByPath(string $directory, string $name, string $etx): ?Asset

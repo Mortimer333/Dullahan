@@ -7,7 +7,6 @@ namespace Dullahan\Asset\Port\Infrastructure;
 use Dullahan\Asset\Domain\Exception\AssetEntityNotFoundException;
 use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
 use Dullahan\Asset\Domain\Structure;
-use Dullahan\User\Domain\Entity\User;
 
 // @TODO separate into persistence and retrieval
 /**
@@ -70,7 +69,7 @@ interface AssetPersistenceManagerInterface
         ?array $group = null,
     ): int;
 
-    public function create(Structure $structure, User $owner): AssetEntityInterface;
+    public function create(Structure $structure): AssetEntityInterface;
 
     public function update(AssetEntityInterface $asset, Structure $structure): void;
 

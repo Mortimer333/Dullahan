@@ -8,7 +8,6 @@ use Dullahan\Asset\Domain\Asset;
 use Dullahan\Asset\Port\Infrastructure\AssetFileManagerInterface;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Presentation\Event\Transport\Clone\CloneAssetEvent;
-use Dullahan\User\Adapter\Symfony\Application\UserRetrieveService;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 final class CloneListener
@@ -16,7 +15,6 @@ final class CloneListener
     public function __construct(
         private AssetFileManagerInterface $assetFileManager,
         private AssetPersistenceManagerInterface $assetPersistenceManager,
-        private UserRetrieveService $userService,
     ) {
     }
 
@@ -26,7 +24,7 @@ final class CloneListener
         $asset = $event->getAsset();
         $path = $event->getPath();
         $clone = $this->assetFileManager->clone($asset->structure, $path);
-        $entity = $this->assetPersistenceManager->create($clone, $this->userService->getLoggedInUser());
+        $entity = $this->assetPersistenceManager->create($clone);
         $event->setAsset(
             new Asset(
                 $clone,

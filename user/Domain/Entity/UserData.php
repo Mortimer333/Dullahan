@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Dullahan\User\Domain\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Entity\Domain\Attribute\Field;
 use Dullahan\User\Adapter\Symfony\Infrastructure\Repository\UserDataRepository;
 
@@ -32,23 +29,8 @@ class UserData
     #[Field, ORM\Column(length: 255, nullable: true)]
     private ?string $oldName = null;
 
-    /**
-     * @var Collection<int, Asset>
-     */
-    #[ORM\OneToMany(mappedBy: 'userData', targetEntity: Asset::class, orphanRemoval: true)]
-    private Collection $assets;
-
     #[Field, ORM\Column(length: 255)]
     private ?string $publicId = null;
-
-    #[ORM\Column(options: ['default' => 10 ** 7])] // Default 10Mb
-    private ?int $fileLimitBytes = null;
-
-    public function __construct()
-    {
-        $this->assets = new ArrayCollection();
-        $this->fileLimitBytes = 10 ** 7;
-    }
 
     public function getId(): ?int
     {
@@ -103,36 +85,6 @@ class UserData
         return $this;
     }
 
-    /**
-     * @return Collection<int, Asset>
-     */
-    public function getAssets(): Collection
-    {
-        return $this->assets;
-    }
-
-    public function addAsset(Asset $asset): self
-    {
-        if (!$this->assets->contains($asset)) {
-            $this->assets->add($asset);
-            $asset->setUserData($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAsset(Asset $asset): self
-    {
-        if ($this->assets->removeElement($asset)) {
-            // set the owning side to null (unless already changed)
-            if ($asset->getUserData() === $this) {
-                $asset->setUserData(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getPublicId(): ?string
     {
         return $this->publicId;
@@ -141,18 +93,6 @@ class UserData
     public function setPublicId(string $publicId): self
     {
         $this->publicId = $publicId;
-
-        return $this;
-    }
-
-    public function getFileLimitBytes(): ?int
-    {
-        return $this->fileLimitBytes;
-    }
-
-    public function setFileLimitBytes(int $fileLimitBytes): self
-    {
-        $this->fileLimitBytes = $fileLimitBytes;
 
         return $this;
     }

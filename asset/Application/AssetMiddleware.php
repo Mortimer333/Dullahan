@@ -16,7 +16,6 @@ use Dullahan\Asset\Port\Presentation\AssetMiddlewareInterface;
 use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Model\Context;
-use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 
 class AssetMiddleware implements AssetMiddlewareInterface
 {
@@ -24,7 +23,6 @@ class AssetMiddleware implements AssetMiddlewareInterface
 
     public function __construct(
         protected AssetPersistenceManagerInterface $assetManager,
-        protected UserRetrieveServiceInterface $userService,
         protected EntityManagerInterface $em,
         protected AssetSerializerInterface $assetSerializer,
         protected AssetServiceInterface $assetService,
@@ -73,14 +71,6 @@ class AssetMiddleware implements AssetMiddlewareInterface
                 Context::TYPE => self::CONTROLLER_TYPE,
             ])
         );
-        //        $assets = $this->em->getRepository(Asset::class)->list(
-        //            $pagination,
-        //            function (QueryBuilder $qb) use ($user) {
-        //                $qb->andWhere('p.userData = :userData')
-        //                    ->setParameter('userData', $user->getData())
-        //                ;
-        //            }
-        //        );
         foreach ($assets as $asset) {
             $images[] = $this->assetSerializer->serialize($asset);
         }
@@ -152,12 +142,6 @@ class AssetMiddleware implements AssetMiddlewareInterface
         string $mimeType,
     ): array {
         $asset = $this->assetService->get($id, $this->generateControllerContext());
-        // @TODO this should be handled by client or at least give a chance to authorize user from different source
-        $user = $this->userService->getLoggedInUser();
-        if ($user->getId() != $asset->entity->getOwner()?->getId()) {
-            throw new \Exception('Unauthorized access', 401);
-        }
-
         $asset = $this->assetService->replace($asset, new File(
             $asset->structure->path,
             $asset->structure->name,

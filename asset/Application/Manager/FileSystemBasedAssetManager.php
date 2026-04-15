@@ -11,8 +11,6 @@ use Dullahan\Entity\Port\Domain\MappingsManagerInterface;
 use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\Main\Service\Util\FileUtilService;
 use Dullahan\Main\Symfony\SymfonyConstraintValidationService;
-use Dullahan\User\Domain\Entity\UserData;
-use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 // @TODO create a wrapper interface
@@ -28,7 +26,6 @@ class FileSystemBasedAssetManager // implements AssetManagerInterface
 
     public function __construct(
         protected EntityManagerInterface $em,
-        protected UserRetrieveServiceInterface $userService,
         protected EntityCacheService $cacheService,
         protected SymfonyConstraintValidationService $validationService,
         protected MappingsManagerInterface $projectManagerService,
@@ -48,10 +45,6 @@ class FileSystemBasedAssetManager // implements AssetManagerInterface
     public function remove(int $id): void
     {
         $asset = $this->get($id);
-        $user = $this->userService->getLoggedInUser();
-        if ($asset->getUser()?->getId() !== $user->getId()) {
-            throw new \Exception("This asset doesn't belong to you", 403);
-        }
 
         $batchSize = 20;
         foreach ($asset->getPointers() as $i => $pointer) {
@@ -166,10 +159,6 @@ class FileSystemBasedAssetManager // implements AssetManagerInterface
             $path
         );
 
-        $user = $this->userService->getLoggedInUser();
-        /** @var UserData $userData */
-        $userData = $user->getData();
-
         $asset = new Asset();
         $asset->setMimeType(FileUtilService::extToType($mime))
             ->setName($name)
@@ -177,7 +166,6 @@ class FileSystemBasedAssetManager // implements AssetManagerInterface
             ->setProject($project)
             ->setPath($relative)
             ->setWeight($size)
-            ->setUserData($userData)
         ;
 
         return $asset;

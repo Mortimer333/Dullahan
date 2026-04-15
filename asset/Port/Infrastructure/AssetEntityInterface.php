@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace Dullahan\Asset\Port\Infrastructure;
 
 use Dullahan\Asset\Port\Presentation\AssetPointerInterface;
-use Dullahan\User\Domain\Entity\User;
 
 interface AssetEntityInterface
 {
     public function getId(): mixed;
 
     public function getFullPath(): string;
-
-    public function getOwner(): ?User;
 
     /**
      * @return \IteratorAggregate<AssetPointerInterface>&\Countable

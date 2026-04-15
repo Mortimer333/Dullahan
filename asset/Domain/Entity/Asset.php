@@ -9,17 +9,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Dullahan\Asset\Adapter\Symfony\Infrastructure\Doctrine\Repository\AssetRepository;
 use Dullahan\Asset\Port\Infrastructure\AssetEntityInterface;
 use Dullahan\Asset\Port\Presentation\AssetPointerInterface;
-use Dullahan\User\Domain\Entity\User;
-use Dullahan\User\Domain\Entity\UserData;
-use Dullahan\User\Domain\Trait\UserDataRelationTrait;
 
 #[ORM\Entity(repositoryClass: AssetRepository::class)]
 #[ORM\Index(name: 'path_search_idx', fields: ['directory', 'name', 'extension'])]
 #[ORM\UniqueConstraint(name: 'full_path_unique_idx', fields: ['fullPath'])]
 class Asset implements AssetEntityInterface
 {
-    use UserDataRelationTrait;
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -52,10 +47,6 @@ class Asset implements AssetEntityInterface
     #[ORM\OneToMany(mappedBy: 'asset', targetEntity: AssetPointer::class, orphanRemoval: true)]
     private Collection $pointers; // @phpstan-ignore-line
 
-    #[ORM\ManyToOne(inversedBy: 'assets')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?UserData $userData = null;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeInterface $modified = null;
 
@@ -64,11 +55,6 @@ class Asset implements AssetEntityInterface
         $this->modified = new \DateTime();
         $this->pointers = new ArrayCollection();
         $this->hidden = false;
-    }
-
-    public function getOwner(): ?User
-    {
-        return $this->getUser();
     }
 
     public function getId(): ?int
@@ -162,18 +148,6 @@ class Asset implements AssetEntityInterface
                 $pointer->setAsset(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getUserData(): ?UserData
-    {
-        return $this->userData;
-    }
-
-    public function setUserData(?UserData $userData): self
-    {
-        $this->userData = $userData;
 
         return $this;
     }
