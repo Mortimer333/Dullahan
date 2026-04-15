@@ -9,6 +9,7 @@ use Dullahan\User\Adapter\Symfony\Infrastructure\Repository\UserDataRepository;
 use Dullahan\User\Adapter\Symfony\Infrastructure\Repository\UserRepository;
 use Dullahan\User\Port\Application\UserPersistServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\Flush;
+use Dullahan\User\Presentation\Event\Transport\Manage\RemoveUser;
 use Dullahan\User\Presentation\Event\Transport\Registration\CreateUser;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
@@ -32,13 +33,33 @@ final class GenericListener
         $event->setUser($this->userManageService->create($event->getUserBaseline()));
     }
 
+    #[AsEventListener(event: RemoveUser::class)]
+    public function onRemoveUser(RemoveUser $event): void
+    {
+        if ($event->wasDefaultPrevented()) {
+            return;
+        }
+
+        $this->userManageService->remove(
+            $event->user->getId() ?? throw new \InvalidArgumentException('User is missing an ID, cannot be deleted'),
+            $event->shouldDeleteAll(),
+        );
+        $event->setWasRemoved(true);
+    }
+
     #[AsEventListener(event: Flush::class)]
     public function flush(Flush $event): void
     {
         match ($event->context->getProperty(Flush::FLUSH_PURPOSE)) {
             Flush::REGISTER => $this->flushRegister($event),
+            Flush::USER_REMOVAL => $this->removeFlush(),
             default => $this->defaultFlush($event),
         };
+    }
+
+    private function removeFlush(): void
+    {
+        $this->userRepository->flush();
     }
 
     private function defaultFlush(Flush $event): void

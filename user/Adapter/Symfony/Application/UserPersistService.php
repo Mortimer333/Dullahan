@@ -63,7 +63,6 @@ class UserPersistService implements UserPersistServiceInterface
             $this->em->persist($data);
         }
         $this->em->remove($user);
-        $this->em->flush();
     }
 
     /**

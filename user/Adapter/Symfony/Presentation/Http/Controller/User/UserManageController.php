@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Dullahan\User\Adapter\Symfony\Presentation\Http\Controller\User;
 
 use Dullahan\Main\Contract\ErrorCollectorInterface;
+use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Contract\MailServiceInterface;
+use Dullahan\Main\Exception\SagaNotHandledException;
+use Dullahan\Main\Service\RequestFactory;
 use Dullahan\Main\Service\Util\HttpUtilService;
 use Dullahan\User\Port\Application\UserPersistServiceInterface;
 use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Port\Domain\RegistrationValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserValidationServiceInterface;
+use Dullahan\User\Presentation\Event\Transport\Saga\RemovalSaga;
 use Dullahan\User\Presentation\Http\Model\Body\Manage\RemoveUserDTO;
 use Dullahan\User\Presentation\Http\Model\Body\Manage\UpdateUserDTO;
 use Dullahan\User\Presentation\Http\Model\Body\Manage\UpdateUserEmailDTO;
@@ -28,7 +32,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[SWG\Tag('Project User Managment')]
+#[SWG\Tag('Project User Management')]
 #[Route('/manage', name: 'api_user_manage_')]
 class UserManageController extends AbstractController
 {
@@ -40,6 +44,8 @@ class UserManageController extends AbstractController
         protected MailServiceInterface $mailService,
         protected RegistrationValidationServiceInterface $registrationValidationService,
         protected ErrorCollectorInterface $errorCollector,
+        private EventDispatcherInterface $eventDispatcher,
+        private RequestFactory $requestFactory,
     ) {
     }
 
@@ -84,12 +90,18 @@ class UserManageController extends AbstractController
     )]
     public function remove(Request $request): JsonResponse
     {
-        $parameters = $this->httpUtilService->getBody($request);
-        $user = $this->userService->getLoggedInUser();
-        $this->userValidateService->validateUserRemoval($user, $parameters['user']['password'] ?? '');
-        $this->userManageService->remove((int) $user->getId(), $parameters['user']['deleteAll'] ?? false);
+        $response = $this->eventDispatcher->dispatch(new RemovalSaga(
+            $this->requestFactory->symfonyToDullahanRequest($request),
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('Removal was not handled');
+        }
 
-        return $this->httpUtilService->jsonResponse('User removed successfully');
+        return new JsonResponse(
+            $response->toArray(),
+            $response->status,
+            $response->headers,
+        );
     }
 
     #[Route('/update', name: 'update', methods: 'POST')]
