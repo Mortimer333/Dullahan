@@ -22,6 +22,6 @@ interface UserPersistManagerInterface
     //     * @param array<int|string, mixed> $payload
     //     */
     //    public function update(int $id, array $payload): User;
-    //
-    //    public function remove(int $id): bool;
+
+    public function remove(int $id, bool $deleteAll): bool;
 }

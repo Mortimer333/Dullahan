@@ -15,6 +15,7 @@ use Dullahan\User\Port\Application\Manager\UserStatusManagerInterface;
 use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\Flush;
 use Dullahan\User\Presentation\Event\Transport\ForgottenPassword\EnablePasswordReset;
+use Dullahan\User\Presentation\Event\Transport\Manage\RemoveUser;
 use Dullahan\User\Presentation\Event\Transport\Registration\CreateUser;
 use Dullahan\User\Presentation\Event\Transport\ResetPassword\CanUserResetPassword;
 use Dullahan\User\Presentation\Event\Transport\ResetPassword\ResetPassword;
@@ -34,7 +35,7 @@ implements UserPersistManagerInterface, UserActionManagerInterface, UserStatusMa
         string $password,
     ): User {
         // @TODO:
-        // - check user permissions for other user creation
+        // - check user permissions for other user creation - can it create a new user?
         // - custom generic exceptions
         // - I hate how we basically require to wrap payload with `register` - very useful for API, awful for normal use
         // so that our error bag works without issue.
@@ -87,5 +88,20 @@ implements UserPersistManagerInterface, UserActionManagerInterface, UserStatusMa
         $this->eventDispatcher->dispatch(new Flush($user, new Context([
             Flush::FLUSH_PURPOSE => Flush::PASSWORD_RESET,
         ])));
+    }
+
+    public function remove(int $id, bool $deleteAll): bool
+    {
+        $user = $this->userRetrieveService->get($id);
+
+        $wasRemoved = $this->eventDispatcher->dispatch(new RemoveUser($user, $deleteAll))->wasRemoved();
+
+        if ($wasRemoved) {
+            $this->eventDispatcher->dispatch(new Flush($user, new Context([
+                Flush::FLUSH_PURPOSE => Flush::USER_REMOVAL,
+            ])));
+        }
+
+        return $wasRemoved;
     }
 }
