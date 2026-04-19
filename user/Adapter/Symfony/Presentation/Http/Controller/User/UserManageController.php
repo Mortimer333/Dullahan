@@ -15,6 +15,7 @@ use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Port\Domain\RegistrationValidationServiceInterface;
 use Dullahan\User\Port\Domain\UserValidationServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\Saga\RemovalSaga;
+use Dullahan\User\Presentation\Event\Transport\Saga\UpdateEmailSaga;
 use Dullahan\User\Presentation\Http\Model\Body\Manage\RemoveUserDTO;
 use Dullahan\User\Presentation\Http\Model\Body\Manage\UpdateUserDTO;
 use Dullahan\User\Presentation\Http\Model\Body\Manage\UpdateUserEmailDTO;
@@ -37,13 +38,13 @@ use Symfony\Component\Routing\Attribute\Route;
 class UserManageController extends AbstractController
 {
     public function __construct(
-        protected HttpUtilService $httpUtilService,
-        protected UserRetrieveServiceInterface $userService,
-        protected UserValidationServiceInterface $userValidateService,
-        protected UserPersistServiceInterface $userManageService,
-        protected MailServiceInterface $mailService,
-        protected RegistrationValidationServiceInterface $registrationValidationService,
-        protected ErrorCollectorInterface $errorCollector,
+        private HttpUtilService $httpUtilService,
+        private UserRetrieveServiceInterface $userService,
+        private UserValidationServiceInterface $userValidateService,
+        private UserPersistServiceInterface $userManageService,
+        private MailServiceInterface $mailService,
+        private RegistrationValidationServiceInterface $registrationValidationService,
+        private ErrorCollectorInterface $errorCollector,
         private EventDispatcherInterface $eventDispatcher,
         private RequestFactory $requestFactory,
     ) {
@@ -56,6 +57,7 @@ class UserManageController extends AbstractController
     )]
     public function auth(Request $request): Response
     {
+        // @TODO doesn't make sense, X-User-Token holds the whole token not just public id...
         $userPublicId = $request->headers->get('X-User-Token');
         $user = $this->userService->getLoggedInUser();
         if ($user->getData()?->getPublicId() !== $userPublicId) {
@@ -141,21 +143,18 @@ class UserManageController extends AbstractController
     )]
     public function updateEmail(Request $request): JsonResponse
     {
-        $parameters = $this->httpUtilService->getBody($request);
-        $update = $parameters['update'] ?? [];
-
-        $user = $this->userService->getLoggedInUser();
-        $this->userValidateService->validateUpdateUserMail($update, $user);
-        if ($this->errorCollector->hasErrors()) {
-            throw new \InvalidArgumentException("Couldn't update user email", 400);
+        $response = $this->eventDispatcher->dispatch(new UpdateEmailSaga(
+            $this->requestFactory->symfonyToDullahanRequest($request),
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('Update email was not handled');
         }
 
-        /** @var string $email */
-        $email = $update['email'] ?? throw new \Exception('Missing email', 500);
-        $this->userManageService->updateNewEmail($user, $email);
-        $this->mailService->sendUpdateEmailAndVerify($user);
-
-        return $this->httpUtilService->jsonResponse('User verification email was sent successfully');
+        return new JsonResponse(
+            $response->toArray(),
+            $response->status,
+            $response->headers,
+        );
     }
 
     #[Route('/update/password', name: 'update_password', methods: 'POST')]

@@ -11,8 +11,10 @@ class UserUpdateMailConstraint
     public static function get(): Assert\Collection
     {
         return new Assert\Collection([
-            'email' => RegistrationConstraint::getMail(),
-            'password' => RegistrationConstraint::getPassword(),
+            'update' => new Assert\Collection([
+                'email' => RegistrationConstraint::getMail(),
+                'password' => RegistrationConstraint::getPassword(),
+            ]),
         ]);
     }
 }

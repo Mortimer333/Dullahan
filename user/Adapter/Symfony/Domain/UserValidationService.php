@@ -52,25 +52,32 @@ class UserValidationService extends SymfonyConstraintValidationService implement
     /**
      * @param array<string, mixed> $update
      */
-    public function validateUpdateUserMail(array $update, User $user): void
+    public function validateUpdateUserMail(#[\SensitiveParameter] array $update, User $user): void
     {
         $this->validate($update, UserUpdateMailConstraint::get());
         if ($this->errorCollector->hasErrors()) {
             throw new \Exception('Updating your email has failed', 400);
         }
 
-        /** @var string $password */
+        $update = $update['update'] ?? [];
+        /* @var string $password */
+        $this->errorCollector->setPrefixPath(['update']);
         $password = $update['password'] ?? throw new \Exception('Missing password', 500);
         if (!$this->userVerifyAndSetService->verifyUserPassword($password, $user)) {
-            throw new \Exception("Sent password doesn't match, user email was not updated", 403);
+            $this->errorCollector->addError("Sent password doesn't match, user email was not updated", ['password']);
         }
 
         /** @var string $email */
         $email = $update['email'] ?? throw new \Exception('Missing email', 500);
         if ($email === $user->getEmail()) {
-            throw new \Exception('New email cannot be the same as old one', 400);
+            $this->errorCollector->addError('New email cannot be the same as old one', ['email']);
         }
         $this->registrationValidationService->validateEmailUniqueness($email);
+        $this->errorCollector->setPrefixPath([]);
+
+        if ($this->errorCollector->hasErrors()) {
+            throw new \Exception('Updating your email has failed', 400);
+        }
     }
 
     /**

@@ -92,11 +92,12 @@ class UserPersistService implements UserPersistServiceInterface
         $this->em->flush();
     }
 
-    public function updateNewEmail(User $user, ?string $email): void
+    public function enableEmailChange(User $user, string $email): void
     {
         $user->setNewEmail($email);
-        $this->em->persist($user);
-        $this->em->flush();
+        $user->setEmailVerificationToken($this->binUtilService->generateToken(32));
+        // TODO make expiry time a parameter in config
+        $user->setEmailVerificationTokenExp(time() + (60 * 60 * 24)); // Token expires after 24 hours
     }
 
     public function updateNewPassword(User $user, #[\SensitiveParameter] ?string $password): void
@@ -163,5 +164,12 @@ class UserPersistService implements UserPersistServiceInterface
         $user->setActivated(false);
         $this->em->persist($user);
         $this->em->flush();
+    }
+
+    public function disableEmailChange(User $user): void
+    {
+        $user->setNewEmail(null);
+        $user->setEmailVerificationToken(null);
+        $user->setEmailVerificationTokenExp(null);
     }
 }

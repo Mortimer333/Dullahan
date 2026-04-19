@@ -9,6 +9,7 @@ use Dullahan\User\Adapter\Symfony\Infrastructure\Repository\UserDataRepository;
 use Dullahan\User\Adapter\Symfony\Infrastructure\Repository\UserRepository;
 use Dullahan\User\Port\Application\UserPersistServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\Flush;
+use Dullahan\User\Presentation\Event\Transport\Manage\ChangeEmail;
 use Dullahan\User\Presentation\Event\Transport\Manage\RemoveUser;
 use Dullahan\User\Presentation\Event\Transport\Registration\CreateUser;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -45,6 +46,16 @@ final class GenericListener
             $event->shouldDeleteAll(),
         );
         $event->setWasRemoved(true);
+    }
+
+    #[AsEventListener(event: ChangeEmail::class)]
+    public function onChangeEmail(ChangeEmail $event): void
+    {
+        if ($event->wasDefaultPrevented()) {
+            return;
+        }
+
+        $this->userManageService->enableEmailChange($event->getUser(), $event->getEmail());
     }
 
     #[AsEventListener(event: Flush::class)]

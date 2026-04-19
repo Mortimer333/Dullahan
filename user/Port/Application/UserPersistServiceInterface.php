@@ -18,7 +18,9 @@ interface UserPersistServiceInterface
      */
     public function update(User $user, array $data): void;
 
-    public function updateNewEmail(User $user, ?string $email): void;
+    public function enableEmailChange(User $user, string $email): void;
+
+    public function disableEmailChange(User $user): void;
 
     public function updateNewPassword(User $user, #[\SensitiveParameter] ?string $password): void;
 

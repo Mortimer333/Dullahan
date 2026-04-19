@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Dullahan\User\Port\Application\Manager;
 
-use Dullahan\User\Domain\Entity\User;
-
 interface UserActionManagerInterface
 {
-    //    public function updateNewEmail(User $user, ?string $email): void;
-    //
+    public function enableEmailChange(int $id, string $email): void;
+
     //    public function updateNewPassword(User $user, #[\SensitiveParameter] ?string $password): void;
 
     public function resetPassword(int $id, #[\SensitiveParameter] string $password): void;

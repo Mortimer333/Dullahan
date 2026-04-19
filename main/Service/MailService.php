@@ -88,7 +88,7 @@ class MailService implements MailServiceInterface
                 return $this->sendUpdateEmail($user);
             },
             function () use ($user) {
-                $this->userManageService->updateNewEmail($user, null);
+                $this->userManageService->disableEmailChange($user);
             }
         );
     }
