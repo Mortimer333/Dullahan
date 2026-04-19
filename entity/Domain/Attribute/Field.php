@@ -20,6 +20,7 @@ class Field
         public ?array $auto = null,
         public ?string $plural = null,
         public ?string $enum = null,
+        public ?bool $hasOpenRelation = null,
     ) {
         if (!is_null($this->order) && 'ASC' != $this->order && 'DESC' != $this->order) {
             throw new \Exception('Order must be either ASC or DESC', 500);

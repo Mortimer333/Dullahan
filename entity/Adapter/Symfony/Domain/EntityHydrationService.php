@@ -173,7 +173,9 @@ class EntityHydrationService implements EntityHydrationInterface
         // @TODO make this check optional - based on the relation.
         // If the relation is public, anyone can create relation
         // if private then only the owner
-        $this->validateRelationOwnership($relative, $name);
+        if (!($definition['hasOpenRelation'] ?? false)) {
+            $this->validateRelationOwnership($relative, $name);
+        }
 
         $entity->$setter($relative);
     }
@@ -284,7 +286,10 @@ class EntityHydrationService implements EntityHydrationInterface
     {
         if (
             $item instanceof ManageableInterface
-            && !$item->isOwner($this->userService->getLoggedInUser())
+            && (
+                !$this->userService->isLoggedIn()
+                || !$item->isOwner($this->userService->getLoggedInUser())
+            )
         ) {
             throw new \Exception(
                 sprintf("In `%s` you are trying to add entity you don't own", ucfirst($name)),
