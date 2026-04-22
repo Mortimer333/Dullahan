@@ -16,6 +16,7 @@ use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\Flush;
 use Dullahan\User\Presentation\Event\Transport\ForgottenPassword\EnablePasswordReset;
 use Dullahan\User\Presentation\Event\Transport\Manage\ChangeEmail;
+use Dullahan\User\Presentation\Event\Transport\Manage\FinishChangingEmail;
 use Dullahan\User\Presentation\Event\Transport\Manage\RemoveUser;
 use Dullahan\User\Presentation\Event\Transport\Registration\CreateUser;
 use Dullahan\User\Presentation\Event\Transport\ResetPassword\CanUserResetPassword;
@@ -112,6 +113,15 @@ implements UserPersistManagerInterface, UserActionManagerInterface, UserStatusMa
         $this->eventDispatcher->dispatch(new ChangeEmail($user, $email));
         $this->eventDispatcher->dispatch(new Flush($user, new Context([
             Flush::FLUSH_PURPOSE => Flush::ENABLE_EMAIL_CHANGE,
+        ])));
+    }
+
+    public function finishEmailChange(int $id, #[\SensitiveParameter] string $token): void
+    {
+        $user = $this->userRetrieveService->get($id);
+        $this->eventDispatcher->dispatch(new FinishChangingEmail($user, $token));
+        $this->eventDispatcher->dispatch(new Flush($user, new Context([
+            Flush::FLUSH_PURPOSE => Flush::EMAIL_CHANGE,
         ])));
     }
 }

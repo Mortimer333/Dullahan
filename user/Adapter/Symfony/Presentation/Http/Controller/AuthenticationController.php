@@ -20,6 +20,7 @@ use Dullahan\User\Presentation\Event\Transport\PostLogin;
 use Dullahan\User\Presentation\Event\Transport\Saga\ForgottenPasswordSaga;
 use Dullahan\User\Presentation\Event\Transport\Saga\RegistrationSaga;
 use Dullahan\User\Presentation\Event\Transport\Saga\ResetPasswordSaga;
+use Dullahan\User\Presentation\Event\Transport\Saga\VerifyUpdateEmailSaga;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\Authentication\ResetPasswordVerifyBodyDTO;
 use Dullahan\User\Presentation\Http\Model\Body\LoginDto;
@@ -37,8 +38,8 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
@@ -73,7 +74,7 @@ class AuthenticationController extends AbstractController
         content: new Model(type: RegistrationResponseDTO::class),
         response: 200
     )]
-    public function register(Request $request): JsonResponse
+    public function register(Request $request): Response
     {
         $response = $this->eventDispatcher->dispatch(new RegistrationSaga(
             $this->requestFactory->symfonyToDullahanRequest($request),
@@ -82,11 +83,7 @@ class AuthenticationController extends AbstractController
             throw new SagaNotHandledException('Registration was not handled');
         }
 
-        return new JsonResponse(
-            $response->toArray(),
-            $response->status,
-            $response->headers,
-        );
+        return $this->requestFactory->dullahanToSymfonyResponse($response);
     }
 
     #[Route('/login', name: 'login', methods: 'POST')]
@@ -106,7 +103,7 @@ class AuthenticationController extends AbstractController
         JWTManagerInterface $jwtService,
         Security $security,
         AccessControlInterface $accessControl,
-    ): JsonResponse {
+    ): Response {
         /** @var ?User $user */
         $user = $security->getUser();
 
@@ -147,7 +144,7 @@ class AuthenticationController extends AbstractController
         content: new Model(type: ActivationResponseDTO::class),
         response: 200
     )]
-    public function activate(int $userId, string $token): JsonResponse
+    public function activate(int $userId, string $token): Response
     {
         $user = $this->userRetrieveService->get($userId);
 
@@ -161,26 +158,33 @@ class AuthenticationController extends AbstractController
         return $this->httpUtilService->jsonResponse('User activated');
     }
 
-    #[Route('/{userId<\d+>}/verify/{token}/mail', name: 'activate_email', methods: 'POST')]
+    #[Route('/{userId<\d+>}/verify/{token}/mail', name: 'activate_email', methods: ['GET', 'POST'])]
     #[SWG\Response(
-        description: 'User email verification sent',
+        description: 'Changing user email was successful',
         content: new Model(type: UserEmailUpdatedDTO::class),
         response: 200
     )]
-    public function newEmailVerify(int $userId, string $token): JsonResponse
+    public function newEmailVerify(Request $request, int $userId, string $token): Response
     {
-        $this->userVerifyAndSetService->verifyNewEmail($userId, $token);
+        $response = $this->eventDispatcher->dispatch(new VerifyUpdateEmailSaga(
+            $this->requestFactory->symfonyToDullahanRequest($request),
+            $userId,
+            $token,
+        ))->getResponse();
+        if (!$response) {
+            throw new SagaNotHandledException('Email verification was not handled');
+        }
 
-        return $this->httpUtilService->jsonResponse('User email verification was successfully');
+        return $this->requestFactory->dullahanToSymfonyResponse($response);
     }
 
-    #[Route('/{userId<\d+>}/verify/{token}/password', name: 'change_password', methods: 'POST')]
+    #[Route('/{userId<\d+>}/verify/{token}/password', name: 'change_password', methods: ['GET', 'POST'])]
     #[SWG\Response(
         description: 'User password updated',
         content: new Model(type: UserPasswordUpdatedDTO::class),
         response: 200
     )]
-    public function newPasswordUpdate(int $userId, string $token): JsonResponse
+    public function newPasswordUpdate(int $userId, string $token): Response
     {
         $this->userVerifyAndSetService->verifyNewPassword($userId, $token);
 
@@ -194,7 +198,7 @@ class AuthenticationController extends AbstractController
         content: new Model(type: UserPasswordResetDTO::class),
         response: 200
     )]
-    public function forgottenPassword(Request $request): JsonResponse
+    public function forgottenPassword(Request $request): Response
     {
         $response = $this->eventDispatcher->dispatch(new ForgottenPasswordSaga(
             $this->requestFactory->symfonyToDullahanRequest($request),
@@ -203,11 +207,7 @@ class AuthenticationController extends AbstractController
             throw new SagaNotHandledException('Forgotten password was not handled');
         }
 
-        return new JsonResponse(
-            $response->toArray(),
-            $response->status,
-            $response->headers,
-        );
+        return $this->requestFactory->dullahanToSymfonyResponse($response);
     }
 
     #[Route('/{userId<\d+>}/verify/password/reset', name: 'verify_reset_password', methods: 'POST')]
@@ -217,7 +217,7 @@ class AuthenticationController extends AbstractController
         content: new Model(type: UserPasswordWasResetDTO::class),
         response: 200
     )]
-    public function verifyResetPassword(Request $request, int $userId): JsonResponse
+    public function verifyResetPassword(Request $request, int $userId): Response
     {
         $response = $this->eventDispatcher->dispatch(new ResetPasswordSaga(
             $this->requestFactory->symfonyToDullahanRequest($request),
@@ -227,10 +227,6 @@ class AuthenticationController extends AbstractController
             throw new SagaNotHandledException('Password reset was not handled');
         }
 
-        return new JsonResponse(
-            $response->toArray(),
-            $response->status,
-            $response->headers,
-        );
+        return $this->requestFactory->dullahanToSymfonyResponse($response);
     }
 }

@@ -10,8 +10,10 @@ use Dullahan\User\Port\Application\Manager\UserActionManagerInterface;
 use Dullahan\User\Port\Application\Manager\UserPersistManagerInterface;
 use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Port\Domain\UserValidationServiceInterface;
+use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\Saga\RemovalSaga;
 use Dullahan\User\Presentation\Event\Transport\Saga\UpdateEmailSaga;
+use Dullahan\User\Presentation\Event\Transport\Saga\VerifyUpdateEmailSaga;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 class ManageSagaListener
@@ -71,5 +73,17 @@ class ManageSagaListener
         );
 
         $event->setResponse(new Response('Change of user email was enabled'));
+    }
+
+    #[AsEventListener(event: VerifyUpdateEmailSaga::class)]
+    public function onVerifyUpdateEmail(VerifyUpdateEmailSaga $event): void
+    {
+        if ($event->wasDefaultPrevented()) {
+            return;
+        }
+
+        $this->userActionManager->finishEmailChange($event->userId, $event->token);
+
+        $event->setResponse(new Response('Changing user email was successful'));
     }
 }

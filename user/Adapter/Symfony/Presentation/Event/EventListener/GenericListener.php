@@ -8,8 +8,10 @@ use Dullahan\Main\Service\Util\BinUtilService;
 use Dullahan\User\Adapter\Symfony\Infrastructure\Repository\UserDataRepository;
 use Dullahan\User\Adapter\Symfony\Infrastructure\Repository\UserRepository;
 use Dullahan\User\Port\Application\UserPersistServiceInterface;
+use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\Flush;
 use Dullahan\User\Presentation\Event\Transport\Manage\ChangeEmail;
+use Dullahan\User\Presentation\Event\Transport\Manage\FinishChangingEmail;
 use Dullahan\User\Presentation\Event\Transport\Manage\RemoveUser;
 use Dullahan\User\Presentation\Event\Transport\Registration\CreateUser;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -21,6 +23,7 @@ final class GenericListener
         private UserRepository $userRepository,
         private UserDataRepository $userDataRepository,
         private BinUtilService $binUtilService,
+        private UserVerifyAndSetServiceInterface $userVerifyAndSetService,
     ) {
     }
 
@@ -56,6 +59,16 @@ final class GenericListener
         }
 
         $this->userManageService->enableEmailChange($event->getUser(), $event->getEmail());
+    }
+
+    #[AsEventListener(event: FinishChangingEmail::class)]
+    public function onFinishChangingEmail(FinishChangingEmail $event): void
+    {
+        if ($event->wasDefaultPrevented()) {
+            return;
+        }
+
+        $this->userVerifyAndSetService->verifyNewEmail($event->getUser(), $event->getToken());
     }
 
     #[AsEventListener(event: Flush::class)]

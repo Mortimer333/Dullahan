@@ -15,6 +15,7 @@ final class Flush extends EventAbstract
     public const ENABLE_PASSWORD_RESET = 'enable_password_reset';
     public const PASSWORD_RESET = 'password_reset';
     public const ENABLE_EMAIL_CHANGE = 'email_change_enable';
+    public const EMAIL_CHANGE = 'email_change';
     public const USER_REMOVAL = 'user_removal';
 
     public function __construct(

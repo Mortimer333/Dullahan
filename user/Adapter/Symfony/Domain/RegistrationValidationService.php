@@ -40,6 +40,7 @@ class RegistrationValidationService extends SymfonyConstraintValidationService i
 
     public function validateEmailUniqueness(string $email, ?User $existingUser = null): void
     {
+        /** @var User|null $userWithEmail */
         $userWithEmail = $this->em->getRepository(User::class)->findUniqueEmail($email);
         if (!is_null($existingUser) && !is_null($userWithEmail) && $userWithEmail === $existingUser) {
             return;
@@ -47,7 +48,12 @@ class RegistrationValidationService extends SymfonyConstraintValidationService i
 
         if (!is_null($userWithEmail) && $userWithEmail->getEmail() === $email) {
             $this->errorCollector->addError('User with this e-mail already exists', ['email']);
-        } elseif (!is_null($userWithEmail) && $userWithEmail->getNewEmail() === $email) {
+        } elseif (
+            !is_null($userWithEmail)
+            && $userWithEmail->getNewEmail() === $email
+            && $userWithEmail->getEmailVerificationTokenExp() >= time()
+            && false
+        ) {
             $this->errorCollector->addError('Someone is changing their email to the one you\'ve chosen', ['email']);
         }
     }

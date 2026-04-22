@@ -6,11 +6,31 @@ namespace Dullahan\Main\Service;
 
 use Dullahan\Main\Contract\RequestInterface;
 use Dullahan\Main\Model\Request;
+use Dullahan\Main\Model\Response\RedirectResponse;
+use Dullahan\Main\Model\Response\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 class RequestFactory
 {
+    public function dullahanToSymfonyResponse(Response $response): \Symfony\Component\HttpFoundation\Response
+    {
+        if ($response instanceof RedirectResponse) {
+            return new \Symfony\Component\HttpFoundation\RedirectResponse(
+                $response->url,
+                $response->status,
+                $response->headers
+            );
+        }
+
+        return new JsonResponse(
+            $response->toArray(),
+            $response->status,
+            $response->headers,
+        );
+    }
+
     public function symfonyToDullahanRequest(SymfonyRequest $request): RequestInterface
     {
         $files = [];

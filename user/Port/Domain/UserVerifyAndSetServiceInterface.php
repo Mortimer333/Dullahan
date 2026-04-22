@@ -12,7 +12,7 @@ interface UserVerifyAndSetServiceInterface
 
     public function verifyUserPassword(#[\SensitiveParameter] string $password, User $user): bool;
 
-    public function verifyNewEmail(int $userId, #[\SensitiveParameter] string $token): void;
+    public function verifyNewEmail(User $user, #[\SensitiveParameter] string $token): void;
 
     public function verifyNewPassword(int $userId, #[\SensitiveParameter] string $token): void;
 }

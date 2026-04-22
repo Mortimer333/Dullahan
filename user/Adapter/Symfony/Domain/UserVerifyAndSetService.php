@@ -36,9 +36,8 @@ class UserVerifyAndSetService implements UserVerifyAndSetServiceInterface
         return $this->passwordHasher->isPasswordValid($user, $password);
     }
 
-    public function verifyNewEmail(int $userId, #[\SensitiveParameter] string $token): void
+    public function verifyNewEmail(User $user, #[\SensitiveParameter] string $token): void
     {
-        $user = $this->userService->get($userId);
         if (empty($user->getEmailVerificationToken())) {
             throw new \Exception('No change request was created', 400);
         }
@@ -59,8 +58,6 @@ class UserVerifyAndSetService implements UserVerifyAndSetServiceInterface
         $user->setNewEmail(null);
         $user->setEmailVerificationToken(null);
         $user->setEmailVerificationTokenExp(null);
-        $this->em->persist($user);
-        $this->em->flush();
     }
 
     public function verifyNewPassword(int $userId, #[\SensitiveParameter] string $token): void

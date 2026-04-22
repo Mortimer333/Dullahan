@@ -7,6 +7,7 @@ namespace Dullahan\User\Port\Application\Manager;
 interface UserActionManagerInterface
 {
     public function enableEmailChange(int $id, string $email): void;
+    public function finishEmailChange(int $id, #[\SensitiveParameter] string $token): void;
 
     //    public function updateNewPassword(User $user, #[\SensitiveParameter] ?string $password): void;
 
