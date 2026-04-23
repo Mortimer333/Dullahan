@@ -9,7 +9,7 @@ use Dullahan\Asset\Port\Presentation\AssetServerInterface;
 
 class BigAssetServer implements AssetServerInterface
 {
-    public function serve(Structure $structure): void
+    public function serve(Structure $structure, bool $download = false): void
     {
         $file = $structure->getResource();
         if (!$file) {
@@ -19,6 +19,10 @@ class BigAssetServer implements AssetServerInterface
         header('Content-Type: ' . $structure->mimeType);
         header('Cache-Control: public, max-age=31536000, immutable');
         header('Content-Length: ' . $structure->weight);
+        if ($download) {
+            header('Content-Disposition: attachment; '
+                . 'filename="' . $structure->name . '.' . $structure->extension  . '"');
+        }
 
         ob_start();
         set_time_limit(0);

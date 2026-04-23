@@ -37,7 +37,7 @@ class AssetManagementController extends AbstractController
     }
 
     #[Route('/{id<\d+>}/jackrabbit', name: JackrabbitUrlResolver::IMAGE_PATH_NAME, methods: 'GET')]
-    public function serveJackrabbit(int $id): Response
+    public function serveJackrabbit(Request $request, int $id): Response
     {
         $asset = $this->assetService->get($id);
         /** @var Asset $entity */
@@ -52,7 +52,7 @@ class AssetManagementController extends AbstractController
             $asset->structure->getResource(),
         );
 
-        $this->assetServer->serve($structure);
+        $this->assetServer->serve($structure, $request->query->has('download'));
 
         return new Response('');
     }

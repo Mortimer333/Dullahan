@@ -11,6 +11,7 @@ use Dullahan\Thumbnail\Adapter\Symfony\Presentation\UrlResolver\JackrabbitThumbn
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailServiceInterface;
 use OpenApi\Attributes as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[SWG\Tag('Project Asset Management - Thumbnail')]
@@ -29,7 +30,7 @@ class ThumbnailController extends AbstractController
         name: JackrabbitThumbnailUrlResolver::RETRIEVE_PATH_NAME,
         methods: 'GET',
     )]
-    public function getThumbnail(int $id): void
+    public function getThumbnail(Request $request, int $id): void
     {
         $thumbnail = $this->thumbnailService->get($id);
         /** @var \Dullahan\Thumbnail\Domain\Entity\Thumbnail $entity */
@@ -44,6 +45,6 @@ class ThumbnailController extends AbstractController
             $thumbnail->structure->getResource(),
         );
 
-        $this->assetServer->serve($structure);
+        $this->assetServer->serve($structure, $request->query->has('download'));
     }
 }
