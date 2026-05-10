@@ -6,7 +6,7 @@ namespace Dullahan\Thumbnail\Domain\Generator;
 
 use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
 use Dullahan\Asset\Domain\Structure;
-use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
+use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
 use Dullahan\Thumbnail\Domain\Exception\ThumbnailCannotBeGeneratedException;
 use Dullahan\Thumbnail\Domain\ThumbnailConfig;
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailGeneratorInterface;
@@ -22,7 +22,7 @@ class ImagickThumbnailGenerator implements ThumbnailGeneratorInterface
     ];
 
     public function __construct(
-        protected AssetServiceInterface $assetService,
+        private AssetRetrievalManagerInterface $assetRetrievalManager,
     ) {
     }
 
@@ -31,7 +31,7 @@ class ImagickThumbnailGenerator implements ThumbnailGeneratorInterface
         string $filename,
     ) {
         try {
-            $asset = $this->assetService->get($config->assetId);
+            $asset = $this->assetRetrievalManager->get($config->assetId);
         } catch (AssetNotFoundException) {
             throw new ThumbnailCannotBeGeneratedException(sprintf(
                 'Thumbnail %s could\'t be generated because related asset was not found',

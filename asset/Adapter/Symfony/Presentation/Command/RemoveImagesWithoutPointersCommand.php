@@ -6,6 +6,8 @@ namespace Dullahan\Asset\Adapter\Symfony\Presentation\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Asset\Domain\Entity\Asset;
+use Dullahan\Asset\Port\Presentation\AssetPersistManagerInterface;
+use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Command\BaseCommandAbstract;
 use Dullahan\Main\Service\Util\BinUtilService;
@@ -26,6 +28,8 @@ class RemoveImagesWithoutPointersCommand extends BaseCommandAbstract
         protected LoggerInterface $logger,
         protected BinUtilService $binUtilService,
         protected AssetServiceInterface $assetService,
+        private AssetRetrievalManagerInterface $assetRetrievalManager,
+        protected AssetPersistManagerInterface $assetPersistManager,
     ) {
         parent::__construct();
     }
@@ -55,7 +59,7 @@ class RemoveImagesWithoutPointersCommand extends BaseCommandAbstract
         /** @var Asset $asset */
         foreach ($q->toIterable() as $asset) {
             $this->log('Asset: ' . $asset->getName() . ' [' . $asset->getId() . ']');
-            $this->assetService->remove($this->assetService->get($asset->getId()));
+            $this->assetPersistManager->remove($this->assetRetrievalManager->get($asset->getId()));
 
             ++$i;
             if (($i % $batchSize) === 0) {

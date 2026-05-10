@@ -10,6 +10,8 @@ use Dullahan\Asset\Domain\Exception\AssetNotCreatedException;
 use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
 use Dullahan\Asset\Domain\Exception\AssetNotMovedException;
 use Dullahan\Asset\Domain\Exception\AssetNotReplacedException;
+use Dullahan\Asset\Port\Presentation\AssetPersistManagerInterface;
+use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Asset\Port\Presentation\NewStructureInterface;
 use Dullahan\Asset\Presentation\Event\Transport\Clear\ClearAssetEvent;
@@ -37,7 +39,8 @@ use Dullahan\Asset\Presentation\Event\Transport\Validate\AssetNameEvent;
 use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Model\Context;
 
-class AssetEventFacadeService implements AssetServiceInterface
+class AssetEventFacadeService
+implements AssetServiceInterface, AssetRetrievalManagerInterface, AssetPersistManagerInterface
 {
     public function __construct(
         protected readonly EventDispatcherInterface $eventDispatcher,

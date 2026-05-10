@@ -13,7 +13,7 @@ class RuntimeCacheItem
 {
     public function __construct(
         protected string $key,
-        protected ?object $subject = null,
+        protected mixed $subject = null,
     ) {
     }
 
@@ -22,7 +22,7 @@ class RuntimeCacheItem
         return $this->key;
     }
 
-    public function get(): ?object
+    public function get(): mixed
     {
         return $this->subject;
     }
@@ -32,9 +32,9 @@ class RuntimeCacheItem
         return (bool) $this->subject;
     }
 
-    public function set(object $asset): self
+    public function set(mixed $subject): self
     {
-        $this->subject = $asset;
+        $this->subject = $subject;
 
         return $this;
     }

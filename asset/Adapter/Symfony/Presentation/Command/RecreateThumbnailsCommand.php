@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
+use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
 use Dullahan\Entity\Domain\Service\EntityCacheService;
 use Dullahan\Main\Command\BaseCommandAbstract;
 use Dullahan\Main\Service\Util\BinUtilService;
@@ -31,7 +31,7 @@ class RecreateThumbnailsCommand extends BaseCommandAbstract
         protected BinUtilService $binUtilService,
         protected EntityCacheService $cacheService,
         protected ThumbnailServiceInterface $thumbnailService,
-        protected AssetServiceInterface $assetService,
+        protected AssetRetrievalManagerInterface $assetRetrievalManager,
     ) {
         parent::__construct();
     }
@@ -100,7 +100,7 @@ class RecreateThumbnailsCommand extends BaseCommandAbstract
         foreach ($q->toIterable() as $assetEntity) {
             $this->log('Asset ' . $assetEntity->getName() . ' [' . $assetEntity->getId() . ']');
             $this->increaseIndent();
-            $asset = $this->assetService->get($assetEntity->getId());
+            $asset = $this->assetRetrievalManager->get($assetEntity->getId());
             foreach ($this->thumbnailService->getThumbnails($asset) as $thumbnail) {
                 foreach ($thumbnail->entity->getAssetPointers() as $assetPointer) {
                     $this->em->remove($assetPointer);

@@ -10,7 +10,9 @@ use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
 use Dullahan\Asset\Domain\File;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
 use Dullahan\Asset\Port\Infrastructure\AssetFileManagerInterface;
+use Dullahan\Asset\Port\Presentation\AssetPersistManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetPointerInterface;
+use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Model\Context;
 use Dullahan\Thumbnail\Domain\Thumbnail;
@@ -34,6 +36,8 @@ final readonly class ThumbnailService implements ThumbnailServiceInterface
     public function __construct(
         private AssetFileManagerInterface $assetFileManager,
         private AssetServiceInterface $assetService,
+        private AssetPersistManagerInterface $assetPersistManager,
+        private AssetRetrievalManagerInterface $assetRetrievalManager,
         private ThumbnailMapperInterface $thumbnailMapper,
         private ThumbnailGeneratorInterface $thumbnailGenerator,
         private ThumbnailRetrieveInterface $thumbnailRetrieve,
@@ -112,7 +116,7 @@ final readonly class ThumbnailService implements ThumbnailServiceInterface
         }
 
         try {
-            $asset = $this->assetService->get($config->assetId);
+            $asset = $this->assetRetrievalManager->get($config->assetId);
             $assetEntity = $asset->entity;
         } catch (AssetNotFoundException) {
             return null;
@@ -125,7 +129,7 @@ final readonly class ThumbnailService implements ThumbnailServiceInterface
         ;
 
         if (!$this->assetFileManager->exists($path)) {
-            $this->assetService->create(
+            $this->assetPersistManager->create(
                 new Directory($path),
                 new Context([AssetFileManagerInterface::RECURSIVE => true])
             );
@@ -151,11 +155,11 @@ final readonly class ThumbnailService implements ThumbnailServiceInterface
     private function getThumbnailRoot(): Asset
     {
         $path = '/.thumbnail/';
-        if ($this->assetService->exists($path)) {
-            return $this->assetService->getByPath($path);
+        if ($this->assetRetrievalManager->exists($path)) {
+            return $this->assetRetrievalManager->getByPath($path);
         }
 
-        $root = $this->assetService->create(new Directory($path));
+        $root = $this->assetPersistManager->create(new Directory($path));
         $this->assetService->flush();
 
         return $root;

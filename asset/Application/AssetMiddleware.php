@@ -13,6 +13,8 @@ use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
 use Dullahan\Asset\Domain\File;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetMiddlewareInterface;
+use Dullahan\Asset\Port\Presentation\AssetPersistManagerInterface;
+use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Model\Context;
@@ -26,12 +28,16 @@ class AssetMiddleware implements AssetMiddlewareInterface
         protected EntityManagerInterface $em,
         protected AssetSerializerInterface $assetSerializer,
         protected AssetServiceInterface $assetService,
+        protected AssetRetrievalManagerInterface $assetRetrievalManager,
+        protected AssetPersistManagerInterface $assetPersistManager,
     ) {
     }
 
     public function serialize(int $id): array
     {
-        return $this->assetSerializer->serialize($this->assetService->get($id, $this->generateControllerContext()));
+        return $this->assetSerializer->serialize(
+            $this->assetRetrievalManager->get($id, $this->generateControllerContext()),
+        );
     }
 
     public function retrieve(int $id): array
@@ -41,16 +47,16 @@ class AssetMiddleware implements AssetMiddlewareInterface
 
     public function move(string $from, string $to): array
     {
-        if (!$this->assetService->exists($from, $this->generateControllerContext())) {
+        if (!$this->assetRetrievalManager->exists($from, $this->generateControllerContext())) {
             throw new AssetNotFoundException($from);
         }
 
-        if ($this->assetService->exists($to, $this->generateControllerContext())) {
+        if ($this->assetRetrievalManager->exists($to, $this->generateControllerContext())) {
             throw new AssetExistsException($to);
         }
 
-        $asset = $this->assetService->getByPath($from);
-        $asset = $this->assetService->move($asset, $to, $this->generateControllerContext());
+        $asset = $this->assetRetrievalManager->getByPath($from);
+        $asset = $this->assetPersistManager->move($asset, $to, $this->generateControllerContext());
         $this->assetService->flush($this->generateControllerContext());
 
         return $this->assetSerializer->serialize($asset);
@@ -59,7 +65,7 @@ class AssetMiddleware implements AssetMiddlewareInterface
     public function list(array $pagination): array
     {
         $images = [];
-        $assets = $this->assetService->list(
+        $assets = $this->assetRetrievalManager->list(
             new Context([
                 ListListener::LIMIT => $pagination['limit'] ?? null,
                 ListListener::OFFSET => $pagination['offset'] ?? null,
@@ -92,11 +98,11 @@ class AssetMiddleware implements AssetMiddlewareInterface
         }
 
         $fullPath = rtrim($path, '/') . '/' . $name;
-        if ($this->assetService->exists($fullPath, $this->generateControllerContext())) {
+        if ($this->assetRetrievalManager->exists($fullPath, $this->generateControllerContext())) {
             throw new AssetExistsException($fullPath);
         }
 
-        $file = $this->assetService->create(
+        $file = $this->assetPersistManager->create(
             new File(
                 $path,
                 $name,
@@ -120,11 +126,11 @@ class AssetMiddleware implements AssetMiddlewareInterface
         }
 
         $path = rtrim($parent, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name;
-        if ($this->assetService->exists($path, $this->generateControllerContext())) {
+        if ($this->assetRetrievalManager->exists($path, $this->generateControllerContext())) {
             throw new AssetExistsException($path);
         }
 
-        $file = $this->assetService->create(
+        $file = $this->assetPersistManager->create(
             new Directory($path),
             $this->generateControllerContext(),
         );
@@ -141,8 +147,8 @@ class AssetMiddleware implements AssetMiddlewareInterface
         string $extension,
         string $mimeType,
     ): array {
-        $asset = $this->assetService->get($id, $this->generateControllerContext());
-        $asset = $this->assetService->replace($asset, new File(
+        $asset = $this->assetRetrievalManager->get($id, $this->generateControllerContext());
+        $asset = $this->assetPersistManager->replace($asset, new File(
             $asset->structure->path,
             $asset->structure->name,
             $originalName,
@@ -158,7 +164,7 @@ class AssetMiddleware implements AssetMiddlewareInterface
 
     public function remove(int $id): void
     {
-        $this->assetService->remove($this->assetService->get($id), $this->generateControllerContext());
+        $this->assetPersistManager->remove($this->assetRetrievalManager->get($id), $this->generateControllerContext());
         $this->assetService->flush($this->generateControllerContext());
     }
 

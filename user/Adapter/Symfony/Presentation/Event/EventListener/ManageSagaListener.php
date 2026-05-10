@@ -10,7 +10,6 @@ use Dullahan\User\Port\Application\Manager\UserActionManagerInterface;
 use Dullahan\User\Port\Application\Manager\UserPersistManagerInterface;
 use Dullahan\User\Port\Application\UserRetrieveServiceInterface;
 use Dullahan\User\Port\Domain\UserValidationServiceInterface;
-use Dullahan\User\Port\Domain\UserVerifyAndSetServiceInterface;
 use Dullahan\User\Presentation\Event\Transport\Saga\RemovalSaga;
 use Dullahan\User\Presentation\Event\Transport\Saga\UpdateEmailSaga;
 use Dullahan\User\Presentation\Event\Transport\Saga\VerifyUpdateEmailSaga;

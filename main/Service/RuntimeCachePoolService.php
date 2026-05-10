@@ -74,18 +74,18 @@ class RuntimeCachePoolService
 
     public function save(RuntimeCacheItem $item): bool
     {
-        $asset = $item->get();
-        if (!$asset) {
+        $value = $item->get();
+        if (!$value) {
             return false;
         }
 
         // @TODO refactor this, is it necessary?
-        $assetId = method_exists($asset, 'getId') ? $asset->getId() : false;
-        if ($assetId) {
-            $this->pool[(string) $assetId] = $item;
+        $objectId = is_object($value) && method_exists($value, 'getId') ? $value->getId() : false;
+        if ($objectId) {
+            $this->pool[(string) $objectId] = $item;
         }
 
-        $path = method_exists($asset, 'getPath') ? $asset->getPath() : false;
+        $path = is_object($value) && method_exists($value, 'getPath') ? $value->getPath() : false;
         if ($path) {
             $this->pool[(string) $path] = $item;
         }

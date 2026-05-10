@@ -9,7 +9,8 @@ use Dullahan\Asset\Domain\Attribute\Asset;
 use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Infrastructure\Mapper\EntityPointersMapper;
 use Dullahan\Asset\Port\Infrastructure\AssetAwareInterface;
-use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
+use Dullahan\Asset\Port\Presentation\AssetPersistManagerInterface;
+use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
 use Dullahan\Entity\Port\Application\EntityDefinitionManagerInterface;
 use Dullahan\Entity\Presentation\Event\Transport\PersistUpdatedEntity;
 use Dullahan\Entity\Presentation\Event\Transport\RemoveEntity;
@@ -19,7 +20,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class RemoveConjoinedListener
 {
     public function __construct(
-        protected AssetServiceInterface $assetService,
+        protected AssetPersistManagerInterface $assetPersistManager,
+        protected AssetRetrievalManagerInterface $assetRetrievalManager,
         protected KernelInterface $kernel,
         protected EntityDefinitionManagerInterface $entityDefinitionManager,
         protected AssetPointerRepository $assetPointerRepository,
@@ -97,7 +99,7 @@ class RemoveConjoinedListener
         /** @var Asset $asset */
         $asset = $assetAttr->newInstance();
         if ($asset->conjoined && $pointer->getAsset()) {
-            $this->assetService->remove($this->assetService->get((int) $pointer->getAsset()->getId()));
+            $this->assetPersistManager->remove($this->assetRetrievalManager->get((int) $pointer->getAsset()->getId()));
         }
     }
 }

@@ -9,8 +9,8 @@ use Dullahan\Asset\Domain\Entity\Asset;
 use Dullahan\Asset\Domain\Structure;
 use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetMiddlewareInterface;
+use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServerInterface;
-use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Asset\Presentation\HTTP\Response\PAM\RetrieveImageResponse;
 use Dullahan\Asset\Presentation\HTTP\Response\PAM\RetrieveImagesResponse;
 use Dullahan\Entity\Presentation\Http\Model\Parameter\PaginationDTO;
@@ -31,7 +31,7 @@ class AssetManagementController extends AbstractController
         protected HttpUtilService $httpUtilService,
         protected AssetPersistenceManagerInterface $assetManager,
         protected AssetServerInterface $assetServer,
-        protected AssetServiceInterface $assetService,
+        protected AssetRetrievalManagerInterface $assetRetrievalManager,
         protected AssetMiddlewareInterface $assetMiddleware,
     ) {
     }
@@ -39,7 +39,7 @@ class AssetManagementController extends AbstractController
     #[Route('/{id<\d+>}/jackrabbit', name: JackrabbitUrlResolver::IMAGE_PATH_NAME, methods: 'GET')]
     public function serveJackrabbit(Request $request, int $id): Response
     {
-        $asset = $this->assetService->get($id);
+        $asset = $this->assetRetrievalManager->get($id);
         /** @var Asset $entity */
         $entity = $asset->entity;
         $structure = new Structure(

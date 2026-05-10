@@ -8,5 +8,5 @@ use Dullahan\Asset\Domain\Structure;
 
 interface AssetServerInterface
 {
-    public function serve(Structure $asset): void;
+    public function serve(Structure $asset, bool $download = false): void;
 }

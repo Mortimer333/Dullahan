@@ -6,8 +6,8 @@ namespace Dullahan\Asset\Application;
 
 use Dullahan\Asset\Domain\Asset;
 use Dullahan\Asset\Port\Presentation\AssetPointerInterface;
+use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
-use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Asset\Port\Presentation\AssetUrlResolverInterface;
 use Dullahan\Main\Service\Util\FileUtilService;
 use Dullahan\Thumbnail\Domain\Entity\AssetThumbnailPointer;
@@ -24,7 +24,7 @@ class AssetSerializer implements AssetSerializerInterface
         protected AssetUrlResolverInterface $assetUrlResolver,
         protected ThumbnailServiceInterface $thumbnailService,
         protected ThumbnailUrlResolverInterface $thumbnailUrlResolver,
-        protected AssetServiceInterface $assetService,
+        protected AssetRetrievalManagerInterface $assetRetrievalManager,
     ) {
     }
 
@@ -98,7 +98,7 @@ class AssetSerializer implements AssetSerializerInterface
             }
         }
 
-        $asset = $this->assetService->get($pointer->getAsset()?->getId());
+        $asset = $this->assetRetrievalManager->get($pointer->getAsset()?->getId());
 
         return [
             'id' => $asset->entity->getId(),

@@ -52,7 +52,6 @@ class RegistrationValidationService extends SymfonyConstraintValidationService i
             !is_null($userWithEmail)
             && $userWithEmail->getNewEmail() === $email
             && $userWithEmail->getEmailVerificationTokenExp() >= time()
-            && false
         ) {
             $this->errorCollector->addError('Someone is changing their email to the one you\'ve chosen', ['email']);
         }
