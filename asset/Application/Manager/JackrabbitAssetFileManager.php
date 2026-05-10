@@ -258,7 +258,7 @@ class JackrabbitAssetFileManager implements AssetFileManagerInterface
     {
         $name = $node->getName();
         $extension = '';
-        if ('.' !== $name[0]) {
+        if ('.' !== ($name[0] ?? '')) {
             $filename = explode('.', $node->getName());
             $name = $filename[0];
             $extension = $filename[1] ?? null;

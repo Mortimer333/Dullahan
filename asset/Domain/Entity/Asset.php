@@ -169,9 +169,11 @@ class Asset implements AssetEntityInterface
         return $this->directory;
     }
 
-    public function setDirectory(?string $directory): void
+    public function setDirectory(?string $directory): self
     {
         $this->directory = $directory;
+
+        return $this;
     }
 
     public function isHidden(): ?bool
@@ -179,8 +181,10 @@ class Asset implements AssetEntityInterface
         return $this->hidden;
     }
 
-    public function setHidden(?bool $hidden): void
+    public function setHidden(?bool $hidden): self
     {
         $this->hidden = $hidden;
+
+        return $this;
     }
 }

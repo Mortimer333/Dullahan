@@ -29,7 +29,7 @@ class AssetMiddleware implements AssetMiddlewareInterface
         protected AssetServiceInterface $assetService,
         protected AssetRetrievalManagerInterface $assetRetrievalManager,
         protected AssetPersistManagerInterface $assetPersistManager,
-        private AssetSerializeManagerInterface $assetSerializeManager,
+        protected AssetSerializeManagerInterface $assetSerializeManager,
     ) {
     }
 

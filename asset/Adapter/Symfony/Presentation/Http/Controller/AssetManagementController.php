@@ -83,7 +83,7 @@ class AssetManagementController extends AbstractController
     )]
     public function list(Request $request): JsonResponse
     {
-        $pagination = $request->get('pagination') ?? [];
+        $pagination = $request->query->get('pagination') ?? [];
         if (is_string($pagination)) {
             $pagination = json_decode($pagination, true);
         }
