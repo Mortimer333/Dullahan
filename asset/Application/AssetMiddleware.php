@@ -15,7 +15,7 @@ use Dullahan\Asset\Port\Infrastructure\AssetPersistenceManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetMiddlewareInterface;
 use Dullahan\Asset\Port\Presentation\AssetPersistManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
-use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
+use Dullahan\Asset\Port\Presentation\AssetSerializeManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Model\Context;
 
@@ -26,17 +26,20 @@ class AssetMiddleware implements AssetMiddlewareInterface
     public function __construct(
         protected AssetPersistenceManagerInterface $assetManager,
         protected EntityManagerInterface $em,
-        protected AssetSerializerInterface $assetSerializer,
         protected AssetServiceInterface $assetService,
         protected AssetRetrievalManagerInterface $assetRetrievalManager,
         protected AssetPersistManagerInterface $assetPersistManager,
+        private AssetSerializeManagerInterface $assetSerializeManager,
     ) {
     }
 
     public function serialize(int $id): array
     {
-        return $this->assetSerializer->serialize(
-            $this->assetRetrievalManager->get($id, $this->generateControllerContext()),
+        $context = $this->generateControllerContext();
+
+        return $this->assetSerializeManager->serialize(
+            $this->assetRetrievalManager->get($id, $context),
+            $context,
         );
     }
 
@@ -59,7 +62,7 @@ class AssetMiddleware implements AssetMiddlewareInterface
         $asset = $this->assetPersistManager->move($asset, $to, $this->generateControllerContext());
         $this->assetService->flush($this->generateControllerContext());
 
-        return $this->assetSerializer->serialize($asset);
+        return $this->assetSerializeManager->serialize($asset);
     }
 
     public function list(array $pagination): array
@@ -78,7 +81,7 @@ class AssetMiddleware implements AssetMiddlewareInterface
             ])
         );
         foreach ($assets as $asset) {
-            $images[] = $this->assetSerializer->serialize($asset);
+            $images[] = $this->assetSerializeManager->serialize($asset);
         }
 
         return $images;
@@ -116,7 +119,7 @@ class AssetMiddleware implements AssetMiddlewareInterface
         );
         $this->assetService->flush($this->generateControllerContext());
 
-        return $this->assetSerializer->serialize($file);
+        return $this->assetSerializeManager->serialize($file);
     }
 
     public function folder(string $parent, string $name): array
@@ -136,7 +139,7 @@ class AssetMiddleware implements AssetMiddlewareInterface
         );
         $this->assetService->flush($this->generateControllerContext());
 
-        return $this->assetSerializer->serialize($file);
+        return $this->assetSerializeManager->serialize($file);
     }
 
     public function reupload(
@@ -159,7 +162,7 @@ class AssetMiddleware implements AssetMiddlewareInterface
         ), $this->generateControllerContext());
         $this->assetService->flush($this->generateControllerContext());
 
-        return $this->assetSerializer->serialize($asset);
+        return $this->assetSerializeManager->serialize($asset);
     }
 
     public function remove(int $id): void

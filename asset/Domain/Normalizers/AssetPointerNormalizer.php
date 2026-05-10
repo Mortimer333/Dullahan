@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Dullahan\Entity\Domain\Normalizers;
+namespace Dullahan\Asset\Domain\Normalizers;
 
 use Dullahan\Asset\Domain\Entity\AssetPointer;
-use Dullahan\Asset\Port\Presentation\AssetSerializerInterface;
+use Dullahan\Asset\Port\Presentation\AssetSerializeManagerInterface;
 use Dullahan\Entity\Port\Domain\NormalizerInterface;
 use Dullahan\Main\Model\Context;
 
 class AssetPointerNormalizer implements NormalizerInterface
 {
     public function __construct(
-        protected AssetSerializerInterface $assetSerializer,
+        private AssetSerializeManagerInterface $assetSerializeManager,
     ) {
     }
 
@@ -45,6 +45,6 @@ class AssetPointerNormalizer implements NormalizerInterface
             return null;
         }
 
-        return $this->assetSerializer->serializePointer($value);
+        return $this->assetSerializeManager->serializePointer($value);
     }
 }

@@ -7,7 +7,7 @@ namespace Dullahan\Asset\Port\Presentation;
 use Dullahan\Asset\Domain\Exception\AssetExistsException;
 
 /**
- * @phpstan-import-type AssetSerialized from \Dullahan\Asset\Port\Presentation\AssetSerializerInterface
+ * @phpstan-import-type AssetSerialized from \Dullahan\Asset\Port\Presentation\AssetSerializeManagerInterface
  */
 interface AssetMiddlewareInterface
 {

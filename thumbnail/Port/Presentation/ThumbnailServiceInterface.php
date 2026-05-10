@@ -12,6 +12,22 @@ use Dullahan\Thumbnail\Domain\Exception\ThumbnailEntityNotFoundException;
 use Dullahan\Thumbnail\Domain\Thumbnail;
 use Dullahan\Thumbnail\Domain\ThumbnailConfig;
 
+/**
+ * @phpstan-type ThumbnailSerialized array{
+ *      id: int,
+ *      src: string,
+ *      name: string,
+ *      weight: int,
+ *      weight_readable: string,
+ *      pointers: array<string, array{
+ *           id: int,
+ *      }>,
+ *      dimensions: array{
+ *          width: 'auto'|int,
+ *          height: 'auto'|int,
+ *      }
+ *  }
+ */
 interface ThumbnailServiceInterface
 {
     /**
@@ -46,4 +62,9 @@ interface ThumbnailServiceInterface
     public function generateWithConfig(ThumbnailConfig $config): ?Thumbnail;
 
     public function flush(): void;
+
+    /**
+     * @return ThumbnailSerialized
+     */
+    public function serialize(Thumbnail $thumbnail): array;
 }

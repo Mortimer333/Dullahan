@@ -15,6 +15,8 @@ use Dullahan\Asset\Port\Presentation\AssetPointerInterface;
 use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Main\Model\Context;
+use Dullahan\Main\Service\Util\FileUtilService;
+use Dullahan\Thumbnail\Domain\Entity\AssetThumbnailPointer;
 use Dullahan\Thumbnail\Domain\Thumbnail;
 use Dullahan\Thumbnail\Domain\ThumbnailConfig;
 use Dullahan\Thumbnail\Port\Infrastructure\Database\Repository\ThumbnailPersisterInterface;
@@ -22,6 +24,7 @@ use Dullahan\Thumbnail\Port\Infrastructure\Database\Repository\ThumbnailRetrieve
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailGeneratorInterface;
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailMapperInterface;
 use Dullahan\Thumbnail\Port\Presentation\ThumbnailServiceInterface;
+use Dullahan\Thumbnail\Port\Presentation\ThumbnailUrlResolverInterface;
 
 /**
  * @TODO refactor to be Event based.
@@ -42,6 +45,7 @@ final readonly class ThumbnailService implements ThumbnailServiceInterface
         private ThumbnailGeneratorInterface $thumbnailGenerator,
         private ThumbnailRetrieveInterface $thumbnailRetrieve,
         private ThumbnailPersisterInterface $thumbnailPersist,
+        private ThumbnailUrlResolverInterface $thumbnailUrlResolver,
     ) {
     }
 
@@ -150,6 +154,39 @@ final readonly class ThumbnailService implements ThumbnailServiceInterface
         $entity = $this->thumbnailPersist->create($assetEntity, $path . $filename, $filename, $thumbFile, $config);
 
         return new Thumbnail($structure, $entity, new Context());
+    }
+
+    public function serialize(Thumbnail $thumbnail): array
+    {
+        $entity = $thumbnail->entity;
+        $structure = $thumbnail->structure;
+        $settings = json_decode($entity->getSettings() ?: '{width: null, height: null}', true);
+        $dimensions = [
+            'width' => $settings['crop'][0] ?? $settings['width'] ?? 'auto',
+            'height' => $settings['crop'][1] ?? $settings['height'] ?? 'auto',
+        ];
+
+        $pointers = [];
+        /** @var AssetThumbnailPointer $assetPointer */
+        foreach ($entity->getAssetPointers() as $assetPointer) {
+            $pointer = $assetPointer->getAssetPointer();
+            if (!$pointer) {
+                continue;
+            }
+            $pointers[(string) $assetPointer->getCode()] = [
+                'id' => (int) $pointer->getId(),
+            ];
+        }
+
+        return [
+            'id' => (int) $entity->getId(),
+            'src' => $this->thumbnailUrlResolver->getUrl($thumbnail),
+            'name' => $structure->name,
+            'weight' => (int) $structure->weight,
+            'weight_readable' => FileUtilService::humanFilesize((int) $structure->weight),
+            'pointers' => $pointers,
+            'dimensions' => $dimensions,
+        ];
     }
 
     private function getThumbnailRoot(): Asset

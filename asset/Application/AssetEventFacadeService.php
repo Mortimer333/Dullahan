@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dullahan\Asset\Application;
 
 use Dullahan\Asset\Domain\Asset;
+use Dullahan\Asset\Domain\Entity\AssetPointer;
 use Dullahan\Asset\Domain\Exception\AssetNotClonedException;
 use Dullahan\Asset\Domain\Exception\AssetNotCreatedException;
 use Dullahan\Asset\Domain\Exception\AssetNotFoundException;
@@ -12,6 +13,7 @@ use Dullahan\Asset\Domain\Exception\AssetNotMovedException;
 use Dullahan\Asset\Domain\Exception\AssetNotReplacedException;
 use Dullahan\Asset\Port\Presentation\AssetPersistManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetRetrievalManagerInterface;
+use Dullahan\Asset\Port\Presentation\AssetSerializeManagerInterface;
 use Dullahan\Asset\Port\Presentation\AssetServiceInterface;
 use Dullahan\Asset\Port\Presentation\NewStructureInterface;
 use Dullahan\Asset\Presentation\Event\Transport\Clear\ClearAssetEvent;
@@ -35,12 +37,19 @@ use Dullahan\Asset\Presentation\Event\Transport\Replace\PreReplaceAssetEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Replace\ReplaceAssetEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Retrieve\RetrieveByIdEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Retrieve\RetrieveByPathEvent;
+use Dullahan\Asset\Presentation\Event\Transport\Serialize\AssetPointerSerializeEvent;
+use Dullahan\Asset\Presentation\Event\Transport\Serialize\AssetSerializeEvent;
 use Dullahan\Asset\Presentation\Event\Transport\Validate\AssetNameEvent;
 use Dullahan\Main\Contract\EventDispatcherInterface;
 use Dullahan\Main\Model\Context;
 
+/**
+ * @phpstan-import-type AssetSerialized from \Dullahan\Asset\Port\Presentation\AssetSerializeManagerInterface
+ * @phpstan-import-type PointerSerialized from \Dullahan\Asset\Port\Presentation\AssetSerializeManagerInterface
+ */
 class AssetEventFacadeService
-implements AssetServiceInterface, AssetRetrievalManagerInterface, AssetPersistManagerInterface
+implements AssetServiceInterface, AssetRetrievalManagerInterface, AssetPersistManagerInterface,
+    AssetSerializeManagerInterface
 {
     public function __construct(
         protected readonly EventDispatcherInterface $eventDispatcher,
@@ -223,5 +232,25 @@ implements AssetServiceInterface, AssetRetrievalManagerInterface, AssetPersistMa
     {
         $context ??= new Context();
         $this->eventDispatcher->dispatch(new ClearAssetEvent($context));
+    }
+
+    public function serialize(Asset $asset, ?Context $context = null): array
+    {
+        $context ??= new Context();
+
+        /** @var AssetSerialized $serialized */
+        $serialized = $this->eventDispatcher->dispatch(new AssetSerializeEvent($asset, $context))->serialized;
+
+        return $serialized;
+    }
+
+    public function serializePointer(AssetPointer $pointer, ?Context $context = null): array
+    {
+        $context ??= new Context();
+
+        /** @var PointerSerialized $serialized */
+        $serialized = $this->eventDispatcher->dispatch(new AssetPointerSerializeEvent($pointer, $context))->serialized;
+
+        return $serialized;
     }
 }
